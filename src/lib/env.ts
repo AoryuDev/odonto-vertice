@@ -9,9 +9,11 @@ const serverEnvSchema = z
     MANAGE_TOKEN_SECRET: z.string().min(32),
     BOOKING_RATE_LIMIT: z.coerce.number().int().positive().default(10),
     CRON_SECRET: z.string().min(32).optional(),
-    NOTIFICATION_CHANNEL: z.enum(['console', 'email']).default('console'),
+    NOTIFICATION_CHANNEL: z.enum(['console', 'email', 'whatsapp']).default('console'),
     RESEND_API_KEY: z.string().min(10).optional(),
     EMAIL_FROM: z.string().min(5).optional(),
+    WHATSAPP_ACCESS_TOKEN: z.string().min(10).optional(),
+    WHATSAPP_PHONE_NUMBER_ID: z.string().min(3).optional(),
   })
   .refine((env) => env.NOTIFICATION_CHANNEL !== 'email' || (env.RESEND_API_KEY && env.EMAIL_FROM), {
     message: 'RESEND_API_KEY and EMAIL_FROM are required when NOTIFICATION_CHANNEL=email',

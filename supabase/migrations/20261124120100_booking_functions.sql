@@ -108,6 +108,7 @@ language plpgsql
 security invoker
 set search_path = ''
 as $$
+#variable_conflict use_column
 begin
   return query
   with candidates as (
