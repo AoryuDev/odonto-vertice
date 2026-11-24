@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRightIcon, CalendarIcon } from '@/components/ui/icons'
 import { formatShortDate, formatTime, formatWeekdayShort } from '@/lib/format'
+import { bookingHref } from '@/modules/booking/booking-routes'
 import { findNextSlot } from '@/modules/schedule/next-slot'
 
 function dayLabel(next: { isToday: boolean; isTomorrow: boolean; slot: { start: Date } }) {
@@ -20,7 +21,7 @@ export async function NextSlotCard() {
     )
   }
 
-  const href = `/agendar?tratamento=${next.treatmentSlug}&dentista=qualquer&data=${next.date}`
+  const href = bookingHref({ treatment: next.treatmentSlug, dentist: 'qualquer', date: next.date })
 
   return (
     <SlotCardFrame href={href}>

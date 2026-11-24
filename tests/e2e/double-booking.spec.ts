@@ -10,7 +10,7 @@ test.describe('double booking protection', () => {
     const alice = new BookingFlow(await first.newPage())
     const bruno = new BookingFlow(await second.newPage())
 
-    await alice.open('?tratamento=manutencao-de-aparelho&dentista=rafael-tavares')
+    await alice.open('/manutencao-de-aparelho/rafael-tavares')
     const slotHref = await alice.chooseFirstSlot()
     await bruno.page.goto(slotHref)
     await expect(bruno.page.getByRole('heading', { name: 'Seus dados' })).toBeVisible()

@@ -13,7 +13,6 @@ import {
 import { toLocalDate, type LocalDate } from '@/modules/schedule/domain/clinic-time'
 import { candidateDentists } from './booking.service'
 import { ANY_DENTIST } from './schemas'
-import type { BookingSelection } from './search-params'
 
 export type SlotChoice = {
   readonly start: string
@@ -26,29 +25,12 @@ export type SlotBoard = {
   readonly slots: readonly SlotChoice[]
 }
 
-export type BookingView =
-  | { readonly step: 'treatment'; readonly treatments: readonly Treatment[] }
-  | {
-      readonly step: 'dentist'
-      readonly treatment: Treatment
-      readonly dentists: readonly Dentist[]
-    }
-  | {
-      readonly step: 'slot'
-      readonly treatment: Treatment
-      readonly dentistSlug: string
-      readonly dentist: Dentist | undefined
-      readonly board: SlotBoard
-    }
-  | {
-      readonly step: 'details'
-      readonly treatment: Treatment
-      readonly dentistSlug: string
-      readonly dentist: Dentist | undefined
-      readonly slot: SlotChoice | undefined
-      readonly requestedStart: string
-      readonly board: SlotBoard
-    }
+export type BookingChoice = {
+  readonly treatment: Treatment
+  readonly dentistSlug: string
+  readonly dentist: Dentist | undefined
+  readonly candidates: readonly Dentist[]
+}
 
 export function buildSlotBoard(
   context: AvailabilityContext,
@@ -72,43 +54,63 @@ function toChoice(slot: Slot, dentists: readonly Dentist[]): SlotChoice {
   }
 }
 
-export async function loadBookingView(selection: BookingSelection): Promise<BookingView> {
+export async function findTreatmentWithDentists(
+  treatmentSlug: string,
+): Promise<{ treatment: Treatment; dentists: Dentist[] } | undefined> {
   const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
-  const treatment = treatments.find((candidate) => candidate.slug === selection.treatment)
-  if (!treatment) return { step: 'treatment', treatments }
+  const treatment = treatments.find((candidate) => candidate.slug === treatmentSlug)
+  if (!treatment) return undefined
+  return { treatment, dentists: candidateDentists(treatment, dentists, ANY_DENTIST) }
+}
 
-  const offering = candidateDentists(treatment, dentists, ANY_DENTIST)
-  const dentistSlug =
-    selection.dentist === ANY_DENTIST ||
-    offering.some((dentist) => dentist.slug === selection.dentist)
-      ? selection.dentist
-      : undefined
-  if (!dentistSlug) return { step: 'dentist', treatment, dentists: offering }
-
-  const chosen = candidateDentists(treatment, dentists, dentistSlug)
-  const dentist = dentistSlug === ANY_DENTIST ? undefined : chosen[0]
-  const context = await loadAvailabilityContext(treatment, chosen)
-
-  if (!selection.start) {
-    return {
-      step: 'slot',
-      treatment,
-      dentistSlug,
-      dentist,
-      board: buildSlotBoard(context, chosen, selection.date),
-    }
-  }
-
-  const start = new Date(selection.start)
-  const date = toLocalDate(start, context.policy.timeZone)
-  const slot = findSlot(date, start, context)
+export async function resolveBookingChoice(
+  treatmentSlug: string,
+  dentistSlug: string,
+): Promise<BookingChoice | undefined> {
+  const found = await findTreatmentWithDentists(treatmentSlug)
+  if (!found) return undefined
+  const candidates =
+    dentistSlug === ANY_DENTIST
+      ? found.dentists
+      : found.dentists.filter((dentist) => dentist.slug === dentistSlug)
+  if (candidates.length === 0) return undefined
   return {
-    step: 'details',
-    treatment,
+    treatment: found.treatment,
     dentistSlug,
-    dentist,
-    slot: slot ? toChoice(slot, chosen) : undefined,
-    requestedStart: selection.start,
-    board: buildSlotBoard(context, chosen, date),
+    dentist: dentistSlug === ANY_DENTIST ? undefined : candidates[0],
+    candidates,
+  }
+}
+
+export async function bookingParams(): Promise<{ tratamento: string; dentista: string }[]> {
+  const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
+  return treatments.flatMap((treatment) => [
+    { tratamento: treatment.slug, dentista: ANY_DENTIST },
+    ...candidateDentists(treatment, dentists, ANY_DENTIST).map((dentist) => ({
+      tratamento: treatment.slug,
+      dentista: dentist.slug,
+    })),
+  ])
+}
+
+export async function loadSlotBoard(
+  choice: BookingChoice,
+  requestedDate: LocalDate | undefined,
+): Promise<SlotBoard> {
+  const context = await loadAvailabilityContext(choice.treatment, choice.candidates)
+  return buildSlotBoard(context, choice.candidates, requestedDate)
+}
+
+export async function loadSlotDetails(
+  choice: BookingChoice,
+  start: string,
+): Promise<{ slot: SlotChoice | undefined; board: SlotBoard }> {
+  const context = await loadAvailabilityContext(choice.treatment, choice.candidates)
+  const instant = new Date(start)
+  const date = toLocalDate(instant, context.policy.timeZone)
+  const slot = findSlot(date, instant, context)
+  return {
+    slot: slot ? toChoice(slot, choice.candidates) : undefined,
+    board: buildSlotBoard(context, choice.candidates, date),
   }
 }

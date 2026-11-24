@@ -183,3 +183,29 @@ function DateChooser({ board, hrefForDate }: Pick<SlotPickerProps, 'board' | 'hr
     </nav>
   )
 }
+
+export function SlotPickerSkeleton() {
+  return (
+    <div
+      aria-hidden="true"
+      className="mt-8 grid animate-pulse gap-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-12"
+    >
+      <div className="flex gap-2 overflow-hidden lg:grid lg:grid-cols-7 lg:gap-1.5">
+        {Array.from({ length: 14 }, (_, index) => (
+          <span
+            key={index}
+            className="h-[4.5rem] w-14 shrink-0 rounded-[0.9rem] bg-paper-deep lg:w-auto"
+          />
+        ))}
+      </div>
+      <div className="space-y-4">
+        <div className="h-8 w-64 max-w-full rounded bg-paper-deep" />
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {Array.from({ length: 9 }, (_, index) => (
+            <span key={index} className="h-12 rounded-full bg-paper-deep" />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}

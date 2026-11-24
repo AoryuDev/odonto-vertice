@@ -1,17 +1,20 @@
 'use client'
 
-import { domAnimation, LazyMotion, m, MotionConfig, type HTMLMotionProps } from 'motion/react'
-import type { ReactNode } from 'react'
+import { LazyMotion, MotionConfig } from 'motion/react'
+import * as m from 'motion/react-m'
+import type { ComponentProps, ReactNode } from 'react'
+
+const loadFeatures = () => import('./motion-features').then((module) => module.default)
 
 export function MotionProvider({ children }: { children: ReactNode }) {
   return (
-    <LazyMotion features={domAnimation} strict>
+    <LazyMotion features={loadFeatures} strict>
       <MotionConfig reducedMotion="user">{children}</MotionConfig>
     </LazyMotion>
   )
 }
 
-type RevealProps = HTMLMotionProps<'div'> & { delay?: number; distance?: number }
+type RevealProps = ComponentProps<typeof m.div> & { delay?: number; distance?: number }
 
 export function Reveal({ delay = 0, distance = 18, children, ...props }: RevealProps) {
   return (

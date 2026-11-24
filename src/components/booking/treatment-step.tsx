@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowRightIcon } from '@/components/ui/icons'
 import { formatDuration } from '@/lib/format'
-import { bookingHref } from '@/modules/booking/search-params'
+import { bookingHref } from '@/modules/booking/booking-routes'
 import type { Treatment } from '@/modules/catalog/types'
 import { StepHeading } from './step-heading'
 

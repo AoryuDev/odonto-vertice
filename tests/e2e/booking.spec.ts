@@ -48,7 +48,7 @@ test.describe('online booking', () => {
 
   test('validates patient details on the server-shared schema before booking', async ({ page }) => {
     const flow = new BookingFlow(page)
-    await flow.open('?tratamento=limpeza&dentista=helena-prado')
+    await flow.open('/limpeza/helena-prado')
     await flow.chooseFirstSlot()
 
     await flow.confirm()
@@ -67,12 +67,25 @@ test.describe('online booking', () => {
     await expect(page.getByLabel('Nome completo')).toHaveAttribute('aria-invalid', 'true')
   })
 
-  test('ignores tampered query parameters and falls back to the first step', async ({ page }) => {
-    await page.goto('/agendar?tratamento=../../etc&dentista=%27%3Bdrop&horario=ontem')
+  test('shows a non-indexable not-found page for unknown or malformed booking paths', async ({
+    page,
+  }) => {
+    for (const path of [
+      '/agendar/nao-existe',
+      '/agendar/limpeza/camila-arantes',
+      "/agendar/limpeza/'drop",
+    ]) {
+      await page.goto(path)
 
-    await expect(
-      page.getByRole('heading', { name: 'Qual consulta você quer marcar?' }),
-    ).toBeVisible()
+      await expect(page.getByRole('heading', { name: /Essa página não existe/ })).toBeVisible()
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
+    }
+  })
+
+  test('falls back to the slot list when the chosen time is malformed', async ({ page }) => {
+    await page.goto('/agendar/limpeza/helena-prado/dados?horario=amanha')
+
+    await expect(page.getByRole('link', { name: 'Ver horários livres' })).toBeVisible()
   })
 
   test('shows a not-found page for an invalid manage link', async ({ page }) => {

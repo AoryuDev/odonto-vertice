@@ -202,7 +202,7 @@ async function ManageContent({ params, searchParams }: Props) {
 
       {appointment.status !== 'scheduled' ? (
         <div className="mt-10">
-          <ButtonLink href={`/agendar?tratamento=${appointment.treatment.slug}`}>
+          <ButtonLink href={`/agendar/${appointment.treatment.slug}`}>
             Agendar outro horário
           </ButtonLink>
         </div>

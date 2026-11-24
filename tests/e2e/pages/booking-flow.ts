@@ -27,8 +27,8 @@ export class BookingFlow {
     this.confirmButton = page.getByRole('button', { name: 'Confirmar agendamento' })
   }
 
-  async open(query = '') {
-    await this.page.goto(`/agendar${query}`)
+  async open(path = '') {
+    await this.page.goto(`/agendar${path}`)
   }
 
   async chooseTreatment(name: string) {

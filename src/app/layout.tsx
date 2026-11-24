@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { siteUrl } from '@/lib/site'
-import { hanken, newsreader } from './fonts'
+import { hanken, newsreader, newsreaderItalic } from './fonts'
 import './globals.css'
 
 const description =
@@ -38,7 +38,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html
       lang="pt-BR"
       data-scroll-behavior="smooth"
-      className={`${newsreader.variable} ${hanken.variable}`}
+      className={`${newsreader.variable} ${newsreaderItalic.variable} ${hanken.variable}`}
     >
       <body>{children}</body>
     </html>

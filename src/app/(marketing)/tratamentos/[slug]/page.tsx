@@ -2,11 +2,9 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
 import { Breadcrumbs } from '@/components/site/breadcrumbs'
 import { FaqList } from '@/components/site/faq-list'
 import { JsonLd } from '@/components/site/json-ld'
-import { PageSkeleton } from '@/components/site/page-skeleton'
 import { Reveal } from '@/components/site/motion'
 import { ButtonLink } from '@/components/ui/button'
 import { Eyebrow } from '@/components/ui/eyebrow'
@@ -45,15 +43,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default function TreatmentPage({ params }: Props) {
-  return (
-    <Suspense fallback={<PageSkeleton />}>
-      <TreatmentContent params={params} />
-    </Suspense>
-  )
-}
+export const instant = false
 
-async function TreatmentContent({ params }: Props) {
+export default async function TreatmentPage({ params }: Props) {
   const { slug } = await params
   const [treatment, treatments, dentists] = await Promise.all([
     findTreatment(slug),
@@ -98,7 +90,7 @@ async function TreatmentContent({ params }: Props) {
             <h1 className="mt-5 text-display text-ink">{treatment.name}</h1>
             <p className="mt-6 max-w-xl text-lead text-ink-soft">{treatment.summary}</p>
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-              <ButtonLink href={`/agendar?tratamento=${treatment.slug}`} size="lg">
+              <ButtonLink href={`/agendar/${treatment.slug}`} size="lg">
                 Agendar {treatment.name.toLowerCase()}
               </ButtonLink>
               <span className="inline-flex items-center gap-2 text-ink-soft">
@@ -111,7 +103,8 @@ async function TreatmentContent({ params }: Props) {
             <Image
               src={photo.src}
               alt={photo.alt}
-              priority
+              loading="eager"
+              fetchPriority="high"
               placeholder="blur"
               sizes="(min-width: 768px) 38vw, 100vw"
               className="aspect-[4/3] w-full rounded-[var(--radius-card)] rounded-tr-[5rem] object-cover md:aspect-[5/6]"
@@ -223,7 +216,7 @@ async function TreatmentContent({ params }: Props) {
                   )
                 })}
               </ul>
-              <ButtonLink href={`/agendar?tratamento=${treatment.slug}`} className="mt-6 w-full">
+              <ButtonLink href={`/agendar/${treatment.slug}`} className="mt-6 w-full">
                 Ver horários livres
               </ButtonLink>
               <p className="mt-4 text-center text-sm text-ink-soft">Particular ou convênio</p>

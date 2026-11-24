@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { CheckIcon } from '@/components/ui/icons'
 import { cn } from '@/lib/cn'
-import type { BookingStep } from '@/modules/booking/search-params'
+import type { BookingStep } from '@/modules/booking/booking-routes'
 
 const STEPS: readonly { key: BookingStep | 'done'; label: string }[] = [
   { key: 'treatment', label: 'Tratamento' },

@@ -2,10 +2,8 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
 import { Breadcrumbs } from '@/components/site/breadcrumbs'
 import { JsonLd } from '@/components/site/json-ld'
-import { PageSkeleton } from '@/components/site/page-skeleton'
 import { ButtonLink } from '@/components/ui/button'
 import { Eyebrow } from '@/components/ui/eyebrow'
 import { ArrowUpRightIcon } from '@/components/ui/icons'
@@ -44,15 +42,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default function DentistPage({ params }: Props) {
-  return (
-    <Suspense fallback={<PageSkeleton />}>
-      <DentistContent params={params} />
-    </Suspense>
-  )
-}
+export const instant = false
 
-async function DentistContent({ params }: Props) {
+export default async function DentistPage({ params }: Props) {
   const { slug } = await params
   const [dentist, treatments] = await Promise.all([findDentist(slug), listTreatments()])
   if (!dentist) notFound()
@@ -75,36 +67,38 @@ async function DentistContent({ params }: Props) {
 
       <section className="container-page pt-8 pb-16 md:pt-12 md:pb-24">
         <Breadcrumbs items={crumbs} />
-        <div className="mt-8 grid gap-10 md:grid-cols-12 md:gap-14">
-          <div className="md:col-span-5">
-            <div className="relative">
-              <div
-                aria-hidden="true"
-                className="absolute top-6 -right-3 -bottom-3 left-6 rounded-[var(--radius-card)] bg-pine-100"
-              />
-              <Image
-                src={photo.src}
-                alt={photo.alt}
-                priority
-                placeholder="blur"
-                sizes="(min-width: 768px) 38vw, 100vw"
-                className="relative aspect-[4/5] w-full rounded-[var(--radius-card)] object-cover object-top"
-              />
-            </div>
+        <div className="mt-8 grid grid-cols-[6.5rem_minmax(0,1fr)] items-center gap-x-5 gap-y-8 md:grid-cols-12 md:items-start md:gap-x-14">
+          <div className="relative md:col-span-5 md:row-span-2">
+            <div
+              aria-hidden="true"
+              className="absolute top-6 -right-3 -bottom-3 left-6 hidden rounded-[var(--radius-card)] bg-pine-100 md:block"
+            />
+            <Image
+              src={photo.src}
+              alt={photo.alt}
+              loading="eager"
+              fetchPriority="high"
+              placeholder="blur"
+              sizes="(min-width: 768px) 38vw, 6.5rem"
+              className="relative aspect-[4/5] w-full rounded-[1rem] object-cover object-top md:rounded-[var(--radius-card)]"
+            />
           </div>
 
           <div className="md:col-span-7 md:pt-4">
-            <Eyebrow>
+            <Eyebrow className="text-[0.72rem] md:text-[0.8rem]">
               {SPECIALTY_LABELS[dentist.specialty]}
               {dentist.isTechnicalLead ? ' · Responsável técnica' : ''}
             </Eyebrow>
-            <h1 className="mt-5 text-display text-ink">{dentist.displayName}</h1>
-            <p className="mt-3 text-ink-soft">
+            <h1 className="mt-3 text-[2rem] leading-[1.05] text-ink md:mt-5 md:text-display">
+              {dentist.displayName}
+            </h1>
+            <p className="mt-2 text-sm text-ink-soft md:mt-3 md:text-base">
               {dentist.fullName} · <span className="tabular">{dentist.croRegistration}</span>
             </p>
-            <p className="mt-8 font-display text-subtitle text-pine-800 italic">
-              {dentist.headline}
-            </p>
+          </div>
+
+          <div className="col-span-2 md:col-span-7 md:col-start-6">
+            <p className="font-display text-subtitle text-pine-800 italic">{dentist.headline}</p>
             <div className="prose-clinic mt-6 max-w-2xl text-lg text-ink">
               {dentist.bio.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
@@ -118,7 +112,7 @@ async function DentistContent({ params }: Props) {
               </ul>
             ) : null}
             <div className="mt-10 flex flex-wrap gap-3">
-              <ButtonLink href={`/agendar?dentista=${dentist.slug}`} size="lg">
+              <ButtonLink href="#o-que-atende" size="lg">
                 Agendar com {dentist.displayName.split(' ').slice(0, 2).join(' ')}
               </ButtonLink>
             </div>
@@ -159,12 +153,14 @@ async function DentistContent({ params }: Props) {
           </div>
 
           <div className="md:col-span-6 md:col-start-7">
-            <h2 className="text-title text-ink">O que atende</h2>
+            <h2 id="o-que-atende" className="text-title text-ink">
+              O que atende
+            </h2>
             <ul className="mt-8 border-t border-line-strong/60">
               {offered.map((treatment) => (
                 <li key={treatment.id} className="border-b border-line-strong/60">
                   <Link
-                    href={`/agendar?tratamento=${treatment.slug}&dentista=${dentist.slug}`}
+                    href={`/agendar/${treatment.slug}/${dentist.slug}`}
                     className="group flex items-center justify-between gap-4 py-4"
                   >
                     <span>

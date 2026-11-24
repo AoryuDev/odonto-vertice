@@ -56,7 +56,8 @@ export function Hero() {
             <Image
               src={photos.hero.src}
               alt={photos.hero.alt}
-              priority
+              loading="eager"
+              fetchPriority="high"
               placeholder="blur"
               sizes="(min-width: 1216px) 460px, (min-width: 768px) 40vw, 100vw"
               className="aspect-[4/5] w-full object-cover object-[60%_30%] md:aspect-[5/6]"

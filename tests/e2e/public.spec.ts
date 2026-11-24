@@ -62,11 +62,7 @@ test.describe('public site', () => {
     expect(robots).toContain('Disallow: /painel')
   })
 
-  for (const path of [
-    '/',
-    '/agendar?tratamento=limpeza&dentista=helena-prado',
-    '/tratamentos/limpeza',
-  ]) {
+  for (const path of ['/', '/agendar/limpeza/helena-prado', '/tratamentos/limpeza']) {
     test(`never scrolls sideways on a phone: ${path}`, async ({ page }) => {
       await page.goto(path)
 
@@ -83,7 +79,7 @@ test.describe('public site', () => {
     '/tratamentos/limpeza',
     '/equipe/helena-prado',
     '/agendar',
-    '/agendar?tratamento=limpeza&dentista=helena-prado',
+    '/agendar/limpeza/helena-prado',
     '/painel/login',
   ]) {
     test(`has no detectable WCAG A/AA violations on ${path}`, async ({ page }) => {

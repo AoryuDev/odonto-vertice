@@ -22,7 +22,7 @@ export async function TreatmentsSection() {
               Cada horário do site já considera a duração real da consulta. Se não souber qual
               escolher, marque uma avaliação: em meia hora você sai com um plano por escrito.
             </p>
-            <ButtonLink href="/agendar?tratamento=avaliacao" variant="quiet" className="mt-6">
+            <ButtonLink href="/agendar/avaliacao" variant="quiet" className="mt-6">
               Marcar uma avaliação
             </ButtonLink>
           </div>

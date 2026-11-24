@@ -82,7 +82,6 @@
     font-weight: 450;
     letter-spacing: -0.015em;
     text-wrap: balance;
-    font-variation-settings: 'opsz' 72;
   }
 
   p {
@@ -102,6 +101,12 @@
 
   summary {
     cursor: pointer;
+  }
+
+  em,
+  i,
+  .italic {
+    font-family: var(--font-newsreader-italic), var(--font-display);
   }
 
   summary::-webkit-details-marker {

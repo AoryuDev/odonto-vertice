@@ -15,7 +15,7 @@ import {
   type PatientDetails,
   type PatientDetailsInput,
 } from '@/modules/booking/schemas'
-import { bookingHref } from '@/modules/booking/search-params'
+import { bookingHref } from '@/modules/booking/booking-routes'
 import { maskBrazilianPhoneInput } from '@/modules/patients/phone'
 import { toLocalDate } from '@/modules/schedule/domain/clinic-time'
 import { CLINIC_TIME_ZONE } from '@/modules/schedule/domain/policy'
