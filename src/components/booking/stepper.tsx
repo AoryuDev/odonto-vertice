@@ -64,15 +64,17 @@ export function Stepper({
       </p>
 
       {completed.length > 0 ? (
-        <dl className="mt-6 flex flex-wrap gap-2">
+        <ul aria-label="Suas escolhas" className="mt-6 flex flex-wrap gap-2">
           {completed.map((item) => (
-            <div
+            <li
               key={item.step}
               className="flex items-center gap-2 rounded-full border border-line bg-card py-1.5 pr-1.5 pl-3 text-sm"
             >
               <CheckIcon size={16} className="text-pine-700" />
-              <dt className="sr-only">{STEPS.find((step) => step.key === item.step)?.label}</dt>
-              <dd className="text-ink">{item.value}</dd>
+              <span className="sr-only">
+                {STEPS.find((step) => step.key === item.step)?.label}:{' '}
+              </span>
+              <span className="text-ink">{item.value}</span>
               <Link
                 href={item.href}
                 className="rounded-full px-2.5 py-0.5 text-xs font-medium text-pine-800 hover:bg-pine-100"
@@ -83,9 +85,9 @@ export function Stepper({
                   {STEPS.find((step) => step.key === item.step)?.label.toLowerCase()}
                 </span>
               </Link>
-            </div>
+            </li>
           ))}
-        </dl>
+        </ul>
       ) : null}
     </div>
   )

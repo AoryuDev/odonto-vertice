@@ -144,17 +144,17 @@ function DateChooser({ board, hrefForDate }: Pick<SlotPickerProps, 'board' | 'hr
                 {Number(day.date.slice(8))}
               </span>
               <span className="text-[0.7rem]">{formatMonthShort(noon)}</span>
+              <span className="sr-only">{`, ${label}`}</span>
             </>
           )
           const base =
-            'flex h-[4.5rem] w-14 shrink-0 snap-start flex-col items-center justify-center gap-0.5 rounded-[0.9rem] border lg:w-auto'
+            'relative flex h-[4.5rem] w-14 shrink-0 snap-start flex-col items-center justify-center gap-0.5 rounded-[0.9rem] border lg:w-auto'
           return (
             <li key={day.date}>
               {available ? (
                 <Link
                   href={hrefForDate(day.date)}
                   scroll={false}
-                  aria-label={label}
                   aria-current={selected ? 'date' : undefined}
                   className={cn(
                     base,
@@ -167,7 +167,6 @@ function DateChooser({ board, hrefForDate }: Pick<SlotPickerProps, 'board' | 'hr
                 </Link>
               ) : (
                 <span
-                  aria-label={label}
                   aria-disabled="true"
                   className={cn(
                     base,

@@ -15,11 +15,12 @@ export default defineConfig({
     baseURL,
     locale: 'pt-BR',
     timezoneId: 'America/Sao_Paulo',
+    reducedMotion: 'reduce',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
   projects: [
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    { name: 'mobile', use: { ...devices['Pixel 7'] }, testIgnore: /admin|double-booking/ },
     { name: 'desktop', use: { ...devices['Desktop Chrome'] }, testMatch: /admin|double-booking/ },
   ],
   webServer: useExistingServer

@@ -109,7 +109,7 @@ async function RescheduleContent({ params, searchParams }: Props) {
       {selected ? (
         <form
           action={rescheduleAppointment}
-          className="sticky bottom-4 mt-10 flex flex-col gap-4 rounded-[var(--radius-card)] border border-pine-700 bg-card p-5 shadow-[0_20px_40px_-24px_rgba(21,58,47,0.5)] sm:flex-row sm:items-center sm:justify-between"
+          className="sticky bottom-4 z-20 mt-10 flex flex-col gap-4 rounded-[var(--radius-card)] border border-pine-700 bg-card p-5 shadow-[0_20px_40px_-24px_rgba(21,58,47,0.5)] sm:flex-row sm:items-center sm:justify-between"
         >
           <input type="hidden" name="token" value={token} />
           <input type="hidden" name="startsAt" value={selected.start} />
