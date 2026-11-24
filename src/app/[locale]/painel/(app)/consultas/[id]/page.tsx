@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { notFound } from 'next/navigation'
 import { connection } from 'next/server'
@@ -20,6 +21,7 @@ import { agendaHref } from '@/modules/admin/agenda-params'
 import { findStaffAppointment } from '@/modules/admin/agenda.repository'
 import { appointmentIdSchema } from '@/modules/admin/schemas'
 import { currentLocale } from '@/i18n/server'
+import { parseCancellationNote } from '@/modules/booking/cancellation'
 import { requireStaff } from '@/modules/admin/session'
 import { buildSlotBoard } from '@/modules/booking/booking-view'
 import { rescheduleContext } from '@/modules/booking/manage.service'
@@ -69,6 +71,12 @@ async function AppointmentContent({ params, searchParams }: Props) {
   if (!appointmentIdSchema.safeParse(id).success) notFound()
   const appointment = await findStaffAppointment(db, id)
   if (!appointment) notFound()
+
+  const tCancellation = await getTranslations({ locale, namespace: 'cancellationReasons' })
+  const cancellationLabel = (value: string) => {
+    const note = parseCancellationNote(value)
+    return note.kind === 'staff' ? note.text : tCancellation(note.reason ?? 'patient')
+  }
 
   await connection()
   const now = new Date()
@@ -220,7 +228,9 @@ async function AppointmentContent({ params, searchParams }: Props) {
         </section>
       ) : null}
       {appointment.cancellationReason ? (
-        <p className="text-ink-soft">Motivo do cancelamento: {appointment.cancellationReason}</p>
+        <p className="text-ink-soft">
+          Motivo do cancelamento: {cancellationLabel(appointment.cancellationReason)}
+        </p>
       ) : null}
 
       {appointment.status !== 'cancelled' && !isFuture ? (

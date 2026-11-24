@@ -2,7 +2,7 @@ import 'server-only'
 import { connection } from 'next/server'
 import { manageTokenSchema } from './schemas'
 import { findAppointmentByToken, type AppointmentDetails } from './appointment.repository'
-import { canManageOnline } from './manage.service'
+import { canManageOnline, type ManageFailure } from './manage.service'
 
 export type ManageView = {
   readonly appointment: AppointmentDetails
@@ -23,10 +23,14 @@ export async function loadManageView(token: string): Promise<ManageView | undefi
   }
 }
 
-export const MANAGE_ERRORS: Record<string, string> = {
-  not_found: 'Não encontramos esse agendamento.',
-  not_scheduled: 'Essa consulta já foi cancelada ou realizada.',
-  too_late: 'Faltam menos de duas horas para a consulta. Para mudar, ligue para a recepção.',
-  slot_unavailable: 'Esse horário acabou de ser ocupado. Escolha outro.',
-  unexpected: 'Não conseguimos concluir agora. Tente de novo em instantes.',
+const MANAGE_FAILURES = [
+  'not_found',
+  'not_scheduled',
+  'too_late',
+  'slot_unavailable',
+  'unexpected',
+] as const satisfies readonly ManageFailure[]
+
+export function manageFailureFrom(value: unknown): ManageFailure | undefined {
+  return MANAGE_FAILURES.find((failure) => failure === value)
 }

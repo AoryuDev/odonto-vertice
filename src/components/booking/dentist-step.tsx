@@ -18,16 +18,21 @@ export async function DentistStep({
   dentists: readonly Dentist[]
 }) {
   const locale = await currentLocale()
-  const [tSpecialty, weekdays] = await Promise.all([
+  const [t, tSpecialty, weekdays] = await Promise.all([
+    getTranslations({ locale, namespace: 'booking.dentistStep' }),
     getTranslations({ locale, namespace: 'specialty' }),
     getWeekdayLabels(locale),
   ])
   return (
     <>
-      <StepHeading title={dentists.length > 1 ? 'Com quem você prefere?' : 'Quem vai atender você'}>
+      <StepHeading title={dentists.length > 1 ? t('titleMany') : t('titleOne')}>
         {dentists.length > 1
-          ? `Escolhendo “qualquer dentista”, você vê todos os horários livres para ${treatment.name.toLowerCase()}.`
-          : `${treatment.name} é atendida por ${dentists[0]?.displayName ?? 'nossa equipe'}. Toque para ver os horários.`}
+          ? t('bodyMany', { treatmentLower: treatment.name.toLowerCase() })
+          : t('bodyOne', {
+              treatment: treatment.name,
+              treatmentLower: treatment.name.toLowerCase(),
+              dentist: dentists[0]?.displayName ?? t('team'),
+            })}
       </StepHeading>
       <ul className="mt-8 grid gap-3">
         {dentists.length > 1 ? (
@@ -41,11 +46,9 @@ export async function DentistStep({
               </span>
               <span className="flex-1">
                 <span className="block font-display text-[1.45rem] leading-tight text-ink">
-                  Qualquer dentista disponível
+                  {t('anyTitle')}
                 </span>
-                <span className="block text-[0.95rem] text-ink-soft">
-                  Mais opções de horário. Definimos o profissional ao confirmar.
-                </span>
+                <span className="block text-[0.95rem] text-ink-soft">{t('anyBody')}</span>
               </span>
               <ArrowRightIcon className="shrink-0 text-pine-800 transition-transform group-hover:translate-x-1" />
             </Link>

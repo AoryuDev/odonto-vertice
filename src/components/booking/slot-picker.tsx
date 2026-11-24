@@ -1,7 +1,8 @@
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 import {
+  formatList,
   formatLongDate,
   formatMonthShort,
   formatTime,
@@ -35,11 +36,11 @@ export function SlotPicker({
   showDentists,
 }: SlotPickerProps) {
   const locale = useLocale()
+  const t = useTranslations('booking.slotPicker')
   if (!board.selectedDate) {
     return (
       <p className="mt-8 rounded-[var(--radius-soft)] border border-line bg-card p-6 text-ink-soft">
-        Não há horários livres nas próximas semanas para esta escolha. Tente outro dentista ou ligue
-        para a recepção.
+        {t('empty')}
       </p>
     )
   }
@@ -59,19 +60,16 @@ export function SlotPicker({
         >
           {selectedLabel}
         </h2>
-        <p className="mt-1 text-sm text-ink-soft">
-          {board.slots.length} {board.slots.length === 1 ? 'horário livre' : 'horários livres'} ·
-          horário de Brasília
-        </p>
+        <p className="mt-1 text-sm text-ink-soft">{t('count', { count: board.slots.length })}</p>
         <SlotGroup
-          title="Manhã"
+          title={t('morning')}
           slots={morning}
           hrefForSlot={hrefForSlot}
           selectedStart={selectedStart}
           showDentists={showDentists}
         />
         <SlotGroup
-          title="Tarde"
+          title={t('afternoon')}
           slots={afternoon}
           hrefForSlot={hrefForSlot}
           selectedStart={selectedStart}
@@ -96,6 +94,7 @@ function SlotGroup({
   showDentists?: boolean
 }) {
   const locale = useLocale()
+  const t = useTranslations('booking.slotPicker')
   if (slots.length === 0) return null
   return (
     <div className="mt-6">
@@ -122,7 +121,11 @@ function SlotGroup({
               >
                 {time}
                 <span className="sr-only">
-                  {showDentists ? `, com ${slot.dentistNames.join(' ou ')}` : ''}
+                  {showDentists
+                    ? t('withDentists', {
+                        names: formatList(slot.dentistNames, locale, 'disjunction'),
+                      })
+                    : ''}
                 </span>
               </Link>
             </li>
@@ -135,10 +138,11 @@ function SlotGroup({
 
 function DateChooser({ board, hrefForDate }: Pick<SlotPickerProps, 'board' | 'hrefForDate'>) {
   const locale = useLocale()
+  const t = useTranslations('booking.slotPicker')
   const firstWeekday = board.days[0] ? (weekdayOf(board.days[0].date) + 6) % 7 : 0
 
   return (
-    <nav aria-label="Escolha o dia" className="min-w-0">
+    <nav aria-label={t('days')} className="min-w-0">
       <ol className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-2 lg:mx-0 lg:grid lg:grid-cols-7 lg:gap-1.5 lg:overflow-visible lg:px-0">
         {Array.from({ length: firstWeekday }, (_, index) => (
           <li key={`pad-${index}`} aria-hidden="true" className="hidden lg:block" />
@@ -147,7 +151,10 @@ function DateChooser({ board, hrefForDate }: Pick<SlotPickerProps, 'board' | 'hr
           const noon = localDateNoon(day.date)
           const selected = day.date === board.selectedDate
           const available = day.slotCount > 0
-          const label = `${formatLongDate(noon, locale)}${available ? `, ${day.slotCount} horários` : ', sem horários'}`
+          const date = formatLongDate(noon, locale)
+          const label = available
+            ? t('dayOpen', { date, count: day.slotCount })
+            : t('dayClosed', { date })
           const content = (
             <>
               <span className="text-[0.7rem] tracking-wide uppercase">

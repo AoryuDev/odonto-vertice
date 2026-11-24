@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { localeSchema } from '@/i18n/locales'
+import { issue } from '@/i18n/validation'
 import {
   patientEmailSchema,
   patientNameSchema,
@@ -15,10 +16,14 @@ export const patientDetailsSchema = z
     fullName: patientNameSchema,
     email: patientEmailSchema,
     phone: patientPhoneSchema,
-    paymentMethod: z.enum(['private', 'insurance'], 'Escolha particular ou convênio.'),
-    insuranceProvider: z.string().trim().max(80, 'Use no máximo 80 caracteres.').optional(),
-    notes: z.string().trim().max(500, 'Use no máximo 500 caracteres.').optional(),
-    consent: z.literal(true, 'Precisamos da sua autorização para registrar o agendamento.'),
+    paymentMethod: z.enum(['private', 'insurance'], issue('paymentRequired')),
+    insuranceProvider: z
+      .string(issue('insuranceRequired'))
+      .trim()
+      .max(80, issue('insuranceTooLong'))
+      .optional(),
+    notes: z.string(issue('notesTooLong')).trim().max(500, issue('notesTooLong')).optional(),
+    consent: z.literal(true, issue('consentRequired')),
     company: z.string().max(0).optional(),
   })
   .superRefine((value, context) => {
@@ -26,7 +31,7 @@ export const patientDetailsSchema = z
       context.addIssue({
         code: 'custom',
         path: ['insuranceProvider'],
-        message: 'Informe o nome do seu convênio.',
+        message: issue('insuranceRequired'),
       })
     }
   })
@@ -61,7 +66,16 @@ export const rescheduleRequestSchema = z.object({
   startsAt: z.iso.datetime({ offset: true }).transform((value) => new Date(value)),
 })
 
+export const PATIENT_CANCELLATION_REASONS = [
+  'schedule_conflict',
+  'resolved_elsewhere',
+  'health_issue',
+  'financial',
+] as const
+
+export type PatientCancellationReason = (typeof PATIENT_CANCELLATION_REASONS)[number]
+
 export const cancelRequestSchema = z.object({
   token: manageTokenSchema,
-  reason: z.string().trim().max(280).optional(),
+  reason: z.enum(PATIENT_CANCELLATION_REASONS).optional(),
 })

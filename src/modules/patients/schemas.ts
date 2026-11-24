@@ -1,29 +1,30 @@
 import { z } from 'zod'
+import { issue } from '@/i18n/validation'
 import { normalizeBrazilianPhone } from './phone'
 
 export const patientNameSchema = z
-  .string()
+  .string(issue('nameRequired'))
   .trim()
-  .min(1, 'Informe seu nome completo.')
-  .max(120, 'Use no máximo 120 caracteres.')
-  .refine((value) => value.split(/\s+/).length >= 2, 'Informe nome e sobrenome.')
+  .min(1, issue('nameRequired'))
+  .max(120, issue('nameTooLong'))
+  .refine((value) => value.split(/\s+/).length >= 2, issue('nameIncomplete'))
 
 export const patientEmailSchema = z
-  .string()
+  .string(issue('emailRequired'))
   .trim()
-  .min(1, 'Informe seu e-mail.')
-  .max(254, 'E-mail muito longo.')
-  .pipe(z.email('Confira o e-mail: parece incompleto.'))
+  .min(1, issue('emailRequired'))
+  .max(254, issue('emailTooLong'))
+  .pipe(z.email(issue('emailInvalid')))
   .transform((value) => value.toLowerCase())
 
 export const patientPhoneSchema = z
-  .string()
+  .string(issue('phoneRequired'))
   .trim()
-  .min(1, 'Informe um telefone com DDD.')
+  .min(1, issue('phoneRequired'))
   .transform((value, context) => {
     const normalized = normalizeBrazilianPhone(value)
     if (!normalized) {
-      context.addIssue({ code: 'custom', message: 'Telefone inválido. Use DDD + número.' })
+      context.addIssue({ code: 'custom', message: issue('phoneInvalid') })
       return z.NEVER
     }
     return normalized

@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useRef, useState, useTransition } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { submitBooking, type BookingActionResult } from '@/app/[locale]/(booking)/agendar/actions'
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from '@/i18n/navigation'
 import { describedBy, Field, FieldError, inputClasses } from '@/components/ui/field'
 import { AlertIcon } from '@/components/ui/icons'
+import type { ValidationKey } from '@/i18n/validation'
 import { cn } from '@/lib/cn'
 import { formatTime, formatWeekdayShort } from '@/lib/format'
 import {
@@ -40,6 +41,12 @@ const FIELD_ORDER = [
 export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFormProps) {
   const router = useRouter()
   const locale = useLocale()
+  const t = useTranslations('booking.form')
+  const tValidation = useTranslations('validation')
+  const errorText = (message: string | undefined) =>
+    message && tValidation.has(message as ValidationKey)
+      ? tValidation(message as ValidationKey)
+      : message
   const [submission, setSubmission] = useState<{
     startsAt: string
     result: BookingActionResult
@@ -128,8 +135,10 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
                     }
                     className="rounded-full border border-pine-800 bg-card px-4 py-2 text-sm font-medium text-pine-800 tabular hover:bg-pine-800 hover:text-paper"
                   >
-                    {formatWeekdayShort(new Date(start), locale)}{' '}
-                    {formatTime(new Date(start), locale)}
+                    {t('alternative', {
+                      weekday: formatWeekdayShort(new Date(start), locale),
+                      time: formatTime(new Date(start), locale),
+                    })}
                   </button>
                 </li>
               ))}
@@ -138,7 +147,7 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
         </div>
       ) : null}
 
-      <Field id="fullName" label="Nome completo" error={errors.fullName?.message}>
+      <Field id="fullName" label={t('fullName')} error={errorText(errors.fullName?.message)}>
         <input
           id="fullName"
           type="text"
@@ -153,9 +162,9 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
       <div className="grid gap-6 sm:grid-cols-2">
         <Field
           id="email"
-          label="E-mail"
-          hint="A confirmação e o link para remarcar chegam aqui."
-          error={errors.email?.message}
+          label={t('email')}
+          hint={t('emailHint')}
+          error={errorText(errors.email?.message)}
         >
           <input
             id="email"
@@ -171,9 +180,9 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
 
         <Field
           id="phone"
-          label="Celular com DDD"
-          hint="Só ligamos se precisar mudar algo."
-          error={errors.phone?.message}
+          label={t('phone')}
+          hint={t('phoneHint')}
+          error={errorText(errors.phone?.message)}
         >
           <Controller
             control={control}
@@ -184,7 +193,7 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
                 type="tel"
                 inputMode="numeric"
                 autoComplete="tel-national"
-                placeholder="(62) 90000-0000"
+                placeholder={t('phonePlaceholder')}
                 aria-invalid={Boolean(errors.phone)}
                 aria-describedby={describedBy('phone', {
                   hint: true,
@@ -203,14 +212,9 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
       </div>
 
       <fieldset>
-        <legend className="text-[0.95rem] font-medium text-ink">Como você vai pagar?</legend>
+        <legend className="text-[0.95rem] font-medium text-ink">{t('payment')}</legend>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          {(
-            [
-              ['private', 'Particular'],
-              ['insurance', 'Convênio'],
-            ] as const
-          ).map(([value, label]) => (
+          {(['private', 'insurance'] as const).map((value) => (
             <label
               key={value}
               className={cn(
@@ -226,21 +230,23 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
                 className="size-4 accent-pine-800"
                 {...register('paymentMethod')}
               />
-              {label}
+              {t(value)}
             </label>
           ))}
         </div>
         {errors.paymentMethod?.message ? (
-          <FieldError id="paymentMethod-error">{errors.paymentMethod.message}</FieldError>
+          <FieldError id="paymentMethod-error">
+            {errorText(errors.paymentMethod.message)}
+          </FieldError>
         ) : null}
       </fieldset>
 
       {paymentMethod === 'insurance' ? (
         <Field
           id="insuranceProvider"
-          label="Nome do convênio"
-          hint="A recepção confere a cobertura antes da consulta."
-          error={errors.insuranceProvider?.message}
+          label={t('insuranceProvider')}
+          hint={t('insuranceHint')}
+          error={errorText(errors.insuranceProvider?.message)}
         >
           <input
             id="insuranceProvider"
@@ -259,10 +265,10 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
 
       <Field
         id="notes"
-        label="Algo que o dentista deva saber?"
+        label={t('notes')}
         optional
-        hint="Ex.: sensibilidade, medo de agulha, uso de anticoagulante, gestação."
-        error={errors.notes?.message}
+        hint={t('notesHint')}
+        error={errorText(errors.notes?.message)}
       >
         <textarea
           id="notes"
@@ -275,7 +281,7 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
       </Field>
 
       <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-        <label htmlFor="company">Empresa</label>
+        <label htmlFor="company">{t('honeypot')}</label>
         <input id="company" type="text" tabIndex={-1} autoComplete="off" {...register('company')} />
       </div>
 
@@ -288,18 +294,15 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
             aria-describedby={errors.consent ? 'consent-error' : undefined}
             {...register('consent')}
           />
-          <span>
-            Autorizo a Odonto Vértice a usar meus dados para este agendamento e para lembretes da
-            consulta, conforme a LGPD.
-          </span>
+          <span>{t('consent')}</span>
         </label>
         {errors.consent?.message ? (
-          <FieldError id="consent-error">{errors.consent.message}</FieldError>
+          <FieldError id="consent-error">{errorText(errors.consent.message)}</FieldError>
         ) : null}
       </div>
 
       <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={pending}>
-        {pending ? 'Confirmando…' : 'Confirmar agendamento'}
+        {pending ? t('submitting') : t('submit')}
       </Button>
     </form>
   )

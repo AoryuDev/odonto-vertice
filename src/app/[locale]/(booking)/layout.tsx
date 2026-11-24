@@ -26,11 +26,11 @@ export default async function BookingLayout({ children }: { children: ReactNode 
             <LocaleSwitcherSlot />
             <a
               href={`tel:${clinic.phone.e164}`}
-              className="inline-flex items-center gap-2 text-sm text-ink-soft hover:text-ink"
+              className="-mr-2.5 inline-flex size-11 items-center justify-center gap-2 text-sm whitespace-nowrap text-ink-soft hover:text-ink sm:mr-0 sm:size-auto"
             >
               <PhoneIcon size={18} />
               <span className="hidden sm:inline">{t('preferCall')}</span>
-              <span className="tabular">{clinic.phone.display}</span>
+              <span className="sr-only tabular sm:not-sr-only">{clinic.phone.display}</span>
             </a>
           </div>
         </div>

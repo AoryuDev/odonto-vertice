@@ -1,4 +1,4 @@
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { ArrowRightIcon } from '@/components/ui/icons'
 import { formatDuration } from '@/lib/format'
@@ -8,11 +8,10 @@ import { StepHeading } from './step-heading'
 
 export function TreatmentStep({ treatments }: { treatments: readonly Treatment[] }) {
   const locale = useLocale()
+  const t = useTranslations('booking.treatmentStep')
   return (
     <>
-      <StepHeading title="Qual consulta você quer marcar?">
-        Na dúvida, escolha avaliação: o dentista examina e monta o plano com você.
-      </StepHeading>
+      <StepHeading title={t('title')}>{t('body')}</StepHeading>
       <ul className="mt-8 grid gap-3 md:grid-cols-2">
         {treatments.map((treatment) => (
           <li key={treatment.id}>

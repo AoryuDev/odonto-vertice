@@ -1,7 +1,9 @@
 'use server'
 
+import { getTranslations } from 'next-intl/server'
 import { headers } from 'next/headers'
 import { redirect } from '@/i18n/navigation'
+import { localeFrom } from '@/i18n/server'
 import {
   bookAppointment,
   clientFingerprint,
@@ -18,16 +20,6 @@ export type BookingActionResult = {
   readonly alternatives?: readonly string[]
 }
 
-const MESSAGES: Record<BookingActionResult['reason'], string> = {
-  invalid: 'Confira os campos destacados antes de confirmar.',
-  slot_unavailable:
-    'Esse horário acabou de ser reservado por outra pessoa. Escolha um dos próximos horários livres:',
-  treatment_unavailable: 'Esse tratamento não está disponível para agendamento online no momento.',
-  dentist_unavailable: 'Esse dentista não atende o tratamento escolhido. Volte e escolha outro.',
-  rate_limited: `Muitas tentativas seguidas. Aguarde alguns minutos ou ligue para ${clinic.phone.display}.`,
-  unexpected: `Não conseguimos concluir agora. Tente de novo em instantes ou ligue para ${clinic.phone.display}.`,
-}
-
 async function clientAddress(): Promise<string> {
   const requestHeaders = await headers()
   return (
@@ -37,24 +29,32 @@ async function clientAddress(): Promise<string> {
   )
 }
 
+function requestedLocale(input: unknown) {
+  return localeFrom(
+    typeof input === 'object' && input !== null && 'locale' in input ? input.locale : undefined,
+  )
+}
+
 export async function submitBooking(input: unknown): Promise<BookingActionResult> {
   const parsed = bookingRequestSchema.safeParse(input)
+  const locale = parsed.success ? parsed.data.locale : requestedLocale(input)
+  const t = await getTranslations({ locale, namespace: 'booking.errors' })
+
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {}
     for (const issue of parsed.error.issues) {
       const [scope, field] = issue.path
       if (scope === 'patient' && typeof field === 'string') fieldErrors[field] ??= issue.message
     }
-    return { reason: 'invalid', message: MESSAGES.invalid, fieldErrors }
+    return { reason: 'invalid', message: t('invalid'), fieldErrors }
   }
 
   const result = await bookAppointment(parsed.data, clientFingerprint(await clientAddress()))
-  if (result.ok)
-    return redirect({ href: `/agendamento/${result.token}?novo=1`, locale: parsed.data.locale })
+  if (result.ok) return redirect({ href: `/agendamento/${result.token}?novo=1`, locale })
 
   return {
     reason: result.reason,
-    message: MESSAGES[result.reason],
+    message: t(result.reason, { phone: clinic.phone.display }),
     alternatives:
       result.reason === 'slot_unavailable' ? await suggestAlternatives(parsed.data) : undefined,
   }

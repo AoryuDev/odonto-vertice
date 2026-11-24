@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import { choiceLinks } from '@/components/booking/booking-links'
@@ -38,10 +39,10 @@ async function resolve(params: Promise<Params>): Promise<BookingChoice | undefin
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const choice = await resolve(params)
+  const [choice, t] = await Promise.all([resolve(params), getTranslations('booking.meta')])
   return choice
     ? {
-        title: `${choice.treatment.name}: horários livres`,
+        title: t('slotsTitle', { treatment: choice.treatment.name }),
         alternates: {
           canonical: bookingHref({ treatment: choice.treatment.slug, dentist: choice.dentistSlug }),
         },
@@ -50,17 +51,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BookingSlotPage({ params, searchParams }: Props) {
-  const choice = await resolve(params)
+  const [choice, t, tStepper] = await Promise.all([
+    resolve(params),
+    getTranslations('booking.slotStep'),
+    getTranslations('booking.stepper'),
+  ])
   if (!choice) notFound()
 
   return (
-    <BookingShell step="slot" completed={choiceLinks(choice)}>
-      <StepHeading title="Escolha o dia e o horário">
-        Mostramos só o que está livre na agenda
-        {choice.dentist
-          ? ` de ${choice.dentist.displayName}`
-          : ' dos dentistas que atendem este tratamento'}
-        .
+    <BookingShell step="slot" completed={choiceLinks(choice, tStepper('anyDentist'))}>
+      <StepHeading title={t('title')}>
+        {choice.dentist ? t('bodyDentist', { dentist: choice.dentist.displayName }) : t('bodyAny')}
       </StepHeading>
       <Suspense fallback={<SlotPickerSkeleton />}>
         <SlotBoardSection choice={choice} searchParams={searchParams} />

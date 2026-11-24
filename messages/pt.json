@@ -272,5 +272,193 @@
     "dentistHelena": "Retrato da Dra. Helena Prado, sorrindo",
     "dentistRafael": "Retrato do Dr. Rafael Tavares, de braços cruzados",
     "dentistCamila": "Retrato da Dra. Camila Arantes, sentada e sorrindo"
+  },
+  "field": {
+    "optional": "opcional"
+  },
+  "validation": {
+    "nameRequired": "Informe seu nome completo.",
+    "nameTooLong": "Use no máximo 120 caracteres.",
+    "nameIncomplete": "Informe nome e sobrenome.",
+    "emailRequired": "Informe seu e-mail.",
+    "emailTooLong": "E-mail muito longo.",
+    "emailInvalid": "Confira o e-mail: parece incompleto.",
+    "phoneRequired": "Informe um telefone com DDD.",
+    "phoneInvalid": "Telefone inválido. Use DDD + número.",
+    "paymentRequired": "Escolha particular ou convênio.",
+    "insuranceRequired": "Informe o nome do seu convênio.",
+    "insuranceTooLong": "Use no máximo 80 caracteres.",
+    "notesTooLong": "Use no máximo 500 caracteres.",
+    "consentRequired": "Precisamos da sua autorização para registrar o agendamento."
+  },
+  "booking": {
+    "meta": {
+      "title": "Agendar consulta",
+      "description": "Escolha o tratamento, o dentista e um horário livre. Confirmação imediata por e-mail, com link para remarcar ou cancelar.",
+      "treatmentTitle": "Agendar {treatment}",
+      "slotsTitle": "{treatment}: horários livres",
+      "detailsTitle": "Seus dados"
+    },
+    "stepper": {
+      "label": "Etapas do agendamento",
+      "steps": {
+        "treatment": "Tratamento",
+        "dentist": "Dentista",
+        "slot": "Dia e horário",
+        "details": "Seus dados",
+        "done": "Confirmação"
+      },
+      "stateDone": "(concluída)",
+      "stateCurrent": "(etapa atual)",
+      "progress": "Etapa {current} de {total} · <step>{label}</step>",
+      "choices": "Suas escolhas",
+      "change": "Alterar",
+      "anyDentist": "Qualquer dentista"
+    },
+    "treatmentStep": {
+      "title": "Qual consulta você quer marcar?",
+      "body": "Na dúvida, escolha avaliação: o dentista examina e monta o plano com você."
+    },
+    "dentistStep": {
+      "titleMany": "Com quem você prefere?",
+      "titleOne": "Quem vai atender você",
+      "bodyMany": "Escolhendo “qualquer dentista”, você vê todos os horários livres para {treatmentLower}.",
+      "bodyOne": "{treatment} é atendida por {dentist}. Toque para ver os horários.",
+      "team": "nossa equipe",
+      "anyTitle": "Qualquer dentista disponível",
+      "anyBody": "Mais opções de horário. Definimos o profissional ao confirmar."
+    },
+    "slotStep": {
+      "title": "Escolha o dia e o horário",
+      "bodyDentist": "Mostramos só o que está livre na agenda de {dentist}.",
+      "bodyAny": "Mostramos só o que está livre na agenda dos dentistas que atendem este tratamento."
+    },
+    "slotPicker": {
+      "empty": "Não há horários livres nas próximas semanas para esta escolha. Tente outro dentista ou ligue para a recepção.",
+      "count": "{count, plural, one {# horário livre} other {# horários livres}} · horário de Brasília",
+      "morning": "Manhã",
+      "afternoon": "Tarde",
+      "withDentists": ", com {names}",
+      "days": "Escolha o dia",
+      "dayOpen": "{date}, {count, plural, one {# horário} other {# horários}}",
+      "dayClosed": "{date}, sem horários"
+    },
+    "details": {
+      "chooseFirst": "Escolha primeiro um horário.",
+      "seeTimes": "Ver horários livres",
+      "taken": "O horário das {time} de {date} não está mais livre. Escolha outro:",
+      "title": "Seus dados",
+      "body": "Usamos só para confirmar a consulta e enviar o lembrete na véspera.",
+      "summary": "Resumo do agendamento",
+      "changeTime": "Alterar horário",
+      "assignedOnConfirm": "{names} (definimos ao confirmar)"
+    },
+    "summary": {
+      "when": "Quando",
+      "visit": "Consulta",
+      "dentist": "Dentista",
+      "where": "Onde",
+      "whenValue": "{date}, {time}"
+    },
+    "form": {
+      "fullName": "Nome completo",
+      "email": "E-mail",
+      "emailHint": "A confirmação e o link para remarcar chegam aqui.",
+      "phone": "Celular com DDD",
+      "phoneHint": "Só ligamos se precisar mudar algo.",
+      "phonePlaceholder": "(62) 90000-0000",
+      "payment": "Como você vai pagar?",
+      "private": "Particular",
+      "insurance": "Convênio",
+      "insuranceProvider": "Nome do convênio",
+      "insuranceHint": "A recepção confere a cobertura antes da consulta.",
+      "notes": "Algo que o dentista deva saber?",
+      "notesHint": "Ex.: sensibilidade, medo de agulha, uso de anticoagulante, gestação.",
+      "honeypot": "Empresa",
+      "consent": "Autorizo a Odonto Vértice a usar meus dados para este agendamento e para lembretes da consulta, conforme a LGPD.",
+      "submit": "Confirmar agendamento",
+      "submitting": "Confirmando…",
+      "alternative": "{weekday} {time}"
+    },
+    "errors": {
+      "invalid": "Confira os campos destacados antes de confirmar.",
+      "slot_unavailable": "Esse horário acabou de ser reservado por outra pessoa. Escolha um dos próximos horários livres:",
+      "treatment_unavailable": "Esse tratamento não está disponível para agendamento online no momento.",
+      "dentist_unavailable": "Esse dentista não atende o tratamento escolhido. Volte e escolha outro.",
+      "rate_limited": "Muitas tentativas seguidas. Aguarde alguns minutos ou ligue para {phone}.",
+      "unexpected": "Não conseguimos concluir agora. Tente de novo em instantes ou ligue para {phone}."
+    }
+  },
+  "manage": {
+    "metaTitle": "Seu agendamento",
+    "title": "Seu agendamento",
+    "status": {
+      "scheduled": "Confirmada",
+      "cancelled": "Cancelada",
+      "completed": "Realizada",
+      "no_show": "Não compareceu"
+    },
+    "banners": {
+      "booked": {
+        "title": "Consulta confirmada",
+        "body": "Enviamos os detalhes para {email}. Guarde este link para remarcar ou cancelar."
+      },
+      "rescheduled": {
+        "title": "Consulta remarcada",
+        "body": "O novo horário já está na agenda e a confirmação foi enviada por e-mail."
+      },
+      "cancelled": {
+        "title": "Consulta cancelada",
+        "body": "O horário foi liberado. Se quiser, agende de novo quando for melhor para você."
+      }
+    },
+    "greeting": "Olá, {name}. Estes são os detalhes da sua consulta.",
+    "addToCalendar": "Adicionar à agenda",
+    "directions": "Como chegar",
+    "changeTitle": "Precisa mudar?",
+    "changeBody": "Você pode remarcar ou cancelar por aqui até duas horas antes do horário.",
+    "reschedule": "Remarcar",
+    "cancel": "Cancelar consulta",
+    "reasonLabel": "Quer contar o motivo?",
+    "optional": "(opcional)",
+    "reasons": {
+      "none": "Prefiro não dizer",
+      "schedule_conflict": "Conflito de horário",
+      "resolved_elsewhere": "Resolvi em outro lugar",
+      "health_issue": "Problema de saúde",
+      "financial": "Questão financeira"
+    },
+    "confirmCancel": "Sim, cancelar consulta",
+    "tooLate": "Faltam menos de duas horas para a consulta. Para remarcar ou cancelar, ligue para <phoneLink>{phone}</phoneLink>.",
+    "bookAgain": "Agendar outro horário",
+    "help": "Dúvidas? Fale com a recepção pelo <phoneLink>{phone}</phoneLink> ou volte para o <site>site</site>.",
+    "errors": {
+      "not_found": "Não encontramos esse agendamento.",
+      "not_scheduled": "Essa consulta já foi cancelada ou realizada.",
+      "too_late": "Faltam menos de duas horas para a consulta. Para mudar, ligue para a recepção.",
+      "slot_unavailable": "Esse horário acabou de ser ocupado. Escolha outro.",
+      "unexpected": "Não conseguimos concluir agora. Tente de novo em instantes."
+    }
+  },
+  "reschedule": {
+    "metaTitle": "Remarcar consulta",
+    "back": "Voltar ao agendamento",
+    "title": "Escolha o novo horário",
+    "body": "{treatment} com {dentist}. Atualmente marcada para {date}, às {time}.",
+    "newTime": "Novo horário:",
+    "confirm": "Confirmar novo horário"
+  },
+  "calendar": {
+    "notFound": "Agendamento não encontrado",
+    "summary": "{treatment} · {clinic}",
+    "description": "Consulta com {dentist}. Para remarcar ou cancelar: {url}",
+    "filename": "consulta-odonto-vertice.ics"
+  },
+  "cancellationReasons": {
+    "patient": "Cancelada pelo paciente",
+    "schedule_conflict": "Conflito de horário",
+    "resolved_elsewhere": "Resolvi em outro lugar",
+    "health_issue": "Problema de saúde",
+    "financial": "Questão financeira"
   }
 }

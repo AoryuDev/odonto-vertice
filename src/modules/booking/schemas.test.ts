@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { bookingRequestSchema, patientDetailsSchema } from './schemas'
+import en from '../../../messages/en.json'
+import pt from '../../../messages/pt.json'
+import { bookingRequestSchema, cancelRequestSchema, patientDetailsSchema } from './schemas'
 
 const validPatient = {
   fullName: '  Mariana Lopes Ribeiro ',
@@ -33,7 +35,7 @@ describe('patientDetailsSchema', () => {
 
   it('asks for the insurance name only when paying with insurance', () => {
     expect(issuesOf({ ...validPatient, paymentMethod: 'insurance' })).toEqual({
-      insuranceProvider: 'Informe o nome do seu convênio.',
+      insuranceProvider: 'insuranceRequired',
     })
     expect(
       patientDetailsSchema.parse({ ...validPatient, insuranceProvider: 'Plano X' })
@@ -45,10 +47,39 @@ describe('patientDetailsSchema', () => {
     expect(
       issuesOf({ ...validPatient, fullName: 'Mariana', phone: '1234', consent: false }),
     ).toEqual({
-      fullName: 'Informe nome e sobrenome.',
-      phone: 'Telefone inválido. Use DDD + número.',
-      consent: 'Precisamos da sua autorização para registrar o agendamento.',
+      fullName: 'nameIncomplete',
+      phone: 'phoneInvalid',
+      consent: 'consentRequired',
     })
+  })
+
+  it('reports every problem as a key translated in both languages', () => {
+    const broken = [
+      {},
+      { fullName: '', email: '', phone: '', paymentMethod: 'cash', consent: false },
+      {
+        ...validPatient,
+        fullName: `Ana ${'x'.repeat(130)}`,
+        email: `${'a'.repeat(250)}@example.com`,
+        phone: '(00) 0000',
+        paymentMethod: 'insurance',
+        insuranceProvider: 'x'.repeat(90),
+        notes: 'x'.repeat(600),
+      },
+      { ...validPatient, email: 'mariana@', paymentMethod: 'insurance', insuranceProvider: '' },
+    ]
+    const messages = new Set(
+      broken.flatMap((input) => {
+        const result = patientDetailsSchema.safeParse(input)
+        return result.success ? [] : result.error.issues.map((issue) => issue.message)
+      }),
+    )
+
+    expect(messages.size).toBeGreaterThanOrEqual(12)
+    for (const message of messages) {
+      expect(Object.keys(pt.validation)).toContain(message)
+      expect(Object.keys(en.validation)).toContain(message)
+    }
   })
 
   it('rejects submissions that filled the honeypot field', () => {
@@ -79,5 +110,17 @@ describe('bookingRequestSchema', () => {
     })
 
     expect(parsed.slot.startsAt.toISOString()).toBe('2026-11-25T12:00:00.000Z')
+  })
+})
+
+describe('cancelRequestSchema', () => {
+  const token = 'a'.repeat(43)
+
+  it('accepts only the reason codes offered on the manage page', () => {
+    expect(cancelRequestSchema.parse({ token, reason: 'health_issue' }).reason).toBe('health_issue')
+    expect(cancelRequestSchema.parse({ token }).reason).toBeUndefined()
+    expect(cancelRequestSchema.safeParse({ token, reason: 'Problema de saúde' }).success).toBe(
+      false,
+    )
   })
 })

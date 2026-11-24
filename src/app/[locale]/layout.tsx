@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from 'next'
-import { hasLocale, NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
+import { hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import * as rootParams from 'next/root-params'
 import type { ReactNode } from 'react'
+import { ClientMessages } from '@/i18n/client-messages'
 import { HTML_LANG } from '@/i18n/locales'
 import { routing } from '@/i18n/routing'
 import { siteUrl } from '@/lib/site'
@@ -41,16 +41,11 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-const CLIENT_NAMESPACES = ['localeSwitcher', 'mobileNav', 'errorPage'] as const
+const CLIENT_NAMESPACES = ['localeSwitcher', 'mobileNav', 'errorPage', 'field'] as const
 
 export default async function LocaleLayout({ children }: Readonly<{ children: ReactNode }>) {
   const locale = await rootParams.locale()
   if (!hasLocale(routing.locales, locale)) notFound()
-
-  const messages = await getMessages()
-  const clientMessages = Object.fromEntries(
-    CLIENT_NAMESPACES.map((namespace) => [namespace, messages[namespace]]),
-  )
 
   return (
     <html
@@ -59,7 +54,7 @@ export default async function LocaleLayout({ children }: Readonly<{ children: Re
       className={`${newsreader.variable} ${newsreaderItalic.variable} ${hanken.variable}`}
     >
       <body>
-        <NextIntlClientProvider messages={clientMessages}>{children}</NextIntlClientProvider>
+        <ClientMessages namespaces={CLIENT_NAMESPACES}>{children}</ClientMessages>
       </body>
     </html>
   )

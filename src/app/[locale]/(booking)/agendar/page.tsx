@@ -1,13 +1,16 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { BookingShell } from '@/components/booking/booking-shell'
 import { TreatmentStep } from '@/components/booking/treatment-step'
 import { listTreatments } from '@/modules/catalog/catalog.repository'
 
-export const metadata: Metadata = {
-  title: 'Agendar consulta',
-  description:
-    'Escolha o tratamento, o dentista e um horário livre. Confirmação imediata por e-mail, com link para remarcar ou cancelar.',
-  alternates: { canonical: '/agendar' },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('booking.meta')
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: { canonical: '/agendar' },
+  }
 }
 
 export default async function BookingTreatmentPage() {

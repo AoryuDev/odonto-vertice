@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
@@ -9,8 +10,9 @@ import { PatientForm } from '@/components/booking/patient-form'
 import { SlotPicker } from '@/components/booking/slot-picker'
 import { StepHeading } from '@/components/booking/step-heading'
 import { AlertIcon } from '@/components/ui/icons'
+import { ClientMessages } from '@/i18n/client-messages'
 import { currentLocale } from '@/i18n/server'
-import { formatLongDate, formatTime } from '@/lib/format'
+import { formatList, formatLongDate, formatTime } from '@/lib/format'
 import {
   bookingHref,
   isDentistParam,
@@ -27,9 +29,9 @@ import { ANY_DENTIST } from '@/modules/booking/schemas'
 
 export const instant = false
 
-export const metadata: Metadata = {
-  title: 'Seus dados',
-  robots: { index: false, follow: true },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('booking.meta')
+  return { title: t('detailsTitle'), robots: { index: false, follow: true } }
 }
 
 type Params = { tratamento: string; dentista: string }
@@ -49,9 +51,10 @@ export default async function BookingDetailsPage({ params, searchParams }: Props
       ? await resolveBookingChoice(tratamento, dentista)
       : undefined
   if (!choice) notFound()
+  const tStepper = await getTranslations('booking.stepper')
 
   return (
-    <BookingShell step="details" completed={choiceLinks(choice)}>
+    <BookingShell step="details" completed={choiceLinks(choice, tStepper('anyDentist'))}>
       <Suspense fallback={<DetailsSkeleton />}>
         <DetailsContent choice={choice} searchParams={searchParams} />
       </Suspense>
@@ -67,17 +70,18 @@ async function DetailsContent({
   searchParams: Props['searchParams']
 }) {
   const locale = await currentLocale()
+  const t = await getTranslations({ locale, namespace: 'booking.details' })
   const start = parseStartParam((await searchParams).horario)
   const base = { treatment: choice.treatment.slug, dentist: choice.dentistSlug }
   if (!start) {
     return (
       <p className="max-w-2xl text-ink-soft">
-        Escolha primeiro um horário.{' '}
+        {t('chooseFirst')}{' '}
         <Link
           href={bookingHref(base)}
           className="font-medium text-pine-800 underline underline-offset-4"
         >
-          Ver horários livres
+          {t('seeTimes')}
         </Link>
       </p>
     )
@@ -93,8 +97,10 @@ async function DetailsContent({
         >
           <AlertIcon size={20} className="mt-0.5 shrink-0 text-clay-700" />
           <p>
-            O horário das {formatTime(new Date(start), locale)} de{' '}
-            {formatLongDate(new Date(start), locale)} não está mais livre. Escolha outro:
+            {t('taken', {
+              time: formatTime(new Date(start), locale),
+              date: formatLongDate(new Date(start), locale),
+            })}
           </p>
         </div>
         <SlotPicker
@@ -110,24 +116,26 @@ async function DetailsContent({
   const names = slot.dentistNames
   const dentistLabel =
     choice.dentist?.displayName ??
-    (names.length === 1 ? (names[0] ?? '') : `${names.join(' ou ')} (definimos ao confirmar)`)
+    (names.length === 1
+      ? (names[0] ?? '')
+      : t('assignedOnConfirm', { names: formatList(names, locale, 'disjunction') }))
 
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_24rem] lg:gap-14">
       <div className="order-2 lg:order-1">
-        <StepHeading title="Seus dados">
-          Usamos só para confirmar a consulta e enviar o lembrete na véspera.
-        </StepHeading>
+        <StepHeading title={t('title')}>{t('body')}</StepHeading>
         <div className="mt-8">
-          <PatientForm
-            treatmentSlug={choice.treatment.slug}
-            dentistSlug={choice.dentistSlug}
-            startsAt={slot.start}
-          />
+          <ClientMessages namespaces={['booking', 'validation', 'field']}>
+            <PatientForm
+              treatmentSlug={choice.treatment.slug}
+              dentistSlug={choice.dentistSlug}
+              startsAt={slot.start}
+            />
+          </ClientMessages>
         </div>
       </div>
       <aside className="order-1 lg:order-2 lg:pt-2">
-        <h2 className="sr-only">Resumo do agendamento</h2>
+        <h2 className="sr-only">{t('summary')}</h2>
         <div className="lg:sticky lg:top-8">
           <BookingSummary
             treatmentName={choice.treatment.name}
@@ -139,7 +147,7 @@ async function DetailsContent({
             href={bookingHref({ ...base, date: board.selectedDate })}
             className="mt-3 inline-block text-sm text-pine-800 underline underline-offset-4"
           >
-            Alterar horário
+            {t('changeTime')}
           </Link>
         </div>
       </aside>

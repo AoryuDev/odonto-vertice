@@ -13,6 +13,8 @@ import {
   toPeriodLiteral,
   type AppointmentDetails,
 } from './appointment.repository'
+import { patientCancellationCode } from './cancellation'
+import type { PatientCancellationReason } from './schemas'
 
 export type ManageFailure =
   'not_found' | 'not_scheduled' | 'too_late' | 'slot_unavailable' | 'unexpected'
@@ -65,13 +67,19 @@ export async function rescheduleContext(
   return withoutOwnPeriod(await loadAvailabilityContext(treatment, [dentist], policy), appointment)
 }
 
-export async function cancelByToken(token: string, reason?: string): Promise<ManageResult> {
+export async function cancelByToken(
+  token: string,
+  reason?: PatientCancellationReason,
+): Promise<ManageResult> {
   const loaded = await loadManageable(token)
   if (!loaded.ok) return loaded
 
   const { data, error } = await createServiceClient()
     .from('appointments')
-    .update({ status: 'cancelled', cancellation_reason: reason ?? 'Cancelada pelo paciente' })
+    .update({
+      status: 'cancelled',
+      cancellation_reason: patientCancellationCode(reason),
+    })
     .eq('id', loaded.appointment.id)
     .eq('status', 'scheduled')
     .select('id')

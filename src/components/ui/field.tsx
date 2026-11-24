@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 import { AlertIcon } from './icons'
 
@@ -19,6 +20,7 @@ export function Field({
   optional?: boolean
   children: ReactNode
 }) {
+  const t = useTranslations('field')
   return (
     <div>
       <label
@@ -26,7 +28,9 @@ export function Field({
         className="flex items-baseline justify-between text-[0.95rem] font-medium text-ink"
       >
         {label}
-        {optional ? <span className="text-sm font-normal text-ink-soft">opcional</span> : null}
+        {optional ? (
+          <span className="text-sm font-normal text-ink-soft">{t('optional')}</span>
+        ) : null}
       </label>
       {hint ? (
         <p id={`${id}-hint`} className="mt-1 text-sm text-ink-soft">

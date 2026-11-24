@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { notFound } from 'next/navigation'
 import { redirect } from '@/i18n/navigation'
@@ -13,14 +14,17 @@ import { AlertIcon, ArrowLeftIcon } from '@/components/ui/icons'
 import { capitalize, formatLongDate, formatTime } from '@/lib/format'
 import { buildSlotBoard } from '@/modules/booking/booking-view'
 import { rescheduleContext } from '@/modules/booking/manage.service'
-import { loadManageView, MANAGE_ERRORS } from '@/modules/booking/manage-view'
+import { loadManageView, manageFailureFrom } from '@/modules/booking/manage-view'
 import { listDentists } from '@/modules/catalog/catalog.repository'
 import { isLocalDate, type LocalDate } from '@/modules/schedule/domain/clinic-time'
 
-export const metadata: Metadata = {
-  title: 'Remarcar consulta',
-  robots: { index: false, follow: false },
-  referrer: 'no-referrer',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('reschedule')
+  return {
+    title: t('metaTitle'),
+    robots: { index: false, follow: false },
+    referrer: 'no-referrer',
+  }
 }
 
 type Props = {
@@ -47,7 +51,13 @@ export default function ReschedulePage(props: Props) {
 
 async function RescheduleContent({ params, searchParams }: Props) {
   const locale = await currentLocale()
-  const [{ token }, query] = await Promise.all([params, searchParams])
+  const [{ token }, query, t, tManage, tSummary] = await Promise.all([
+    params,
+    searchParams,
+    getTranslations({ locale, namespace: 'reschedule' }),
+    getTranslations({ locale, namespace: 'manage' }),
+    getTranslations({ locale, namespace: 'booking.summary' }),
+  ])
   const view = await loadManageView(token)
   if (!view) notFound()
   if (!view.canManage)
@@ -73,7 +83,8 @@ async function RescheduleContent({ params, searchParams }: Props) {
     typeof query.horario === 'string'
       ? board.slots.find((slot) => slot.start === query.horario)
       : undefined
-  const error = typeof query.erro === 'string' ? MANAGE_ERRORS[query.erro] : undefined
+  const failure = manageFailureFrom(query.erro)
+  const error = failure ? tManage(`errors.${failure}`) : undefined
   const base = `/agendamento/${token}/remarcar`
 
   return (
@@ -83,13 +94,16 @@ async function RescheduleContent({ params, searchParams }: Props) {
         className="inline-flex items-center gap-2 text-sm text-ink-soft hover:text-ink"
       >
         <ArrowLeftIcon size={16} />
-        Voltar ao agendamento
+        {t('back')}
       </Link>
       <div className="mt-6">
-        <StepHeading title="Escolha o novo horário">
-          {appointment.treatment.name} com {appointment.dentist.displayName}. Atualmente marcada
-          para {formatLongDate(appointment.startsAt, locale)}, às{' '}
-          {formatTime(appointment.startsAt, locale)}.
+        <StepHeading title={t('title')}>
+          {t('body', {
+            treatment: appointment.treatment.name,
+            dentist: appointment.dentist.displayName,
+            date: formatLongDate(appointment.startsAt, locale),
+            time: formatTime(appointment.startsAt, locale),
+          })}
         </StepHeading>
       </div>
 
@@ -121,13 +135,15 @@ async function RescheduleContent({ params, searchParams }: Props) {
           <input type="hidden" name="token" value={token} />
           <input type="hidden" name="startsAt" value={selected.start} />
           <p className="text-ink">
-            Novo horário:{' '}
+            {t('newTime')}{' '}
             <strong className="font-semibold">
-              {capitalize(formatLongDate(new Date(selected.start), locale))},{' '}
-              {formatTime(new Date(selected.start), locale)}
+              {tSummary('whenValue', {
+                date: capitalize(formatLongDate(new Date(selected.start), locale)),
+                time: formatTime(new Date(selected.start), locale),
+              })}
             </strong>
           </p>
-          <Button type="submit">Confirmar novo horário</Button>
+          <Button type="submit">{t('confirm')}</Button>
         </form>
       ) : null}
     </>

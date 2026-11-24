@@ -1,4 +1,4 @@
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { CalendarIcon, ClockIcon, MapPinIcon, UserIcon } from '@/components/ui/icons'
 import { capitalize, formatDuration, formatLongDate, formatTime } from '@/lib/format'
 import { formatAddressLine } from '@/modules/catalog/clinic'
@@ -15,19 +15,23 @@ export function BookingSummary({
   startsAt: Date
 }) {
   const locale = useLocale()
+  const t = useTranslations('booking.summary')
   const rows = [
     {
       icon: CalendarIcon,
-      label: 'Quando',
-      value: `${capitalize(formatLongDate(startsAt, locale))}, ${formatTime(startsAt, locale)}`,
+      label: t('when'),
+      value: t('whenValue', {
+        date: capitalize(formatLongDate(startsAt, locale)),
+        time: formatTime(startsAt, locale),
+      }),
     },
     {
       icon: ClockIcon,
-      label: 'Consulta',
+      label: t('visit'),
       value: `${treatmentName} · ${formatDuration(durationMinutes, locale)}`,
     },
-    { icon: UserIcon, label: 'Dentista', value: dentistLabel },
-    { icon: MapPinIcon, label: 'Onde', value: formatAddressLine() },
+    { icon: UserIcon, label: t('dentist'), value: dentistLabel },
+    { icon: MapPinIcon, label: t('where'), value: formatAddressLine() },
   ]
   return (
     <dl className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-card px-5">
