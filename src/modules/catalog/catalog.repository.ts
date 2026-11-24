@@ -2,6 +2,7 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { createPublicClient } from '@/lib/supabase/clients'
 import { parseLocalTime } from '@/modules/schedule/domain/clinic-time'
+import { clinicOpeningHours, type OpeningHours } from '@/modules/schedule/domain/opening-hours'
 import { treatmentContentSchema, type Dentist, type Treatment } from './types'
 
 export const CATALOG_TAG = 'catalog'
@@ -91,4 +92,8 @@ export async function technicalLead(): Promise<Dentist> {
   const lead = (await listDentists()).find((dentist) => dentist.isTechnicalLead)
   if (!lead) throw new Error('The clinic must have a technical lead dentist')
   return lead
+}
+
+export async function openingHours(): Promise<OpeningHours[]> {
+  return clinicOpeningHours((await listDentists()).flatMap((dentist) => dentist.schedules))
 }

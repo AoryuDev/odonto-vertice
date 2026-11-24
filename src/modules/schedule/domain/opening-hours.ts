@@ -78,3 +78,40 @@ export function describeWeekdays(weekdays: readonly number[]): string {
   if (weekdays.length === 2) return `${WEEKDAY_SHORT_LABELS[first]} e ${WEEKDAY_SHORT_LABELS[last]}`
   return `${WEEKDAY_SHORT_LABELS[first]} a ${WEEKDAY_SHORT_LABELS[last]}`
 }
+
+export type HoursSummary = {
+  readonly label: string
+  readonly opensAt: LocalTime
+  readonly closesAt: LocalTime
+}
+
+export function summarizeWeekHours(hours: readonly OpeningHours[]): HoursSummary[] {
+  const weekdays = hours.filter((entry) => entry.weekday >= 1 && entry.weekday <= 5)
+  const summaries: HoursSummary[] = []
+  if (weekdays.length > 0) {
+    const opensAt = weekdays.reduce(
+      (min, entry) => (entry.opensAt < min ? entry.opensAt : min),
+      weekdays[0]!.opensAt,
+    )
+    const closesAt = weekdays.reduce(
+      (max, entry) => (entry.closesAt > max ? entry.closesAt : max),
+      weekdays[0]!.closesAt,
+    )
+    summaries.push({
+      label:
+        weekdays.length === 5
+          ? 'Segunda a sexta'
+          : describeWeekdays(weekdays.map((entry) => entry.weekday)),
+      opensAt,
+      closesAt,
+    })
+  }
+  for (const weekend of hours.filter((entry) => entry.weekday === 6 || entry.weekday === 0)) {
+    summaries.push({
+      label: WEEKDAY_LABELS[weekend.weekday] ?? '',
+      opensAt: weekend.opensAt,
+      closesAt: weekend.closesAt,
+    })
+  }
+  return summaries
+}

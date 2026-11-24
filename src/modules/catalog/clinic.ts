@@ -2,11 +2,11 @@ export const clinic = {
   name: 'Odonto Vértice',
   legalNote: 'Clínica fictícia criada como projeto de portfólio.',
   address: {
-    street: 'Rua T-55, 930, sala 704',
+    street: 'Avenida T-10, 1180, sala 704',
     neighborhood: 'Setor Bueno',
     city: 'Goiânia',
     state: 'GO',
-    postalCode: '74215-170',
+    postalCode: '74223-060',
     country: 'BR',
   },
   geo: { latitude: -16.7068, longitude: -49.2712 },
@@ -14,6 +14,7 @@ export const clinic = {
   whatsapp: { display: '(62) 99418-2730', e164: '+5562994182730' },
   email: 'contato@odontovertice.example',
   parking: 'Estacionamento conveniado no térreo do edifício.',
+  landmark: 'A duas quadras do Parque Vaca Brava.',
 } as const
 
 export function formatAddressLine(): string {

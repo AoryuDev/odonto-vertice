@@ -64,3 +64,9 @@ export function capitalize(value: string): string {
 export function localDateNoon(date: string): Date {
   return new Date(`${date}T12:00:00-03:00`)
 }
+
+export function formatHour(localTime: string): string {
+  const [hours = '0', minutes = '00'] = localTime.split(':')
+  const hour = String(Number(hours))
+  return minutes === '00' ? `${hour}h` : `${hour}h${minutes}`
+}
