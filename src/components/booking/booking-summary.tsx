@@ -1,3 +1,4 @@
+import { useLocale } from 'next-intl'
 import { CalendarIcon, ClockIcon, MapPinIcon, UserIcon } from '@/components/ui/icons'
 import { capitalize, formatDuration, formatLongDate, formatTime } from '@/lib/format'
 import { formatAddressLine } from '@/modules/catalog/clinic'
@@ -13,16 +14,17 @@ export function BookingSummary({
   dentistLabel: string
   startsAt: Date
 }) {
+  const locale = useLocale()
   const rows = [
     {
       icon: CalendarIcon,
       label: 'Quando',
-      value: `${capitalize(formatLongDate(startsAt))}, ${formatTime(startsAt)}`,
+      value: `${capitalize(formatLongDate(startsAt, locale))}, ${formatTime(startsAt, locale)}`,
     },
     {
       icon: ClockIcon,
       label: 'Consulta',
-      value: `${treatmentName} · ${formatDuration(durationMinutes)}`,
+      value: `${treatmentName} · ${formatDuration(durationMinutes, locale)}`,
     },
     { icon: UserIcon, label: 'Dentista', value: dentistLabel },
     { icon: MapPinIcon, label: 'Onde', value: formatAddressLine() },

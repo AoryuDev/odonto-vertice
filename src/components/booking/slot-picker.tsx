@@ -1,3 +1,4 @@
+import { useLocale } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 import {
@@ -8,7 +9,15 @@ import {
   localDateNoon,
 } from '@/lib/format'
 import type { SlotBoard, SlotChoice } from '@/modules/booking/booking-view'
-import { weekdayOf, type LocalDate } from '@/modules/schedule/domain/clinic-time'
+import {
+  parseLocalTime,
+  toLocalTime,
+  weekdayOf,
+  type LocalDate,
+} from '@/modules/schedule/domain/clinic-time'
+import { CLINIC_TIME_ZONE } from '@/modules/schedule/domain/policy'
+
+const NOON = parseLocalTime('12:00')
 
 type SlotPickerProps = {
   readonly board: SlotBoard
@@ -25,6 +34,7 @@ export function SlotPicker({
   selectedStart,
   showDentists,
 }: SlotPickerProps) {
+  const locale = useLocale()
   if (!board.selectedDate) {
     return (
       <p className="mt-8 rounded-[var(--radius-soft)] border border-line bg-card p-6 text-ink-soft">
@@ -34,9 +44,10 @@ export function SlotPicker({
     )
   }
 
-  const morning = board.slots.filter((slot) => formatTime(new Date(slot.start)) < '12:00')
-  const afternoon = board.slots.filter((slot) => formatTime(new Date(slot.start)) >= '12:00')
-  const selectedLabel = formatLongDate(localDateNoon(board.selectedDate))
+  const isMorning = (start: string) => toLocalTime(new Date(start), CLINIC_TIME_ZONE) < NOON
+  const morning = board.slots.filter((slot) => isMorning(slot.start))
+  const afternoon = board.slots.filter((slot) => !isMorning(slot.start))
+  const selectedLabel = formatLongDate(localDateNoon(board.selectedDate), locale)
 
   return (
     <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-12">
@@ -84,6 +95,7 @@ function SlotGroup({
   selectedStart?: string
   showDentists?: boolean
 }) {
+  const locale = useLocale()
   if (slots.length === 0) return null
   return (
     <div className="mt-6">
@@ -92,7 +104,7 @@ function SlotGroup({
       </h3>
       <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4 xl:grid-cols-5">
         {slots.map((slot) => {
-          const time = formatTime(new Date(slot.start))
+          const time = formatTime(new Date(slot.start), locale)
           const selected = slot.start === selectedStart
           return (
             <li key={slot.start}>
@@ -122,6 +134,7 @@ function SlotGroup({
 }
 
 function DateChooser({ board, hrefForDate }: Pick<SlotPickerProps, 'board' | 'hrefForDate'>) {
+  const locale = useLocale()
   const firstWeekday = board.days[0] ? (weekdayOf(board.days[0].date) + 6) % 7 : 0
 
   return (
@@ -134,16 +147,16 @@ function DateChooser({ board, hrefForDate }: Pick<SlotPickerProps, 'board' | 'hr
           const noon = localDateNoon(day.date)
           const selected = day.date === board.selectedDate
           const available = day.slotCount > 0
-          const label = `${formatLongDate(noon)}${available ? `, ${day.slotCount} horários` : ', sem horários'}`
+          const label = `${formatLongDate(noon, locale)}${available ? `, ${day.slotCount} horários` : ', sem horários'}`
           const content = (
             <>
               <span className="text-[0.7rem] tracking-wide uppercase">
-                {formatWeekdayShort(noon)}
+                {formatWeekdayShort(noon, locale)}
               </span>
               <span className="font-display text-xl leading-none tabular">
                 {Number(day.date.slice(8))}
               </span>
-              <span className="text-[0.7rem]">{formatMonthShort(noon)}</span>
+              <span className="text-[0.7rem]">{formatMonthShort(noon, locale)}</span>
               <span className="sr-only">{`, ${label}`}</span>
             </>
           )

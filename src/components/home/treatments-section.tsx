@@ -1,4 +1,6 @@
+import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
+import { currentLocale } from '@/i18n/server'
 import { Reveal } from '@/components/site/motion'
 import { ButtonLink } from '@/components/ui/button'
 import { Eyebrow } from '@/components/ui/eyebrow'
@@ -7,23 +9,22 @@ import { formatDuration } from '@/lib/format'
 import { listTreatments } from '@/modules/catalog/catalog.repository'
 
 export async function TreatmentsSection() {
-  const treatments = await listTreatments()
+  const locale = await currentLocale()
+  const [t, treatments] = await Promise.all([
+    getTranslations({ locale, namespace: 'home.treatments' }),
+    listTreatments(),
+  ])
 
   return (
     <section id="tratamentos" className="container-page py-20 md:py-28">
       <div className="grid gap-12 md:grid-cols-12 md:gap-10">
         <div className="md:col-span-4">
           <div className="md:sticky md:top-32">
-            <Eyebrow>Tratamentos</Eyebrow>
-            <h2 className="mt-5 text-title text-ink">
-              Do check-up ao implante, no mesmo endereço.
-            </h2>
-            <p className="mt-5 text-ink-soft">
-              Cada horário do site já considera a duração real da consulta. Se não souber qual
-              escolher, marque uma avaliação: em meia hora você sai com um plano por escrito.
-            </p>
+            <Eyebrow>{t('eyebrow')}</Eyebrow>
+            <h2 className="mt-5 text-title text-ink">{t('title')}</h2>
+            <p className="mt-5 text-ink-soft">{t('body')}</p>
             <ButtonLink href="/agendar/avaliacao" variant="quiet" className="mt-6">
-              Marcar uma avaliação
+              {t('cta')}
             </ButtonLink>
           </div>
         </div>
@@ -45,11 +46,11 @@ export async function TreatmentsSection() {
                         {treatment.name}
                       </span>
                       <span className="text-sm text-ink-soft tabular">
-                        {formatDuration(treatment.durationMinutes)}
+                        {formatDuration(treatment.durationMinutes, locale)}
                       </span>
                       {treatment.isUrgent ? (
                         <span className="rounded-full bg-clay-100 px-2.5 py-0.5 text-xs font-semibold text-clay-700">
-                          No mesmo dia
+                          {t('sameDay')}
                         </span>
                       ) : null}
                     </span>
@@ -59,7 +60,7 @@ export async function TreatmentsSection() {
                   </span>
                   <span className="flex size-10 items-center justify-center self-center rounded-full border border-line text-pine-800 transition-all group-hover:border-pine-800 group-hover:bg-pine-800 group-hover:text-paper">
                     <ArrowUpRightIcon size={18} />
-                    <span className="sr-only">Ver detalhes de {treatment.name}</span>
+                    <span className="sr-only">{t('details', { treatment: treatment.name })}</span>
                   </span>
                 </Link>
               </Reveal>

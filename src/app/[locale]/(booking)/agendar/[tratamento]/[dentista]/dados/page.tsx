@@ -9,6 +9,7 @@ import { PatientForm } from '@/components/booking/patient-form'
 import { SlotPicker } from '@/components/booking/slot-picker'
 import { StepHeading } from '@/components/booking/step-heading'
 import { AlertIcon } from '@/components/ui/icons'
+import { currentLocale } from '@/i18n/server'
 import { formatLongDate, formatTime } from '@/lib/format'
 import {
   bookingHref,
@@ -65,6 +66,7 @@ async function DetailsContent({
   choice: BookingChoice
   searchParams: Props['searchParams']
 }) {
+  const locale = await currentLocale()
   const start = parseStartParam((await searchParams).horario)
   const base = { treatment: choice.treatment.slug, dentist: choice.dentistSlug }
   if (!start) {
@@ -91,8 +93,8 @@ async function DetailsContent({
         >
           <AlertIcon size={20} className="mt-0.5 shrink-0 text-clay-700" />
           <p>
-            O horário das {formatTime(new Date(start))} de {formatLongDate(new Date(start))} não
-            está mais livre. Escolha outro:
+            O horário das {formatTime(new Date(start), locale)} de{' '}
+            {formatLongDate(new Date(start), locale)} não está mais livre. Escolha outro:
           </p>
         </div>
         <SlotPicker

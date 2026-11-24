@@ -1,24 +1,27 @@
+import { routing } from '@/i18n/routing'
 import { capitalize, formatLongDate, formatTime } from '@/lib/format'
 import { clinic, formatAddressLine } from '@/modules/catalog/clinic'
 import type { AppointmentNotice, NoticeKind } from './types'
+
+const locale = routing.defaultLocale
 
 type Copy = { subject: string; heading: string; lead: string; cta: string }
 
 const COPY: Record<NoticeKind, (notice: AppointmentNotice) => Copy> = {
   confirmation: ({ appointment }) => ({
-    subject: `Consulta confirmada — ${appointment.treatmentName}, ${formatTime(appointment.startsAt)}`,
+    subject: `Consulta confirmada — ${appointment.treatmentName}, ${formatTime(appointment.startsAt, locale)}`,
     heading: 'Sua consulta está confirmada',
     lead: 'Guarde este e-mail. Pelo link abaixo você remarca ou cancela sem precisar ligar.',
     cta: 'Ver, remarcar ou cancelar',
   }),
   reminder: ({ appointment }) => ({
-    subject: `Lembrete: amanhã às ${formatTime(appointment.startsAt)} na ${clinic.name}`,
+    subject: `Lembrete: amanhã às ${formatTime(appointment.startsAt, locale)} na ${clinic.name}`,
     heading: 'Até amanhã',
     lead: 'Passando para lembrar da sua consulta. Se não puder vir, avise pelo link para liberarmos o horário para outro paciente.',
     cta: 'Remarcar ou cancelar',
   }),
   reschedule: ({ appointment }) => ({
-    subject: `Consulta remarcada para ${formatLongDate(appointment.startsAt)}`,
+    subject: `Consulta remarcada para ${formatLongDate(appointment.startsAt, locale)}`,
     heading: 'Novo horário confirmado',
     lead: 'Sua consulta foi remarcada. O link para gerenciar continua o mesmo.',
     cta: 'Ver detalhes',
@@ -46,7 +49,7 @@ function firstName(fullName: string): string {
 
 export function describeWhen(notice: AppointmentNotice): string {
   const { startsAt } = notice.appointment
-  return `${capitalize(formatLongDate(startsAt))}, às ${formatTime(startsAt)}`
+  return `${capitalize(formatLongDate(startsAt, locale))}, às ${formatTime(startsAt, locale)}`
 }
 
 export function renderShortText(notice: AppointmentNotice): string {

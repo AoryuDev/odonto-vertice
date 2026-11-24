@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { notFound } from 'next/navigation'
@@ -10,12 +11,12 @@ import { ButtonLink } from '@/components/ui/button'
 import { Eyebrow } from '@/components/ui/eyebrow'
 import { ArrowRightIcon, CheckIcon, ClockIcon } from '@/components/ui/icons'
 import { dentistPhoto, treatmentPhoto } from '@/content/photos'
+import { currentLocale } from '@/i18n/server'
+import { getWeekdayLabels } from '@/i18n/weekday-labels'
 import { formatDuration } from '@/lib/format'
 import { absoluteUrl } from '@/lib/site'
 import { findTreatment, listDentists, listTreatments } from '@/modules/catalog/catalog.repository'
 import { breadcrumbSchema, treatmentSchema } from '@/modules/catalog/structured-data'
-import { SPECIALTY_LABELS } from '@/modules/catalog/types'
-import { describeWorkingDays } from '@/modules/catalog/working-days'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -27,6 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const treatment = await findTreatment((await params).slug)
   if (!treatment) return {}
   const photo = treatmentPhoto(treatment.photoKey)
+  const tPhoto = await getTranslations('photoAlt')
   const title = `${treatment.name} no Setor Bueno, Goiânia`
   return {
     title,
@@ -37,7 +39,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: treatment.summary,
       url: `/tratamentos/${treatment.slug}`,
       images: [
-        { url: photo.src.src, width: photo.src.width, height: photo.src.height, alt: photo.alt },
+        {
+          url: photo.src.src,
+          width: photo.src.width,
+          height: photo.src.height,
+          alt: tPhoto(photo.altKey),
+        },
       ],
     },
   }
@@ -47,11 +54,18 @@ export const instant = false
 
 export default async function TreatmentPage({ params }: Props) {
   const { slug } = await params
-  const [treatment, treatments, dentists] = await Promise.all([
-    findTreatment(slug),
-    listTreatments(),
-    listDentists(),
-  ])
+  const locale = await currentLocale()
+  const [t, tCrumbs, tSpecialty, tPhoto, weekdays, treatment, treatments, dentists] =
+    await Promise.all([
+      getTranslations({ locale, namespace: 'treatmentPage' }),
+      getTranslations({ locale, namespace: 'breadcrumbs' }),
+      getTranslations({ locale, namespace: 'specialty' }),
+      getTranslations({ locale, namespace: 'photoAlt' }),
+      getWeekdayLabels(locale),
+      findTreatment(slug),
+      listTreatments(),
+      listDentists(),
+    ])
   if (!treatment) notFound()
 
   const photo = treatmentPhoto(treatment.photoKey)
@@ -59,8 +73,8 @@ export default async function TreatmentPage({ params }: Props) {
   const others = treatments.filter((candidate) => candidate.id !== treatment.id)
   const { content } = treatment
   const crumbs = [
-    { name: 'Início', path: '/' },
-    { name: 'Tratamentos', path: '/#tratamentos' },
+    { name: tCrumbs('home'), path: '/' },
+    { name: tCrumbs('treatments'), path: '/#tratamentos' },
     { name: treatment.name, path: `/tratamentos/${treatment.slug}` },
   ]
 
@@ -86,23 +100,23 @@ export default async function TreatmentPage({ params }: Props) {
         <Breadcrumbs items={crumbs} />
         <div className="mt-8 grid gap-10 md:grid-cols-12 md:items-end md:gap-10">
           <div className="md:col-span-7">
-            <Eyebrow>{treatment.isUrgent ? 'Atendimento no mesmo dia' : 'Tratamento'}</Eyebrow>
+            <Eyebrow>{treatment.isUrgent ? t('eyebrowUrgent') : t('eyebrow')}</Eyebrow>
             <h1 className="mt-5 text-display text-ink">{treatment.name}</h1>
             <p className="mt-6 max-w-xl text-lead text-ink-soft">{treatment.summary}</p>
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
               <ButtonLink href={`/agendar/${treatment.slug}`} size="lg">
-                Agendar {treatment.name.toLowerCase()}
+                {t('book', { treatment: treatment.name.toLowerCase() })}
               </ButtonLink>
               <span className="inline-flex items-center gap-2 text-ink-soft">
                 <ClockIcon size={18} />
-                Consulta de {formatDuration(treatment.durationMinutes)}
+                {t('duration', { duration: formatDuration(treatment.durationMinutes, locale) })}
               </span>
             </div>
           </div>
           <div className="md:col-span-5">
             <Image
               src={photo.src}
-              alt={photo.alt}
+              alt={tPhoto(photo.altKey)}
               loading="eager"
               fetchPriority="high"
               placeholder="blur"
@@ -124,7 +138,7 @@ export default async function TreatmentPage({ params }: Props) {
 
             {content.forWhom.length > 0 ? (
               <div>
-                <h2 className="text-subtitle text-ink">Indicado para</h2>
+                <h2 className="text-subtitle text-ink">{t('forWhom')}</h2>
                 <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                   {content.forWhom.map((item) => (
                     <li key={item} className="flex gap-3 text-ink-soft">
@@ -138,7 +152,7 @@ export default async function TreatmentPage({ params }: Props) {
 
             {content.steps.length > 0 ? (
               <div>
-                <h2 className="text-subtitle text-ink">Como é a consulta</h2>
+                <h2 className="text-subtitle text-ink">{t('steps')}</h2>
                 <ol className="mt-8 border-l border-line-strong">
                   {content.steps.map((step, index) => (
                     <li key={step.title} className="relative pb-8 pl-8 last:pb-0">
@@ -160,7 +174,7 @@ export default async function TreatmentPage({ params }: Props) {
             <div className="grid gap-10 sm:grid-cols-2">
               {content.preparation.length > 0 ? (
                 <div>
-                  <h2 className="text-subtitle text-ink">Antes de vir</h2>
+                  <h2 className="text-subtitle text-ink">{t('preparation')}</h2>
                   <ul className="mt-5 space-y-3 text-ink-soft">
                     {content.preparation.map((item) => (
                       <li key={item}>{item}</li>
@@ -170,7 +184,7 @@ export default async function TreatmentPage({ params }: Props) {
               ) : null}
               {content.aftercare.length > 0 ? (
                 <div>
-                  <h2 className="text-subtitle text-ink">Depois da consulta</h2>
+                  <h2 className="text-subtitle text-ink">{t('aftercare')}</h2>
                   <ul className="mt-5 space-y-3 text-ink-soft">
                     {content.aftercare.map((item) => (
                       <li key={item}>{item}</li>
@@ -184,7 +198,7 @@ export default async function TreatmentPage({ params }: Props) {
           <aside className="md:col-span-5 md:pl-6">
             <div className="rounded-[var(--radius-card)] border border-line bg-paper p-6 md:sticky md:top-28">
               <h2 className="font-sans text-sm font-semibold tracking-[0.12em] text-clay-600 uppercase">
-                Quem atende
+                {t('team')}
               </h2>
               <ul className="mt-5 space-y-4">
                 {team.map((dentist) => {
@@ -207,8 +221,8 @@ export default async function TreatmentPage({ params }: Props) {
                             {dentist.displayName}
                           </span>
                           <span className="block text-sm text-ink-soft">
-                            {SPECIALTY_LABELS[dentist.specialty]} ·{' '}
-                            {describeWorkingDays(dentist.schedules).replace('Atende ', '')}
+                            {tSpecialty(dentist.specialty)} ·{' '}
+                            {weekdays.workingDays(dentist.schedules)}
                           </span>
                         </span>
                       </Link>
@@ -217,9 +231,9 @@ export default async function TreatmentPage({ params }: Props) {
                 })}
               </ul>
               <ButtonLink href={`/agendar/${treatment.slug}`} className="mt-6 w-full">
-                Ver horários livres
+                {t('seeTimes')}
               </ButtonLink>
-              <p className="mt-4 text-center text-sm text-ink-soft">Particular ou convênio</p>
+              <p className="mt-4 text-center text-sm text-ink-soft">{t('payment')}</p>
             </div>
           </aside>
         </div>
@@ -229,7 +243,7 @@ export default async function TreatmentPage({ params }: Props) {
         <section className="container-page py-16 md:py-24">
           <div className="grid gap-10 md:grid-cols-12">
             <h2 className="text-title text-ink md:col-span-4">
-              Dúvidas sobre {treatment.name.toLowerCase()}
+              {t('faqTitle', { treatment: treatment.name.toLowerCase() })}
             </h2>
             <div className="md:col-span-8">
               <FaqList items={content.faqs} />
@@ -241,7 +255,7 @@ export default async function TreatmentPage({ params }: Props) {
       <section className="border-t border-line">
         <div className="container-page py-14">
           <h2 className="font-sans text-sm font-semibold tracking-[0.12em] text-clay-600 uppercase">
-            Outros tratamentos
+            {t('others')}
           </h2>
           <ul className="mt-6 flex flex-wrap gap-3">
             {others.map((other) => (

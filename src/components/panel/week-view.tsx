@@ -1,3 +1,4 @@
+import { useLocale } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 import { formatShortDate, formatTime, formatWeekdayShort, localDateNoon } from '@/lib/format'
@@ -23,6 +24,7 @@ export function WeekView({
   dentists: readonly Dentist[]
   params: AgendaParams
 }) {
+  const locale = useLocale()
   const byDate = groupByDate(entries, CLINIC_TIME_ZONE)
   const dot = (dentistId: string) =>
     DENTIST_DOTS[
@@ -63,8 +65,8 @@ export function WeekView({
                 className="flex items-baseline justify-between border-b border-line px-4 py-3 hover:bg-paper"
               >
                 <span className="font-medium text-ink capitalize">
-                  {formatWeekdayShort(localDateNoon(date))}{' '}
-                  <span className="tabular">{formatShortDate(localDateNoon(date))}</span>
+                  {formatWeekdayShort(localDateNoon(date), locale)}{' '}
+                  <span className="tabular">{formatShortDate(localDateNoon(date), locale)}</span>
                 </span>
                 <span className="text-xs text-ink-soft">{appointments} consultas</span>
               </Link>
@@ -79,7 +81,7 @@ export function WeekView({
                       className="rounded-lg border border-dashed border-line-strong px-2.5 py-1.5 text-xs text-ink-soft"
                     >
                       <span className="tabular">
-                        {formatTime(entry.start)}–{formatTime(entry.end)}
+                        {formatTime(entry.start, locale)}–{formatTime(entry.end, locale)}
                       </span>{' '}
                       · Bloqueado: {entry.reason}
                     </li>
@@ -97,7 +99,9 @@ export function WeekView({
                           className={cn('mt-1 size-2 shrink-0 rounded-full', dot(entry.dentistId))}
                         />
                         <span className="min-w-0">
-                          <span className="font-medium tabular">{formatTime(entry.start)}</span>{' '}
+                          <span className="font-medium tabular">
+                            {formatTime(entry.start, locale)}
+                          </span>{' '}
                           {entry.patientName}
                           <span className="block truncate opacity-80">{entry.treatmentName}</span>
                         </span>

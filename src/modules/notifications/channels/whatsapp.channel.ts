@@ -1,5 +1,8 @@
+import { routing } from '@/i18n/routing'
 import { capitalize, formatLongDate, formatTime } from '@/lib/format'
 import type { AppointmentNotice, NoticeKind, NotificationChannel } from '../types'
+
+const locale = routing.defaultLocale
 
 export type WhatsAppChannelConfig = {
   readonly accessToken: string
@@ -12,7 +15,7 @@ export type WhatsAppChannelConfig = {
 
 export function whatsappTemplatePayload(notice: AppointmentNotice, config: WhatsAppChannelConfig) {
   const firstName = notice.patient.name.trim().split(/\s+/)[0] ?? notice.patient.name
-  const when = `${capitalize(formatLongDate(notice.appointment.startsAt))}, ${formatTime(notice.appointment.startsAt)}`
+  const when = `${capitalize(formatLongDate(notice.appointment.startsAt, locale))}, ${formatTime(notice.appointment.startsAt, locale)}`
   const parameters = [
     firstName,
     notice.appointment.treatmentName,

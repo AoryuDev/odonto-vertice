@@ -1,4 +1,5 @@
 import type { StaticImageData } from 'next/image'
+import type { Messages } from '@/i18n/messages'
 import clinicRoom from '@/assets/photos/clinic-room.jpg'
 import consultation from '@/assets/photos/consultation.jpg'
 import dentistCamila from '@/assets/photos/dentist-camila.jpg'
@@ -13,9 +14,11 @@ import treatmentRestoration from '@/assets/photos/treatment-restoration.jpg'
 import treatmentUrgent from '@/assets/photos/treatment-urgent.jpg'
 import treatmentWhitening from '@/assets/photos/treatment-whitening.jpg'
 
+export type PhotoAltKey = keyof Messages['photoAlt']
+
 export type Photo = {
   readonly src: StaticImageData
-  readonly alt: string
+  readonly altKey: PhotoAltKey
   readonly credit: { readonly name: string; readonly handle: string; readonly url: string }
 }
 
@@ -26,7 +29,7 @@ function unsplash(name: string, handle: string, url: string): Photo['credit'] {
 export const photos = {
   hero: {
     src: heroSmile,
-    alt: 'Mulher de cabelos escuros sorrindo, em close, com luz natural',
+    altKey: 'hero',
     credit: unsplash(
       'Lesly Juarez',
       'jblesly',
@@ -35,7 +38,7 @@ export const photos = {
   },
   clinicRoom: {
     src: clinicRoom,
-    alt: 'Consultório odontológico claro, com cadeira, refletor e bancada',
+    altKey: 'clinicRoom',
     credit: unsplash(
       'Benyamin Bohlouli',
       'benyamin_bohlouli',
@@ -44,7 +47,7 @@ export const photos = {
   },
   consultation: {
     src: consultation,
-    alt: 'Dentista mostrando uma radiografia na tela para a paciente sentada na cadeira',
+    altKey: 'consultation',
     credit: unsplash(
       'Caroline LM',
       'carocaro1987',
@@ -53,7 +56,7 @@ export const photos = {
   },
   reception: {
     src: reception,
-    alt: 'Recepção em tons claros com poltrona e paciente lendo enquanto aguarda',
+    altKey: 'reception',
     credit: unsplash(
       'Caroline Badran',
       '___atmos',
@@ -62,7 +65,7 @@ export const photos = {
   },
   'treatment:avaliacao': {
     src: consultation,
-    alt: 'Dentista explicando a radiografia para a paciente durante a avaliação',
+    altKey: 'treatmentEvaluation',
     credit: unsplash(
       'Caroline LM',
       'carocaro1987',
@@ -71,7 +74,7 @@ export const photos = {
   },
   'treatment:limpeza': {
     src: treatmentCleaning,
-    alt: 'Exame dos dentes com espelho clínico e sonda',
+    altKey: 'treatmentCleaning',
     credit: unsplash(
       'Caroline LM',
       'carocaro1987',
@@ -80,7 +83,7 @@ export const photos = {
   },
   'treatment:restauracao': {
     src: treatmentRestoration,
-    alt: 'Espelho clínico e explorador odontológico sobre superfície branca',
+    altKey: 'treatmentRestoration',
     credit: unsplash(
       'Caroline LM',
       'carocaro1987',
@@ -89,7 +92,7 @@ export const photos = {
   },
   'treatment:clareamento': {
     src: treatmentWhitening,
-    alt: 'Mulher de cabelos cacheados sorrindo apoiada em uma mesa de madeira',
+    altKey: 'treatmentWhitening',
     credit: unsplash(
       'Nolan Manning',
       'nolanrmanning',
@@ -98,7 +101,7 @@ export const photos = {
   },
   'treatment:manutencao-de-aparelho': {
     src: treatmentBraces,
-    alt: 'Close de dentes com aparelho ortodôntico metálico durante o ajuste',
+    altKey: 'treatmentBraces',
     credit: unsplash(
       'Atikah Akhtar',
       'atikahakhtar',
@@ -107,7 +110,7 @@ export const photos = {
   },
   'treatment:avaliacao-de-implante': {
     src: treatmentImplant,
-    alt: 'Mão com luva segurando um implante dentário com coroa',
+    altKey: 'treatmentImplant',
     credit: unsplash(
       'Katarzyna Zygnerska',
       'katasha',
@@ -116,7 +119,7 @@ export const photos = {
   },
   'treatment:urgencia': {
     src: treatmentUrgent,
-    alt: 'Dentista de luvas examinando os dentes de um paciente na cadeira',
+    altKey: 'treatmentUrgent',
     credit: unsplash(
       'D Dental Office',
       'ddentalof1',
@@ -125,7 +128,7 @@ export const photos = {
   },
   'dentist:helena-prado': {
     src: dentistHelena,
-    alt: 'Retrato da Dra. Helena Prado, sorrindo',
+    altKey: 'dentistHelena',
     credit: unsplash(
       'Christina @ wocintechchat.com',
       'wocintechchat',
@@ -134,7 +137,7 @@ export const photos = {
   },
   'dentist:rafael-tavares': {
     src: dentistRafael,
-    alt: 'Retrato do Dr. Rafael Tavares, de braços cruzados',
+    altKey: 'dentistRafael',
     credit: unsplash(
       'Willian Souza',
       'willsouzabr',
@@ -143,7 +146,7 @@ export const photos = {
   },
   'dentist:camila-arantes': {
     src: dentistCamila,
-    alt: 'Retrato da Dra. Camila Arantes, sentada e sorrindo',
+    altKey: 'dentistCamila',
     credit: unsplash(
       'Jonathan Borba',
       'jonathanborba',

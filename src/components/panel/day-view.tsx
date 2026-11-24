@@ -1,3 +1,4 @@
+import { useLocale } from 'next-intl'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { dentistPhoto } from '@/content/photos'
@@ -29,6 +30,7 @@ export function DayView({
   entries: readonly AgendaEntry[]
   now: Date
 }) {
+  const locale = useLocale()
   const minutes = (window.end.getTime() - window.start.getTime()) / 60000
   const height = minutes * PIXELS_PER_MINUTE
   const hours = Array.from(
@@ -90,7 +92,7 @@ export function DayView({
                 className="absolute right-2 -translate-y-1/2 text-xs text-ink-soft tabular"
                 style={{ top: `${placement.topPercent}%` }}
               >
-                {formatTime(hour)}
+                {formatTime(hour, locale)}
               </span>
             ) : null
           })}
@@ -133,7 +135,7 @@ export function DayView({
                     top: `${placement.topPercent}%`,
                     height: `${placement.heightPercent}%`,
                   }
-                  const time = `${formatTime(entry.start)}–${formatTime(entry.end)}`
+                  const time = `${formatTime(entry.start, locale)}–${formatTime(entry.end, locale)}`
                   if (entry.kind === 'block') {
                     return (
                       <div

@@ -1,3 +1,4 @@
+import { useLocale } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { ArrowRightIcon } from '@/components/ui/icons'
 import { formatDuration } from '@/lib/format'
@@ -6,6 +7,7 @@ import type { Treatment } from '@/modules/catalog/types'
 import { StepHeading } from './step-heading'
 
 export function TreatmentStep({ treatments }: { treatments: readonly Treatment[] }) {
+  const locale = useLocale()
   return (
     <>
       <StepHeading title="Qual consulta você quer marcar?">
@@ -24,7 +26,7 @@ export function TreatmentStep({ treatments }: { treatments: readonly Treatment[]
                     {treatment.name}
                   </span>
                   <span className="text-sm text-ink-soft tabular">
-                    {formatDuration(treatment.durationMinutes)}
+                    {formatDuration(treatment.durationMinutes, locale)}
                   </span>
                 </span>
                 <span className="mt-1.5 block text-[0.95rem] text-ink-soft">

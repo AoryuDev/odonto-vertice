@@ -75,8 +75,8 @@ async function Agenda({ searchParams }: Props) {
   const stats = agendaStats(entries)
   const title =
     params.view === 'semana'
-      ? `${formatShortDate(localDateNoon(firstDay))} a ${formatShortDate(localDateNoon(lastDay))}`
-      : dayTitle(date)
+      ? `${formatShortDate(localDateNoon(firstDay), locale)} a ${formatShortDate(localDateNoon(lastDay), locale)}`
+      : dayTitle(date, locale)
 
   return (
     <div className="space-y-6">

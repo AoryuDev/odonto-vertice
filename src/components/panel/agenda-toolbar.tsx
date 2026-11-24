@@ -157,6 +157,6 @@ function FilterPill({
   )
 }
 
-export function dayTitle(date: LocalDate): string {
-  return capitalize(formatLongDate(localDateNoon(date)))
+export function dayTitle(date: LocalDate, locale: AppLocale): string {
+  return capitalize(formatLongDate(localDateNoon(date), locale))
 }

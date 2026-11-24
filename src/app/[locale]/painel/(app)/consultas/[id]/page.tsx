@@ -64,11 +64,8 @@ export default function AppointmentPage(props: Props) {
 }
 
 async function AppointmentContent({ params, searchParams }: Props) {
-  const [{ db }, { id }, query] = await Promise.all([
-    requireStaff(await currentLocale()),
-    params,
-    searchParams,
-  ])
+  const locale = await currentLocale()
+  const [{ db }, { id }, query] = await Promise.all([requireStaff(locale), params, searchParams])
   if (!appointmentIdSchema.safeParse(id).success) notFound()
   const appointment = await findStaffAppointment(db, id)
   if (!appointment) notFound()
@@ -125,7 +122,7 @@ async function AppointmentContent({ params, searchParams }: Props) {
         className="inline-flex items-center gap-2 text-sm text-ink-soft hover:text-ink"
       >
         <ArrowLeftIcon size={16} />
-        Agenda de {formatShortDate(appointment.start)}
+        Agenda de {formatShortDate(appointment.start, locale)}
       </Link>
 
       {flash ? (
@@ -154,8 +151,8 @@ async function AppointmentContent({ params, searchParams }: Props) {
             {appointment.patient.fullName}
           </h1>
           <p className="mt-2 text-lg text-ink">
-            {capitalize(formatLongDate(appointment.start))}, {formatTime(appointment.start)}–
-            {formatTime(appointment.end)}
+            {capitalize(formatLongDate(appointment.start, locale))},{' '}
+            {formatTime(appointment.start, locale)}–{formatTime(appointment.end, locale)}
           </p>
         </div>
         <span className="rounded-full bg-paper-deep px-3 py-1 text-sm font-medium text-ink">
@@ -287,8 +284,8 @@ async function AppointmentContent({ params, searchParams }: Props) {
               <p>
                 Novo horário:{' '}
                 <strong>
-                  {capitalize(formatLongDate(new Date(selectedStart)))},{' '}
-                  {formatTime(new Date(selectedStart))}
+                  {capitalize(formatLongDate(new Date(selectedStart), locale))},{' '}
+                  {formatTime(new Date(selectedStart), locale)}
                 </strong>
               </p>
               <Button type="submit">Confirmar remarcação</Button>

@@ -3,5 +3,274 @@
     "label": "Idioma",
     "current": "Idioma atual: {language}",
     "switchTo": "Ver o site em {language}"
+  },
+  "header": {
+    "skipToContent": "Pular para o conteúdo",
+    "navLabel": "Principal",
+    "book": "Agendar consulta",
+    "preferCall": "Prefere ligar?",
+    "nav": {
+      "treatments": "Tratamentos",
+      "team": "Equipe",
+      "approach": "Como trabalhamos",
+      "faq": "Dúvidas",
+      "location": "Como chegar"
+    }
+  },
+  "mobileNav": {
+    "label": "Menu principal",
+    "open": "Abrir menu",
+    "close": "Fechar menu",
+    "preferCall": "Prefere ligar? <call>Fale com a recepção</call>"
+  },
+  "mobileBar": {
+    "book": "Agendar consulta",
+    "whatsapp": "Conversar pelo WhatsApp",
+    "whatsappMessage": "Olá! Gostaria de tirar uma dúvida sobre um atendimento."
+  },
+  "footer": {
+    "about": "Clínica geral, ortodontia e implantes no Setor Bueno. Atendimento particular e por convênio.",
+    "address": "Endereço",
+    "postalCode": "CEP {code}",
+    "directions": "Como chegar",
+    "hours": "Horários",
+    "hoursRange": "{opens} às {closes}",
+    "contact": "Contato",
+    "whatsapp": "WhatsApp <tabular>{number}</tabular>",
+    "treatments": "Tratamentos",
+    "technicalLead": "Responsável técnico:",
+    "copyright": "© {year} {name}. {note}",
+    "photoCredits": "Créditos das fotos"
+  },
+  "clinic": {
+    "legalNote": "Clínica fictícia criada como projeto de portfólio.",
+    "parking": "Estacionamento conveniado no térreo do edifício.",
+    "landmark": "A duas quadras do Parque Vaca Brava."
+  },
+  "weekdays": {
+    "mondayToFriday": "Segunda a sexta",
+    "span": "{first} a {last}",
+    "pair": "{first} e {last}",
+    "workingSpan": "de {first} a {last}",
+    "seesPatients": "Atende {days}"
+  },
+  "specialty": {
+    "general_dentistry": "Clínica geral",
+    "orthodontics": "Ortodontia",
+    "implantology": "Implantodontia"
+  },
+  "breadcrumbs": {
+    "label": "Você está em",
+    "home": "Início",
+    "treatments": "Tratamentos",
+    "team": "Equipe"
+  },
+  "map": {
+    "title": "Mapa interativo com a localização da clínica",
+    "open": "Abrir mapa interativo",
+    "attribution": "© <link>OpenStreetMap</link> contributors"
+  },
+  "home": {
+    "hero": {
+      "title": "Cuidar dos dentes fica mais simples quando alguém <em>explica</em>.",
+      "lead": "Somos três dentistas, de clínica geral, ortodontia e implantes, atendendo famílias no Setor Bueno. Você sai de cada consulta sabendo o que foi feito, o que vem depois e quantas sessões ainda faltam.",
+      "bookOnline": "Agendar pelo site",
+      "whatsapp": "Falar no WhatsApp",
+      "whatsappMessage": "Olá! Gostaria de agendar uma consulta.",
+      "note": "Particular e convênio · Confirmação na hora, por e-mail"
+    },
+    "nextSlot": {
+      "eyebrow": "Próxima avaliação livre",
+      "seeAll": "Veja a agenda completa",
+      "today": "Hoje",
+      "tomorrow": "Amanhã",
+      "weekdayDate": "{weekday}, {date}",
+      "when": "{day}, <tabular>{time}</tabular>",
+      "with": "com {names}"
+    },
+    "facts": {
+      "label": "Informações rápidas",
+      "hoursLabel": "Segunda a sábado",
+      "weekdayHours": "{opens} às {closes}",
+      "saturdayHours": "sáb até {closes}",
+      "paymentLabel": "Pagamento",
+      "paymentValue": "Particular e convênios",
+      "parkingLabel": "Estacionamento",
+      "parkingValue": "Conveniado, no prédio",
+      "landmarkLabel": "Referência",
+      "landmarkValue": "A duas quadras do Parque Vaca Brava"
+    },
+    "treatments": {
+      "eyebrow": "Tratamentos",
+      "title": "Do check-up ao implante, no mesmo endereço.",
+      "body": "Cada horário do site já considera a duração real da consulta. Se não souber qual escolher, marque uma avaliação: em meia hora você sai com um plano por escrito.",
+      "cta": "Marcar uma avaliação",
+      "sameDay": "No mesmo dia",
+      "details": "Ver detalhes de {treatment}"
+    },
+    "team": {
+      "eyebrow": "Equipe",
+      "title": "Três especialistas, um prontuário só.",
+      "body": "Quando o caso envolve aparelho ou implante, o especialista já recebe o seu histórico. Você não precisa repetir tudo a cada consulta.",
+      "leadRole": "{specialty} · Responsável técnica"
+    },
+    "approach": {
+      "eyebrow": "Como trabalhamos",
+      "title": "O que você pode esperar a partir da primeira consulta.",
+      "quote": "“Antes de tocar no dente, a gente mostra na tela o que está vendo.”",
+      "quoteAuthor": "Dra. Helena Prado",
+      "principles": {
+        "plan": {
+          "title": "Plano por escrito, sem decidir na cadeira",
+          "body": "Depois da avaliação você leva para casa o diagnóstico, as etapas e o número estimado de sessões. Pode pensar, pesquisar e voltar quando quiser."
+        },
+        "schedule": {
+          "title": "Agenda feita com a duração real",
+          "body": "Uma restauração ocupa uma hora, uma manutenção de aparelho, meia. Por isso a sala de espera não lota e a sua consulta começa no horário."
+        },
+        "insurance": {
+          "title": "Convênio conferido antes",
+          "body": "Se você usa plano odontológico, a recepção confirma a cobertura e pede as autorizações necessárias antes do atendimento."
+        },
+        "sterilization": {
+          "title": "Instrumentos esterilizados e rastreados",
+          "body": "Cada kit é embalado, identificado e aberto na sua frente. O registro da autoclave fica disponível para consulta na recepção."
+        }
+      }
+    },
+    "testimonials": {
+      "eyebrow": "Pacientes",
+      "title": "Depoimentos de pacientes",
+      "featured": {
+        "quote": "Eu adiava a limpeza havia três anos, por medo. A Dra. Helena mostrou cada dente na tela antes de começar e foi a primeira vez que saí do dentista sem os ombros tensos.",
+        "author": "Mariana S.",
+        "context": "Limpeza e restaurações, desde 2022"
+      },
+      "braces": {
+        "quote": "Coloquei aparelho aos 34. O Dr. Rafael explicou o que ia mudar em cada manutenção e nunca esperei mais de dez minutos na recepção.",
+        "author": "Thiago R.",
+        "context": "Ortodontia"
+      },
+      "implant": {
+        "quote": "Achei que não poderia fazer implante por causa da diabetes. A Dra. Camila pediu exames, conversou com o meu endocrinologista e montou o plano com calma.",
+        "author": "Sueli M.",
+        "context": "Implante"
+      },
+      "disclaimer": "Depoimentos ilustrativos: a Odonto Vértice é uma clínica fictícia."
+    },
+    "faq": {
+      "eyebrow": "Dúvidas",
+      "title": "Perguntas que a recepção mais ouve.",
+      "items": {
+        "insurance": {
+          "question": "Vocês atendem convênio?",
+          "answer": "Sim. Atendemos os principais planos odontológicos de Goiânia. Informe o nome do seu plano no agendamento: a recepção confirma a cobertura antes da consulta e avisa se algum procedimento precisar de autorização."
+        },
+        "prices": {
+          "question": "Por que o site não mostra valores?",
+          "answer": "As normas do Conselho Federal de Odontologia não permitem anunciar preços de tratamentos. Além disso, o custo depende do plano de tratamento, que você recebe por escrito depois da avaliação."
+        },
+        "booking": {
+          "question": "Como funciona o agendamento pelo site?",
+          "answer": "Você escolhe o tratamento, o dentista (ou qualquer um disponível) e um horário livre. A confirmação chega por e-mail na hora, com um link para remarcar ou cancelar sem precisar ligar."
+        },
+        "reschedule": {
+          "question": "Posso remarcar ou cancelar?",
+          "answer": "Pode, pelo link do e-mail de confirmação, até duas horas antes do horário. Depois disso, ligue para a recepção para liberarmos o horário."
+        },
+        "children": {
+          "question": "Vocês atendem crianças?",
+          "answer": "A Dra. Helena atende crianças a partir de seis anos para prevenção, limpeza e restaurações. Para bebês e crianças menores, indicamos um odontopediatra de confiança."
+        },
+        "pain": {
+          "question": "E se eu estiver com dor agora?",
+          "answer": "Agende uma urgência pelo site: os horários livres do dia aparecem na hora. Se não houver vaga, ligue para a recepção que tentamos um encaixe."
+        }
+      }
+    },
+    "location": {
+      "eyebrow": "Como chegar",
+      "title": "No Setor Bueno, perto do Vaca Brava.",
+      "mapAlt": "Mapa do Setor Bueno com a localização da clínica na {street}, perto do Parque Vaca Brava",
+      "hoursCaption": "Horário de funcionamento",
+      "hoursRange": "{opens} – {closes}",
+      "closedDays": "Domingo e feriados",
+      "closed": "Fechado",
+      "directions": "Traçar rota",
+      "call": "Ligar · <tabular>{phone}</tabular>",
+      "reception": "Recepção com café e água. Chegue com dez minutos de antecedência para o cadastro."
+    },
+    "closing": {
+      "title": "Escolha um horário agora. Leva menos de dois minutos.",
+      "body": "Os horários mostrados são os que estão livres de verdade na agenda de cada dentista. Prefere falar com alguém? A recepção atende no {phone}.",
+      "cta": "Agendar consulta"
+    }
+  },
+  "treatmentPage": {
+    "eyebrow": "Tratamento",
+    "eyebrowUrgent": "Atendimento no mesmo dia",
+    "book": "Agendar {treatment}",
+    "duration": "Consulta de {duration}",
+    "forWhom": "Indicado para",
+    "steps": "Como é a consulta",
+    "preparation": "Antes de vir",
+    "aftercare": "Depois da consulta",
+    "team": "Quem atende",
+    "seeTimes": "Ver horários livres",
+    "payment": "Particular ou convênio",
+    "faqTitle": "Dúvidas sobre {treatment}",
+    "others": "Outros tratamentos"
+  },
+  "dentistPage": {
+    "leadRole": "{specialty} · Responsável técnica",
+    "book": "Agendar com {name}",
+    "scheduleTitle": "Dias de atendimento",
+    "scheduleCaption": "Agenda semanal de {name}",
+    "day": "Dia",
+    "hours": "Horário",
+    "scheduleNote": "Não há atendimento em feriados. Os horários livres aparecem no agendamento.",
+    "offers": "O que atende",
+    "seeTimes": "Ver horários"
+  },
+  "credits": {
+    "eyebrow": "Créditos",
+    "title": "Fotografias",
+    "body": "Todas as fotos são de bancos de imagem com licença para uso comercial (Unsplash License). As pessoas retratadas são modelos e não têm relação com a clínica, que é fictícia.",
+    "photoBy": "Foto de <link>{name}</link> no Unsplash"
+  },
+  "notFound": {
+    "metaTitle": "Página não encontrada",
+    "eyebrow": "Erro 404",
+    "title": "Essa página não existe, ou mudou de endereço.",
+    "body": "Se você chegou aqui por um link de agendamento, confira se o endereço foi copiado inteiro.",
+    "home": "Voltar ao início",
+    "book": "Agendar consulta"
+  },
+  "errorPage": {
+    "title": "Não conseguimos carregar esta página.",
+    "body": "Pode ser uma instabilidade momentânea. Tente novamente ou fale com a recepção pelo telefone {phone}.",
+    "retry": "Tentar novamente",
+    "home": "Ir para o início"
+  },
+  "globalError": {
+    "title": "Algo deu errado do nosso lado.",
+    "body": "Tente de novo em alguns segundos. Se precisar marcar uma consulta agora, ligue para {phone}.",
+    "retry": "Tentar novamente"
+  },
+  "photoAlt": {
+    "hero": "Mulher de cabelos escuros sorrindo, em close, com luz natural",
+    "clinicRoom": "Consultório odontológico claro, com cadeira, refletor e bancada",
+    "consultation": "Dentista mostrando uma radiografia na tela para a paciente sentada na cadeira",
+    "reception": "Recepção em tons claros com poltrona e paciente lendo enquanto aguarda",
+    "treatmentEvaluation": "Dentista explicando a radiografia para a paciente durante a avaliação",
+    "treatmentCleaning": "Exame dos dentes com espelho clínico e sonda",
+    "treatmentRestoration": "Espelho clínico e explorador odontológico sobre superfície branca",
+    "treatmentWhitening": "Mulher de cabelos cacheados sorrindo apoiada em uma mesa de madeira",
+    "treatmentBraces": "Close de dentes com aparelho ortodôntico metálico durante o ajuste",
+    "treatmentImplant": "Mão com luva segurando um implante dentário com coroa",
+    "treatmentUrgent": "Dentista de luvas examinando os dentes de um paciente na cadeira",
+    "dentistHelena": "Retrato da Dra. Helena Prado, sorrindo",
+    "dentistRafael": "Retrato do Dr. Rafael Tavares, de braços cruzados",
+    "dentistCamila": "Retrato da Dra. Camila Arantes, sentada e sorrindo"
   }
 }

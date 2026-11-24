@@ -1,10 +1,12 @@
+import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 
 export type Crumb = { readonly name: string; readonly path: string }
 
-export function Breadcrumbs({ items }: { items: readonly Crumb[] }) {
+export async function Breadcrumbs({ items }: { items: readonly Crumb[] }) {
+  const t = await getTranslations('breadcrumbs')
   return (
-    <nav aria-label="Você está em" className="text-sm text-ink-soft">
+    <nav aria-label={t('label')} className="text-sm text-ink-soft">
       <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
         {items.map((item, index) => {
           const isLast = index === items.length - 1

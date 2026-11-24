@@ -1,20 +1,27 @@
+import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { ArrowRightIcon, CalendarIcon } from '@/components/ui/icons'
 import { dentistPhoto } from '@/content/photos'
+import { currentLocale } from '@/i18n/server'
+import { getWeekdayLabels } from '@/i18n/weekday-labels'
 import { bookingHref } from '@/modules/booking/booking-routes'
 import { ANY_DENTIST } from '@/modules/booking/schemas'
-import { SPECIALTY_LABELS, type Dentist, type Treatment } from '@/modules/catalog/types'
-import { describeWorkingDays } from '@/modules/catalog/working-days'
+import type { Dentist, Treatment } from '@/modules/catalog/types'
 import { StepHeading } from './step-heading'
 
-export function DentistStep({
+export async function DentistStep({
   treatment,
   dentists,
 }: {
   treatment: Treatment
   dentists: readonly Dentist[]
 }) {
+  const locale = await currentLocale()
+  const [tSpecialty, weekdays] = await Promise.all([
+    getTranslations({ locale, namespace: 'specialty' }),
+    getWeekdayLabels(locale),
+  ])
   return (
     <>
       <StepHeading title={dentists.length > 1 ? 'Com quem você prefere?' : 'Quem vai atender você'}>
@@ -64,7 +71,7 @@ export function DentistStep({
                     {dentist.displayName}
                   </span>
                   <span className="block text-[0.95rem] text-ink-soft">
-                    {SPECIALTY_LABELS[dentist.specialty]} · {describeWorkingDays(dentist.schedules)}
+                    {tSpecialty(dentist.specialty)} · {weekdays.seesPatients(dentist.schedules)}
                   </span>
                 </span>
                 <ArrowRightIcon className="shrink-0 text-pine-800 transition-transform group-hover:translate-x-1" />

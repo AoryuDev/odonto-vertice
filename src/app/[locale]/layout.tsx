@@ -41,7 +41,7 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
-const CLIENT_NAMESPACES = ['localeSwitcher'] as const
+const CLIENT_NAMESPACES = ['localeSwitcher', 'mobileNav', 'errorPage'] as const
 
 export default async function LocaleLayout({ children }: Readonly<{ children: ReactNode }>) {
   const locale = await rootParams.locale()

@@ -1,23 +1,35 @@
+import { getTranslations } from 'next-intl/server'
+import { currentLocale } from '@/i18n/server'
 import { formatHour } from '@/lib/format'
 import { openingHours } from '@/modules/catalog/catalog.repository'
-import { clinic } from '@/modules/catalog/clinic'
 import { summarizeWeekHours } from '@/modules/schedule/domain/opening-hours'
 
 export async function FactsStrip() {
-  const [weekdays, saturday] = summarizeWeekHours(await openingHours())
+  const locale = await currentLocale()
+  const [t, hours] = await Promise.all([
+    getTranslations({ locale, namespace: 'home.facts' }),
+    openingHours(),
+  ])
+  const [weekdays, saturday] = summarizeWeekHours(hours)
+  const schedule = [
+    weekdays
+      ? t('weekdayHours', {
+          opens: formatHour(weekdays.opensAt, locale),
+          closes: formatHour(weekdays.closesAt, locale),
+        })
+      : null,
+    saturday ? t('saturdayHours', { closes: formatHour(saturday.closesAt, locale) }) : null,
+  ]
 
   const facts = [
-    {
-      label: 'Segunda a sábado',
-      value: `${weekdays ? `${formatHour(weekdays.opensAt)} às ${formatHour(weekdays.closesAt)}` : ''}${saturday ? ` · sáb até ${formatHour(saturday.closesAt)}` : ''}`,
-    },
-    { label: 'Pagamento', value: 'Particular e convênios' },
-    { label: 'Estacionamento', value: 'Conveniado, no prédio' },
-    { label: 'Referência', value: clinic.landmark.replace('.', '') },
+    { label: t('hoursLabel'), value: schedule.filter(Boolean).join(' · ') },
+    { label: t('paymentLabel'), value: t('paymentValue') },
+    { label: t('parkingLabel'), value: t('parkingValue') },
+    { label: t('landmarkLabel'), value: t('landmarkValue') },
   ]
 
   return (
-    <section aria-label="Informações rápidas" className="border-y border-line bg-card/60">
+    <section aria-label={t('label')} className="border-y border-line bg-card/60">
       <dl className="container-page grid grid-cols-2 gap-x-6 gap-y-5 py-6 md:grid-cols-4 md:py-7">
         {facts.map((fact) => (
           <div

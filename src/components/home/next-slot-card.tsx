@@ -1,41 +1,68 @@
+import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
+import { currentLocale } from '@/i18n/server'
 import { ArrowRightIcon, CalendarIcon } from '@/components/ui/icons'
-import { formatShortDate, formatTime, formatWeekdayShort } from '@/lib/format'
+import {
+  capitalize,
+  formatList,
+  formatShortDate,
+  formatTime,
+  formatWeekdayShort,
+} from '@/lib/format'
 import { bookingHref } from '@/modules/booking/booking-routes'
 import { findNextSlot } from '@/modules/schedule/next-slot'
 
-function dayLabel(next: { isToday: boolean; isTomorrow: boolean; slot: { start: Date } }) {
-  if (next.isToday) return 'Hoje'
-  if (next.isTomorrow) return 'Amanhã'
-  return `${formatWeekdayShort(next.slot.start)}, ${formatShortDate(next.slot.start)}`
-}
-
 export async function NextSlotCard() {
-  const next = await findNextSlot('avaliacao')
+  const locale = await currentLocale()
+  const [t, next] = await Promise.all([
+    getTranslations({ locale, namespace: 'home.nextSlot' }),
+    findNextSlot('avaliacao'),
+  ])
 
   if (!next) {
     return (
-      <SlotCardFrame href="/agendar">
-        <span className="text-ink-soft">Veja a agenda completa</span>
+      <SlotCardFrame href="/agendar" eyebrow={t('eyebrow')}>
+        <span className="text-ink-soft">{t('seeAll')}</span>
       </SlotCardFrame>
     )
   }
 
+  const start = next.slot.start
+  const day = next.isToday
+    ? t('today')
+    : next.isTomorrow
+      ? t('tomorrow')
+      : t('weekdayDate', {
+          weekday: formatWeekdayShort(start, locale),
+          date: formatShortDate(start, locale),
+        })
   const href = bookingHref({ treatment: next.treatmentSlug, dentist: 'qualquer', date: next.date })
 
   return (
-    <SlotCardFrame href={href}>
-      <span className="block font-display text-[1.65rem] leading-tight text-ink capitalize">
-        {dayLabel(next)}, <span className="tabular">{formatTime(next.slot.start)}</span>
+    <SlotCardFrame href={href} eyebrow={t('eyebrow')}>
+      <span className="block font-display text-[1.65rem] leading-tight text-ink">
+        {t.rich('when', {
+          day: capitalize(day),
+          time: formatTime(start, locale),
+          tabular: (chunks) => <span className="tabular">{chunks}</span>,
+        })}
       </span>
       <span className="mt-1 block text-sm text-ink-soft">
-        com {next.dentistNames.slice(0, 2).join(' ou ')}
+        {t('with', { names: formatList(next.dentistNames.slice(0, 2), locale, 'disjunction') })}
       </span>
     </SlotCardFrame>
   )
 }
 
-function SlotCardFrame({ href, children }: { href: string; children: React.ReactNode }) {
+function SlotCardFrame({
+  href,
+  eyebrow,
+  children,
+}: {
+  href: string
+  eyebrow: string
+  children: React.ReactNode
+}) {
   return (
     <Link
       href={href}
@@ -46,7 +73,7 @@ function SlotCardFrame({ href, children }: { href: string; children: React.React
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[0.75rem] font-semibold tracking-[0.12em] text-clay-600 uppercase">
-          Próxima avaliação livre
+          {eyebrow}
         </span>
         {children}
       </span>

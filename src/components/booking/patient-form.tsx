@@ -128,7 +128,8 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
                     }
                     className="rounded-full border border-pine-800 bg-card px-4 py-2 text-sm font-medium text-pine-800 tabular hover:bg-pine-800 hover:text-paper"
                   >
-                    {formatWeekdayShort(new Date(start))} {formatTime(new Date(start))}
+                    {formatWeekdayShort(new Date(start), locale)}{' '}
+                    {formatTime(new Date(start), locale)}
                   </button>
                 </li>
               ))}

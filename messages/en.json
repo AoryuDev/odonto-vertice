@@ -3,5 +3,274 @@
     "label": "Language",
     "current": "Current language: {language}",
     "switchTo": "View the site in {language}"
+  },
+  "header": {
+    "skipToContent": "Skip to content",
+    "navLabel": "Main",
+    "book": "Book a visit",
+    "preferCall": "Rather call?",
+    "nav": {
+      "treatments": "Treatments",
+      "team": "Our team",
+      "approach": "How we work",
+      "faq": "FAQ",
+      "location": "Find us"
+    }
+  },
+  "mobileNav": {
+    "label": "Main menu",
+    "open": "Open menu",
+    "close": "Close menu",
+    "preferCall": "Rather call? <call>Talk to our front desk</call>"
+  },
+  "mobileBar": {
+    "book": "Book a visit",
+    "whatsapp": "Chat on WhatsApp",
+    "whatsappMessage": "Hi! I have a question about an appointment."
+  },
+  "footer": {
+    "about": "General dentistry, orthodontics and implants in Setor Bueno. Self-pay and dental insurance welcome.",
+    "address": "Address",
+    "postalCode": "CEP {code}",
+    "directions": "Get directions",
+    "hours": "Hours",
+    "hoursRange": "{opens} to {closes}",
+    "contact": "Contact",
+    "whatsapp": "WhatsApp <tabular>{number}</tabular>",
+    "treatments": "Treatments",
+    "technicalLead": "Clinical director:",
+    "copyright": "© {year} {name}. {note}",
+    "photoCredits": "Photo credits"
+  },
+  "clinic": {
+    "legalNote": "A fictional clinic created as a portfolio project.",
+    "parking": "Validated parking on the building’s ground floor.",
+    "landmark": "Two blocks from Vaca Brava Park."
+  },
+  "weekdays": {
+    "mondayToFriday": "Monday to Friday",
+    "span": "{first}–{last}",
+    "pair": "{first} and {last}",
+    "workingSpan": "{first}–{last}",
+    "seesPatients": "Sees patients {days}"
+  },
+  "specialty": {
+    "general_dentistry": "General dentistry",
+    "orthodontics": "Orthodontics",
+    "implantology": "Implant dentistry"
+  },
+  "breadcrumbs": {
+    "label": "You are here",
+    "home": "Home",
+    "treatments": "Treatments",
+    "team": "Our team"
+  },
+  "map": {
+    "title": "Interactive map showing the clinic’s location",
+    "open": "Open interactive map",
+    "attribution": "© <link>OpenStreetMap</link> contributors"
+  },
+  "home": {
+    "hero": {
+      "title": "Dental care is simpler when someone takes the time to <em>explain</em>.",
+      "lead": "We’re three dentists covering general care, orthodontics and implants, looking after families in Setor Bueno. You leave every visit knowing what was done, what comes next and how many sessions are left.",
+      "bookOnline": "Book online",
+      "whatsapp": "Chat on WhatsApp",
+      "whatsappMessage": "Hi! I’d like to book an appointment.",
+      "note": "Self-pay or insurance · Instant confirmation by email"
+    },
+    "nextSlot": {
+      "eyebrow": "Next available exam",
+      "seeAll": "See every open time",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "weekdayDate": "{weekday}, {date}",
+      "when": "{day} at <tabular>{time}</tabular>",
+      "with": "with {names}"
+    },
+    "facts": {
+      "label": "At a glance",
+      "hoursLabel": "Monday to Saturday",
+      "weekdayHours": "{opens} to {closes}",
+      "saturdayHours": "Sat until {closes}",
+      "paymentLabel": "Payment",
+      "paymentValue": "Self-pay and insurance",
+      "parkingLabel": "Parking",
+      "parkingValue": "Validated, in the building",
+      "landmarkLabel": "Landmark",
+      "landmarkValue": "Two blocks from Vaca Brava Park"
+    },
+    "treatments": {
+      "eyebrow": "Treatments",
+      "title": "From check-ups to implants, all under one roof.",
+      "body": "Every time on the site already allows for how long the visit really takes. Not sure what to choose? Book an exam: in half an hour you’ll leave with a written plan.",
+      "cta": "Book an exam",
+      "sameDay": "Same day",
+      "details": "See details for {treatment}"
+    },
+    "team": {
+      "eyebrow": "Our team",
+      "title": "Three specialists, one shared chart.",
+      "body": "When your case calls for braces or an implant, the specialist already has your history. No need to repeat everything at every visit.",
+      "leadRole": "{specialty} · Clinical director"
+    },
+    "approach": {
+      "eyebrow": "How we work",
+      "title": "What you can expect from your very first visit.",
+      "quote": "“Before we touch a tooth, we show you on screen exactly what we’re seeing.”",
+      "quoteAuthor": "Dr. Helena Prado",
+      "principles": {
+        "plan": {
+          "title": "A written plan, no decisions in the chair",
+          "body": "After your exam you take home the diagnosis, the steps and an estimated number of sessions. Think it over, do your research and come back whenever you’re ready."
+        },
+        "schedule": {
+          "title": "Booked for the time it really takes",
+          "body": "A filling gets a full hour, a braces adjustment half that. That’s why the waiting room never fills up and your appointment starts on time."
+        },
+        "insurance": {
+          "title": "Insurance checked ahead of time",
+          "body": "If you have a dental plan, our front desk confirms your coverage and requests any authorizations before your visit."
+        },
+        "sterilization": {
+          "title": "Sterilized, traceable instruments",
+          "body": "Every kit is sealed, labeled and opened in front of you. The autoclave log is kept at the front desk if you’d like to see it."
+        }
+      }
+    },
+    "testimonials": {
+      "eyebrow": "Patients",
+      "title": "What our patients say",
+      "featured": {
+        "quote": "I’d been putting off a cleaning for three years because I was scared. Dr. Helena showed me every tooth on screen before she started, and it was the first time I walked out of a dentist’s office without my shoulders up around my ears.",
+        "author": "Mariana S.",
+        "context": "Cleanings and fillings, since 2022"
+      },
+      "braces": {
+        "quote": "I got braces at 34. Dr. Rafael explained what would change at every adjustment, and I never waited more than ten minutes at the front desk.",
+        "author": "Thiago R.",
+        "context": "Orthodontics"
+      },
+      "implant": {
+        "quote": "I thought my diabetes ruled out an implant. Dr. Camila ordered tests, talked with my endocrinologist and put the plan together without rushing me.",
+        "author": "Sueli M.",
+        "context": "Implants"
+      },
+      "disclaimer": "Illustrative testimonials: Odonto Vértice is a fictional clinic."
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "The questions our front desk hears most.",
+      "items": {
+        "insurance": {
+          "question": "Do you take dental insurance?",
+          "answer": "Yes. We accept the main dental plans in Goiânia. Enter your plan’s name when you book: our front desk confirms your coverage before the visit and lets you know if any procedure needs pre-authorization."
+        },
+        "prices": {
+          "question": "Why doesn’t the site show prices?",
+          "answer": "Brazil’s Federal Council of Dentistry doesn’t allow clinics to advertise treatment prices. Cost also depends on your treatment plan, which you receive in writing after your exam."
+        },
+        "booking": {
+          "question": "How does online booking work?",
+          "answer": "Choose a treatment, a dentist (or whoever is available) and an open time. Your confirmation arrives by email right away, with a link to reschedule or cancel without having to call."
+        },
+        "reschedule": {
+          "question": "Can I reschedule or cancel?",
+          "answer": "Yes, using the link in your confirmation email, up to two hours before your appointment. After that, please call our front desk so we can free up the time."
+        },
+        "children": {
+          "question": "Do you see children?",
+          "answer": "Dr. Helena sees children from age six for prevention, cleanings and fillings. For babies and younger children, we’ll refer you to a pediatric dentist we trust."
+        },
+        "pain": {
+          "question": "What if I’m in pain right now?",
+          "answer": "Book an emergency visit online: today’s open times show up straight away. If nothing is free, call our front desk and we’ll do our best to fit you in."
+        }
+      }
+    },
+    "location": {
+      "eyebrow": "Find us",
+      "title": "In Setor Bueno, near Vaca Brava Park.",
+      "mapAlt": "Map of Setor Bueno showing the clinic on {street}, near Vaca Brava Park",
+      "hoursCaption": "Opening hours",
+      "hoursRange": "{opens} – {closes}",
+      "closedDays": "Sundays and holidays",
+      "closed": "Closed",
+      "directions": "Get directions",
+      "call": "Call · <tabular>{phone}</tabular>",
+      "reception": "Coffee and water in the waiting room. Please arrive ten minutes early so we can get you registered."
+    },
+    "closing": {
+      "title": "Pick a time now. It takes less than two minutes.",
+      "body": "The times you see are genuinely open in each dentist’s schedule. Rather talk to someone? Our front desk is at {phone}.",
+      "cta": "Book a visit"
+    }
+  },
+  "treatmentPage": {
+    "eyebrow": "Treatment",
+    "eyebrowUrgent": "Same-day care",
+    "book": "Book your {treatment}",
+    "duration": "{duration} appointment",
+    "forWhom": "Who it’s for",
+    "steps": "What happens at the visit",
+    "preparation": "Before you come",
+    "aftercare": "Afterwards",
+    "team": "Who you’ll see",
+    "seeTimes": "See open times",
+    "payment": "Self-pay or insurance",
+    "faqTitle": "Questions about your {treatment}",
+    "others": "Other treatments"
+  },
+  "dentistPage": {
+    "leadRole": "{specialty} · Clinical director",
+    "book": "Book with {name}",
+    "scheduleTitle": "Office hours",
+    "scheduleCaption": "{name}’s weekly schedule",
+    "day": "Day",
+    "hours": "Hours",
+    "scheduleNote": "Closed on public holidays. Open times show up as you book.",
+    "offers": "Treatments offered",
+    "seeTimes": "See times"
+  },
+  "credits": {
+    "eyebrow": "Credits",
+    "title": "Photography",
+    "body": "Every photo comes from a stock library licensed for commercial use (Unsplash License). The people pictured are models with no connection to the clinic, which is fictional.",
+    "photoBy": "Photo by <link>{name}</link> on Unsplash"
+  },
+  "notFound": {
+    "metaTitle": "Page not found",
+    "eyebrow": "Error 404",
+    "title": "This page doesn’t exist, or it has moved.",
+    "body": "If you followed an appointment link, check that the whole address was copied.",
+    "home": "Back to home",
+    "book": "Book a visit"
+  },
+  "errorPage": {
+    "title": "We couldn’t load this page.",
+    "body": "It may just be a brief hiccup. Try again, or call our front desk at {phone}.",
+    "retry": "Try again",
+    "home": "Go to the home page"
+  },
+  "globalError": {
+    "title": "Something went wrong on our end.",
+    "body": "Please try again in a few seconds. If you need to book right now, call {phone}.",
+    "retry": "Try again"
+  },
+  "photoAlt": {
+    "hero": "Close-up of a dark-haired woman smiling in natural light",
+    "clinicRoom": "Bright dental treatment room with a chair, overhead light and countertop",
+    "consultation": "Dentist showing an X-ray on screen to a patient seated in the chair",
+    "reception": "Light-toned waiting area with an armchair and a patient reading while she waits",
+    "treatmentEvaluation": "Dentist walking a patient through her X-ray during an exam",
+    "treatmentCleaning": "Teeth being examined with a dental mirror and probe",
+    "treatmentRestoration": "Dental mirror and explorer resting on a white surface",
+    "treatmentWhitening": "Curly-haired woman smiling as she leans on a wooden table",
+    "treatmentBraces": "Close-up of teeth with metal braces during an adjustment",
+    "treatmentImplant": "Gloved hand holding a dental implant with its crown",
+    "treatmentUrgent": "Gloved dentist examining a patient’s teeth in the chair",
+    "dentistHelena": "Portrait of Dr. Helena Prado, smiling",
+    "dentistRafael": "Portrait of Dr. Rafael Tavares with his arms crossed",
+    "dentistCamila": "Portrait of Dr. Camila Arantes, seated and smiling"
   }
 }

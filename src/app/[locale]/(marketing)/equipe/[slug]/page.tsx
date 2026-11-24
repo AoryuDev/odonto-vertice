@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
+import { Fragment } from 'react'
 import { Link } from '@/i18n/navigation'
 import { notFound } from 'next/navigation'
 import { Breadcrumbs } from '@/components/site/breadcrumbs'
@@ -8,12 +10,13 @@ import { ButtonLink } from '@/components/ui/button'
 import { Eyebrow } from '@/components/ui/eyebrow'
 import { ArrowUpRightIcon } from '@/components/ui/icons'
 import { dentistPhoto } from '@/content/photos'
+import { currentLocale } from '@/i18n/server'
+import { getWeekdayLabels } from '@/i18n/weekday-labels'
 import { formatDuration, formatHour } from '@/lib/format'
 import { absoluteUrl } from '@/lib/site'
 import { findDentist, listDentists, listTreatments } from '@/modules/catalog/catalog.repository'
 import { breadcrumbSchema, dentistPersonSchema } from '@/modules/catalog/structured-data'
 import { SPECIALTY_LABELS } from '@/modules/catalog/types'
-import { WEEKDAY_LABELS } from '@/modules/schedule/domain/opening-hours'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -25,6 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const dentist = await findDentist((await params).slug)
   if (!dentist) return {}
   const photo = dentistPhoto(dentist.photoKey)
+  const tPhoto = await getTranslations('photoAlt')
   const title = `${dentist.displayName}, ${SPECIALTY_LABELS[dentist.specialty].toLowerCase()} em Goiânia`
   return {
     title,
@@ -36,7 +40,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `/equipe/${dentist.slug}`,
       type: 'profile',
       images: [
-        { url: photo.src.src, width: photo.src.width, height: photo.src.height, alt: photo.alt },
+        {
+          url: photo.src.src,
+          width: photo.src.width,
+          height: photo.src.height,
+          alt: tPhoto(photo.altKey),
+        },
       ],
     },
   }
@@ -46,7 +55,16 @@ export const instant = false
 
 export default async function DentistPage({ params }: Props) {
   const { slug } = await params
-  const [dentist, treatments] = await Promise.all([findDentist(slug), listTreatments()])
+  const locale = await currentLocale()
+  const [t, tCrumbs, tSpecialty, tPhoto, weekdays, dentist, treatments] = await Promise.all([
+    getTranslations({ locale, namespace: 'dentistPage' }),
+    getTranslations({ locale, namespace: 'breadcrumbs' }),
+    getTranslations({ locale, namespace: 'specialty' }),
+    getTranslations({ locale, namespace: 'photoAlt' }),
+    getWeekdayLabels(locale),
+    findDentist(slug),
+    listTreatments(),
+  ])
   if (!dentist) notFound()
 
   const photo = dentistPhoto(dentist.photoKey)
@@ -55,8 +73,8 @@ export default async function DentistPage({ params }: Props) {
     (left, right) => ((left.weekday + 6) % 7) - ((right.weekday + 6) % 7),
   )
   const crumbs = [
-    { name: 'Início', path: '/' },
-    { name: 'Equipe', path: '/#equipe' },
+    { name: tCrumbs('home'), path: '/' },
+    { name: tCrumbs('team'), path: '/#equipe' },
     { name: dentist.displayName, path: `/equipe/${dentist.slug}` },
   ]
 
@@ -75,7 +93,7 @@ export default async function DentistPage({ params }: Props) {
             />
             <Image
               src={photo.src}
-              alt={photo.alt}
+              alt={tPhoto(photo.altKey)}
               loading="eager"
               fetchPriority="high"
               placeholder="blur"
@@ -86,8 +104,9 @@ export default async function DentistPage({ params }: Props) {
 
           <div className="md:col-span-7 md:pt-4">
             <Eyebrow className="text-[0.72rem] md:text-[0.8rem]">
-              {SPECIALTY_LABELS[dentist.specialty]}
-              {dentist.isTechnicalLead ? ' · Responsável técnica' : ''}
+              {dentist.isTechnicalLead
+                ? t('leadRole', { specialty: tSpecialty(dentist.specialty) })
+                : tSpecialty(dentist.specialty)}
             </Eyebrow>
             <h1 className="mt-3 text-[2rem] leading-[1.05] text-ink md:mt-5 md:text-display">
               {dentist.displayName}
@@ -113,7 +132,7 @@ export default async function DentistPage({ params }: Props) {
             ) : null}
             <div className="mt-10 flex flex-wrap gap-3">
               <ButtonLink href="#o-que-atende" size="lg">
-                Agendar com {dentist.displayName.split(' ').slice(0, 2).join(' ')}
+                {t('book', { name: dentist.displayName.split(' ').slice(0, 2).join(' ') })}
               </ButtonLink>
             </div>
           </div>
@@ -123,38 +142,49 @@ export default async function DentistPage({ params }: Props) {
       <section className="bg-paper-deep">
         <div className="container-page grid gap-12 py-16 md:grid-cols-12 md:gap-10 md:py-24">
           <div className="md:col-span-5">
-            <h2 className="text-title text-ink">Dias de atendimento</h2>
+            <h2 className="text-title text-ink">{t('scheduleTitle')}</h2>
             <table className="mt-8 w-full text-[0.98rem]">
-              <caption className="sr-only">Agenda semanal de {dentist.displayName}</caption>
+              <caption className="sr-only">
+                {t('scheduleCaption', { name: dentist.displayName })}
+              </caption>
               <thead className="sr-only">
                 <tr>
-                  <th scope="col">Dia</th>
-                  <th scope="col">Horário</th>
+                  <th scope="col">{t('day')}</th>
+                  <th scope="col">{t('hours')}</th>
                 </tr>
               </thead>
               <tbody>
                 {schedule.map((entry) => (
                   <tr key={entry.weekday} className="border-b border-line-strong/60">
                     <th scope="row" className="py-3 text-left font-normal text-ink">
-                      {WEEKDAY_LABELS[entry.weekday]}
+                      {weekdays.long(entry.weekday)}
                     </th>
                     <td className="py-3 text-right text-ink-soft tabular">
-                      {entry.lunch
-                        ? `${formatHour(entry.startsAt)}–${formatHour(entry.lunch.startsAt)} · ${formatHour(entry.lunch.endsAt)}–${formatHour(entry.endsAt)}`
-                        : `${formatHour(entry.startsAt)}–${formatHour(entry.endsAt)}`}
+                      {(entry.lunch
+                        ? [
+                            { from: entry.startsAt, to: entry.lunch.startsAt },
+                            { from: entry.lunch.endsAt, to: entry.endsAt },
+                          ]
+                        : [{ from: entry.startsAt, to: entry.endsAt }]
+                      ).map((range, index) => (
+                        <Fragment key={range.from}>
+                          {index > 0 ? ' · ' : null}
+                          <span className="whitespace-nowrap">
+                            {formatHour(range.from, locale)}–{formatHour(range.to, locale)}
+                          </span>
+                        </Fragment>
+                      ))}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <p className="mt-4 text-sm text-ink-soft">
-              Não há atendimento em feriados. Os horários livres aparecem no agendamento.
-            </p>
+            <p className="mt-4 text-sm text-ink-soft">{t('scheduleNote')}</p>
           </div>
 
           <div className="md:col-span-6 md:col-start-7">
             <h2 id="o-que-atende" className="text-title text-ink">
-              O que atende
+              {t('offers')}
             </h2>
             <ul className="mt-8 border-t border-line-strong/60">
               {offered.map((treatment) => (
@@ -168,11 +198,11 @@ export default async function DentistPage({ params }: Props) {
                         {treatment.name}
                       </span>
                       <span className="text-sm text-ink-soft">
-                        {formatDuration(treatment.durationMinutes)}
+                        {formatDuration(treatment.durationMinutes, locale)}
                       </span>
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-sm font-medium text-pine-800">
-                      Ver horários
+                      {t('seeTimes')}
                       <ArrowUpRightIcon size={16} />
                     </span>
                   </Link>

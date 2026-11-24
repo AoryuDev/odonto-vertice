@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 import { Suspense } from 'react'
 import { ButtonLink } from '@/components/ui/button'
@@ -6,7 +7,8 @@ import { photos } from '@/content/photos'
 import { clinic, whatsappUrl } from '@/modules/catalog/clinic'
 import { NextSlotCard, NextSlotSkeleton } from './next-slot-card'
 
-export function Hero() {
+export async function Hero() {
+  const [t, tPhoto] = await Promise.all([getTranslations('home.hero'), getTranslations('photoAlt')])
   return (
     <section className="relative overflow-hidden">
       <div className="container-page grid gap-10 pt-8 pb-14 md:grid-cols-12 md:gap-8 md:pt-14 md:pb-24 lg:gap-14">
@@ -16,35 +18,30 @@ export function Hero() {
             <span aria-hidden="true" className="mx-2 text-line-strong">
               /
             </span>
-            Goiânia
+            {clinic.address.city}
           </p>
           <h1 className="mt-5 text-display text-ink">
-            Cuidar dos dentes fica mais simples quando alguém{' '}
-            <em className="text-pine-800 italic">explica</em>.
+            {t.rich('title', {
+              em: (chunks) => <em className="text-pine-800 italic">{chunks}</em>,
+            })}
           </h1>
-          <p className="mt-6 max-w-[34rem] text-lead text-ink-soft">
-            Somos três dentistas, de clínica geral, ortodontia e implantes, atendendo famílias no
-            Setor Bueno. Você sai de cada consulta sabendo o que foi feito, o que vem depois e
-            quantas sessões ainda faltam.
-          </p>
+          <p className="mt-6 max-w-[34rem] text-lead text-ink-soft">{t('lead')}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <ButtonLink href="/agendar" size="lg">
-              Agendar pelo site
+              {t('bookOnline')}
             </ButtonLink>
             <ButtonLink
-              href={whatsappUrl('Olá! Gostaria de agendar uma consulta.')}
+              href={whatsappUrl(t('whatsappMessage'))}
               target="_blank"
               rel="noopener noreferrer"
               variant="secondary"
               size="lg"
             >
               <ChatIcon size={20} />
-              Falar no WhatsApp
+              {t('whatsapp')}
             </ButtonLink>
           </div>
-          <p className="mt-5 text-sm text-ink-soft">
-            Particular e convênio · Confirmação na hora, por e-mail
-          </p>
+          <p className="mt-5 text-sm text-ink-soft">{t('note')}</p>
         </div>
 
         <div className="relative md:col-span-5">
@@ -55,7 +52,7 @@ export function Hero() {
           <div className="relative overflow-hidden rounded-tl-[5.5rem] rounded-tr-[1.5rem] rounded-br-[1.5rem] rounded-bl-[1.5rem] md:rounded-tl-[8rem]">
             <Image
               src={photos.hero.src}
-              alt={photos.hero.alt}
+              alt={tPhoto(photos.hero.altKey)}
               loading="eager"
               fetchPriority="high"
               placeholder="blur"

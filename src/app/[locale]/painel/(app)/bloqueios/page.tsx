@@ -39,8 +39,9 @@ export default function BlocksPage({ searchParams }: Props) {
 }
 
 async function BlocksContent({ searchParams }: Props) {
+  const locale = await currentLocale()
   const [{ db, staff }, dentists, query] = await Promise.all([
-    requireStaff(await currentLocale()),
+    requireStaff(locale),
     listDentists(),
     searchParams,
   ])
@@ -91,8 +92,8 @@ async function BlocksContent({ searchParams }: Props) {
               <div>
                 <p className="font-medium text-ink">{block.reason}</p>
                 <p className="text-sm text-ink-soft">
-                  {block.dentistName} · {capitalize(formatLongDate(block.start))},{' '}
-                  {formatTime(block.start)}–{formatTime(block.end)}
+                  {block.dentistName} · {capitalize(formatLongDate(block.start, locale))},{' '}
+                  {formatTime(block.start, locale)}–{formatTime(block.end, locale)}
                 </p>
               </div>
               <form action={deleteBlock}>

@@ -6,10 +6,12 @@ import { MapPinIcon } from '@/components/ui/icons'
 export function InteractiveMapToggle({
   latitude,
   longitude,
+  labels,
   children,
 }: {
   latitude: number
   longitude: number
+  labels: { readonly title: string; readonly open: string }
   children: React.ReactNode
 }) {
   const [active, setActive] = useState(false)
@@ -25,7 +27,7 @@ export function InteractiveMapToggle({
   if (active) {
     return (
       <iframe
-        title="Mapa interativo com a localização da clínica"
+        title={labels.title}
         src={src}
         className="absolute inset-0 size-full border-0"
         loading="lazy"
@@ -43,7 +45,7 @@ export function InteractiveMapToggle({
         className="absolute right-4 bottom-4 inline-flex items-center gap-2 rounded-full bg-card px-4 py-2.5 text-sm font-medium text-ink shadow-[0_8px_24px_-12px_rgba(27,40,35,0.4)] hover:bg-paper"
       >
         <MapPinIcon size={16} />
-        Abrir mapa interativo
+        {labels.open}
       </button>
     </>
   )

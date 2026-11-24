@@ -1,7 +1,7 @@
 import { ApproachSection } from '@/components/home/approach-section'
 import { ClosingCta } from '@/components/home/closing-cta'
 import { FactsStrip } from '@/components/home/facts-strip'
-import { FAQS, FaqSection } from '@/components/home/faq-section'
+import { FaqSection, homeFaqs } from '@/components/home/faq-section'
 import { Hero } from '@/components/home/hero'
 import { LocationSection } from '@/components/home/location-section'
 import { TeamSection } from '@/components/home/team-section'
@@ -14,7 +14,7 @@ import { listDentists, openingHours } from '@/modules/catalog/catalog.repository
 import { dentistOrganizationSchema } from '@/modules/catalog/structured-data'
 
 export default async function HomePage() {
-  const [hours, dentists] = await Promise.all([openingHours(), listDentists()])
+  const [hours, dentists, faqs] = await Promise.all([openingHours(), listDentists(), homeFaqs()])
 
   return (
     <>
@@ -29,7 +29,7 @@ export default async function HomePage() {
         data={{
           '@context': 'https://schema.org',
           '@type': 'FAQPage',
-          mainEntity: FAQS.map((faq) => ({
+          mainEntity: faqs.map((faq) => ({
             '@type': 'Question',
             name: faq.question,
             acceptedAnswer: { '@type': 'Answer', text: faq.answer },

@@ -7,18 +7,6 @@ export type OpeningHours = {
   readonly closesAt: LocalTime
 }
 
-export const WEEKDAY_LABELS = [
-  'Domingo',
-  'Segunda-feira',
-  'Terça-feira',
-  'Quarta-feira',
-  'Quinta-feira',
-  'Sexta-feira',
-  'Sábado',
-] as const
-
-export const WEEKDAY_SHORT_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'] as const
-
 export const SCHEMA_ORG_WEEKDAYS = [
   'Sunday',
   'Monday',
@@ -70,17 +58,8 @@ export function groupOpeningHours(hours: readonly OpeningHours[]): OpeningHoursG
   return groups
 }
 
-export function describeWeekdays(weekdays: readonly number[]): string {
-  const first = weekdays[0]
-  const last = weekdays.at(-1)
-  if (first === undefined || last === undefined) return ''
-  if (weekdays.length === 1) return WEEKDAY_LABELS[first] ?? ''
-  if (weekdays.length === 2) return `${WEEKDAY_SHORT_LABELS[first]} e ${WEEKDAY_SHORT_LABELS[last]}`
-  return `${WEEKDAY_SHORT_LABELS[first]} a ${WEEKDAY_SHORT_LABELS[last]}`
-}
-
 export type HoursSummary = {
-  readonly label: string
+  readonly weekdays: readonly number[]
   readonly opensAt: LocalTime
   readonly closesAt: LocalTime
 }
@@ -98,17 +77,14 @@ export function summarizeWeekHours(hours: readonly OpeningHours[]): HoursSummary
       weekdays[0]!.closesAt,
     )
     summaries.push({
-      label:
-        weekdays.length === 5
-          ? 'Segunda a sexta'
-          : describeWeekdays(weekdays.map((entry) => entry.weekday)),
+      weekdays: weekdays.map((entry) => entry.weekday),
       opensAt,
       closesAt,
     })
   }
   for (const weekend of hours.filter((entry) => entry.weekday === 6 || entry.weekday === 0)) {
     summaries.push({
-      label: WEEKDAY_LABELS[weekend.weekday] ?? '',
+      weekdays: [weekend.weekday],
       opensAt: weekend.opensAt,
       closesAt: weekend.closesAt,
     })

@@ -46,13 +46,14 @@ export default function ReschedulePage(props: Props) {
 }
 
 async function RescheduleContent({ params, searchParams }: Props) {
+  const locale = await currentLocale()
   const [{ token }, query] = await Promise.all([params, searchParams])
   const view = await loadManageView(token)
   if (!view) notFound()
   if (!view.canManage)
     redirect({
       href: `/agendamento/${token}?erro=${view.appointment.status === 'scheduled' ? 'too_late' : 'not_scheduled'}`,
-      locale: await currentLocale(),
+      locale,
     })
 
   const { appointment } = view
@@ -87,7 +88,8 @@ async function RescheduleContent({ params, searchParams }: Props) {
       <div className="mt-6">
         <StepHeading title="Escolha o novo horário">
           {appointment.treatment.name} com {appointment.dentist.displayName}. Atualmente marcada
-          para {formatLongDate(appointment.startsAt)}, às {formatTime(appointment.startsAt)}.
+          para {formatLongDate(appointment.startsAt, locale)}, às{' '}
+          {formatTime(appointment.startsAt, locale)}.
         </StepHeading>
       </div>
 
@@ -121,8 +123,8 @@ async function RescheduleContent({ params, searchParams }: Props) {
           <p className="text-ink">
             Novo horário:{' '}
             <strong className="font-semibold">
-              {capitalize(formatLongDate(new Date(selected.start)))},{' '}
-              {formatTime(new Date(selected.start))}
+              {capitalize(formatLongDate(new Date(selected.start), locale))},{' '}
+              {formatTime(new Date(selected.start), locale)}
             </strong>
           </p>
           <Button type="submit">Confirmar novo horário</Button>
