@@ -54,10 +54,16 @@ await pause(1500)
 await page.locator('.fixed.bottom-0').getByRole('link', { name: 'Agendar consulta' }).click()
 await page.getByRole('heading', { name: 'Qual consulta você quer marcar?' }).waitFor()
 await pause(900)
-await page.getByRole('main').getByRole('link', { name: /^Limpeza \d/ }).click()
+await page
+  .getByRole('main')
+  .getByRole('link', { name: /^Limpeza \d/ })
+  .click()
 await page.getByRole('heading', { name: /Quem vai atender|Com quem/ }).waitFor()
 await pause(900)
-await page.getByRole('main').getByRole('link', { name: /Dra. Helena Prado/ }).click()
+await page
+  .getByRole('main')
+  .getByRole('link', { name: /Dra. Helena Prado/ })
+  .click()
 await page.getByRole('heading', { name: 'Escolha o dia e o horário' }).waitFor()
 await pause(900)
 await page.locator('nav[aria-label="Escolha o dia"] a').nth(1).click()
@@ -81,8 +87,13 @@ await browser.close()
 const [video] = readdirSync(videoDir).filter((file) => file.endsWith('.webm'))
 renameSync(join(videoDir, video), join(videoDir, 'flow.webm'))
 execFileSync('ffmpeg', [
-  '-v', 'error', '-y', '-i', join(videoDir, 'flow.webm'),
-  '-vf', 'fps=12,scale=360:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=bayer:bayer_scale=4',
+  '-v',
+  'error',
+  '-y',
+  '-i',
+  join(videoDir, 'flow.webm'),
+  '-vf',
+  'fps=12,scale=360:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96[p];[b][p]paletteuse=dither=bayer:bayer_scale=4',
   join(out, 'booking-flow.gif'),
 ])
 rmSync(videoDir, { recursive: true, force: true })
