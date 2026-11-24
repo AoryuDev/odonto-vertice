@@ -8,7 +8,7 @@ test.describe('public site', () => {
     await page.goto('/')
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Cuidar dos dentes')
-    await expect(page.getByText('Próxima avaliação livre')).toBeVisible()
+    await expect(page.getByRole('main').getByText('Próxima avaliação livre')).toBeVisible()
     const stickyCta = page
       .locator('.fixed.bottom-0')
       .getByRole('link', { name: 'Agendar consulta' })
@@ -46,7 +46,7 @@ test.describe('public site', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: 'Manutenção de aparelho' }),
     ).toBeVisible()
-    await expect(page.getByText('Consulta de 30 min')).toBeVisible()
+    await expect(page.getByRole('main').getByText('Consulta de 30 min')).toBeVisible()
 
     await page.goto('/equipe/rafael-tavares')
     await expect(page.getByRole('heading', { level: 1, name: 'Dr. Rafael Tavares' })).toBeVisible()

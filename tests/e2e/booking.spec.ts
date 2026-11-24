@@ -20,11 +20,11 @@ test.describe('online booking', () => {
 
     await expect(page).toHaveURL(/\/agendamento\/[\w-]{43}\?novo=1$/)
     await expect(page.getByRole('heading', { name: 'Consulta confirmada' })).toBeVisible()
-    await expect(page.getByText(patient.email)).toBeVisible()
+    await expect(page.getByRole('main').getByText(patient.email)).toBeVisible()
     await expect(
       page.getByRole('definition').filter({ hasText: 'Dra. Camila Arantes' }),
     ).toBeVisible()
-    await expect(page.getByText('Confirmada', { exact: true })).toBeVisible()
+    await expect(page.getByRole('main').getByText('Confirmada', { exact: true })).toBeVisible()
 
     const manageUrl = page.url().split('?')[0] ?? ''
     await page.getByRole('link', { name: 'Remarcar' }).click()
@@ -42,7 +42,7 @@ test.describe('online booking', () => {
     await expect(page.getByRole('heading', { name: 'Consulta cancelada' })).toBeVisible()
 
     await page.goto(manageUrl)
-    await expect(page.getByText('Cancelada', { exact: true })).toBeVisible()
+    await expect(page.getByRole('main').getByText('Cancelada', { exact: true })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Remarcar' })).toHaveCount(0)
   })
 
