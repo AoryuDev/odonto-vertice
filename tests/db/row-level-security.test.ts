@@ -107,7 +107,9 @@ describe('row level security', () => {
   it('keeps the booking function out of reach of anonymous and staff roles', async () => {
     for (const role of [anon, reception]) {
       const attempt = asRole(role, (query) =>
-        query(`select public.book_appointment(null, null, now(), '', '', '', 'private', null)`),
+        query(
+          `select public.book_appointment(null, null, null, now(), '', '', '', 'private', null)`,
+        ),
       )
       await expect(attempt).rejects.toSatisfy((error) => sqlState(error) === PERMISSION_DENIED)
     }

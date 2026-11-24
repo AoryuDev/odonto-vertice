@@ -7,7 +7,6 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts', 'tests/db/**/*.test.ts'],
     exclude: ['tests/e2e/**', 'node_modules/**'],
     setupFiles: ['./tests/setup/server-only.ts'],
     coverage: {

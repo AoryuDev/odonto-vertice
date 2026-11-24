@@ -419,6 +419,7 @@ export type Database = {
     Functions: {
       book_appointment: {
         Args: {
+          p_appointment_id: string
           p_dentist_id: string
           p_insurance_provider?: string
           p_manage_token_hash: string
@@ -453,6 +454,10 @@ export type Database = {
           ends_at: string
           starts_at: string
         }[]
+      }
+      register_booking_attempt: {
+        Args: { p_fingerprint: string; p_limit: number; p_window_minutes: number }
+        Returns: boolean
       }
     }
     Enums: {

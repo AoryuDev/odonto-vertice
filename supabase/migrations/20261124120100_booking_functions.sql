@@ -29,6 +29,7 @@ end;
 $$;
 
 create function public.book_appointment(
+  p_appointment_id uuid,
   p_dentist_id uuid,
   p_treatment_id uuid,
   p_starts_at timestamptz,
@@ -66,10 +67,11 @@ begin
   returning id into v_patient_id;
 
   insert into public.appointments (
-    dentist_id, treatment_id, patient_id, period, payment_method,
+    id, dentist_id, treatment_id, patient_id, period, payment_method,
     insurance_provider, patient_notes, manage_token_hash, source
   )
   values (
+    p_appointment_id,
     p_dentist_id,
     p_treatment_id,
     v_patient_id,
@@ -137,13 +139,13 @@ end;
 $$;
 
 revoke all on function public.get_busy_periods(uuid[], timestamptz, timestamptz) from public;
-revoke all on function public.book_appointment(uuid, uuid, timestamptz, text, text, text, public.payment_method, bytea, text, text) from public;
+revoke all on function public.book_appointment(uuid, uuid, uuid, timestamptz, text, text, text, public.payment_method, bytea, text, text) from public;
 revoke all on function public.claim_reminders(timestamptz, timestamptz, text) from public;
 
 revoke all on function public.get_busy_periods(uuid[], timestamptz, timestamptz) from anon, authenticated;
-revoke all on function public.book_appointment(uuid, uuid, timestamptz, text, text, text, public.payment_method, bytea, text, text) from anon, authenticated;
+revoke all on function public.book_appointment(uuid, uuid, uuid, timestamptz, text, text, text, public.payment_method, bytea, text, text) from anon, authenticated;
 revoke all on function public.claim_reminders(timestamptz, timestamptz, text) from anon, authenticated;
 
 grant execute on function public.get_busy_periods(uuid[], timestamptz, timestamptz) to anon, authenticated, service_role;
-grant execute on function public.book_appointment(uuid, uuid, timestamptz, text, text, text, public.payment_method, bytea, text, text) to service_role;
+grant execute on function public.book_appointment(uuid, uuid, uuid, timestamptz, text, text, text, public.payment_method, bytea, text, text) to service_role;
 grant execute on function public.claim_reminders(timestamptz, timestamptz, text) to service_role;

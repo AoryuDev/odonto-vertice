@@ -100,7 +100,7 @@ export async function book(
   client: Pick<PoolClient, 'query'> = pool,
 ): Promise<string> {
   const { rows } = await client.query<{ id: string }>(
-    `select public.book_appointment($1, $2, $3, $4, $5, $6, 'private', $7) as id`,
+    `select public.book_appointment(gen_random_uuid(), $1, $2, $3, $4, $5, $6, 'private', $7) as id`,
     [
       input.dentistId,
       input.treatmentId ?? SEED.evaluationTreatmentId,
