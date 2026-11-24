@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 import { formatShortDate, formatTime, formatWeekdayShort, localDateNoon } from '@/lib/format'
 import { agendaHref, type AgendaParams } from '@/modules/admin/agenda-params'

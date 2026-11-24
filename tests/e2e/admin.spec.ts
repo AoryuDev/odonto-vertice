@@ -40,7 +40,7 @@ test.describe('clinic panel', () => {
       .getByRole('link', { name: 'Dra. Helena Prado' })
     await helenaFilter.click()
     const helenaAppointment = await reception
-      .locator('a[href^="/painel/consultas/"]')
+      .locator('a[href*="/painel/consultas/"]')
       .first()
       .getAttribute('href')
     expect(helenaAppointment).toBeTruthy()

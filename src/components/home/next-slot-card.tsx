@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { ArrowRightIcon, CalendarIcon } from '@/components/ui/icons'
 import { formatShortDate, formatTime, formatWeekdayShort } from '@/lib/format'
 import { bookingHref } from '@/modules/booking/booking-routes'

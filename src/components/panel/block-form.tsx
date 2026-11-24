@@ -1,7 +1,8 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { useActionState, useEffect, useRef, useState } from 'react'
-import { createBlock, type BlockFormState } from '@/app/painel/(app)/actions'
+import { createBlock, type BlockFormState } from '@/app/[locale]/painel/(app)/actions'
 import { Button } from '@/components/ui/button'
 import { describedBy, Field, inputClasses } from '@/components/ui/field'
 import { AlertIcon, CheckIcon } from '@/components/ui/icons'
@@ -17,6 +18,7 @@ export function BlockForm({
   fixedDentist?: Option
   minDate: string
 }) {
+  const locale = useLocale()
   const [state, action, pending] = useActionState<BlockFormState, FormData>(createBlock, {})
   const [allDay, setAllDay] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
@@ -28,6 +30,7 @@ export function BlockForm({
 
   return (
     <form ref={formRef} action={action} className="grid gap-5 sm:grid-cols-2">
+      <input type="hidden" name="locale" value={locale} />
       {state.error ? (
         <p
           role="alert"

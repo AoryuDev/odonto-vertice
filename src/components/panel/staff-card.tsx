@@ -1,4 +1,5 @@
-import { signOut } from '@/app/painel/actions'
+import { signOut } from '@/app/[locale]/painel/actions'
+import { LocaleField } from '@/components/site/locale-field'
 import { getStaffSession } from '@/modules/admin/session'
 
 export async function StaffCard() {
@@ -14,6 +15,7 @@ export async function StaffCard() {
         </p>
       </div>
       <form action={signOut}>
+        <LocaleField />
         <button
           type="submit"
           className="rounded-full border border-line-strong px-3 py-1.5 text-sm text-ink hover:border-ink"

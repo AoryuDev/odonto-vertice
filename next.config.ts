@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import createNextIntlPlugin from 'next-intl/plugin'
 
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -41,11 +42,13 @@ const nextConfig: NextConfig = {
     return [
       { source: '/:path*', headers: securityHeaders },
       {
-        source: '/agendamento/:path*',
+        source: '/:locale/agendamento/:path*',
         headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }],
       },
     ]
   },
 }
 
-export default nextConfig
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
+
+export default withNextIntl(nextConfig)

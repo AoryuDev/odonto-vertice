@@ -1,7 +1,8 @@
 import 'server-only'
-import { redirect } from 'next/navigation'
 import { connection } from 'next/server'
 import { cache } from 'react'
+import { redirect } from '@/i18n/navigation'
+import type { AppLocale } from '@/i18n/routing'
 import { createSessionClient, type Db } from '@/lib/supabase/clients'
 import type { Database } from '@/lib/supabase/database.types'
 
@@ -42,9 +43,9 @@ export const getStaffSession = cache(async (): Promise<StaffSession | null> => {
   }
 })
 
-export async function requireStaff(): Promise<StaffSession> {
+export async function requireStaff(locale: AppLocale): Promise<StaffSession> {
   const session = await getStaffSession()
-  if (!session) redirect('/painel/login')
+  if (!session) return redirect({ href: '/painel/login', locale })
   return session
 }
 

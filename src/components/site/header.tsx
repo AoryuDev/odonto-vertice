@@ -1,8 +1,9 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { ButtonLink } from '@/components/ui/button'
 import { PhoneIcon } from '@/components/ui/icons'
 import { clinic } from '@/modules/catalog/clinic'
 import { Logo } from './logo'
+import { LocaleSwitcherSlot } from './locale-switcher-slot'
 import { MobileNav } from './mobile-nav'
 import { NAV_ITEMS } from './nav-items'
 
@@ -17,8 +18,8 @@ export function SiteHeader() {
       </a>
       <div className="container-page relative flex h-16 items-center justify-between gap-6 md:h-20">
         <Logo />
-        <nav aria-label="Principal" className="hidden md:block">
-          <ul className="flex items-center gap-7 text-[0.95rem] text-ink-soft">
+        <nav aria-label="Principal" className="hidden xl:block">
+          <ul className="flex items-center gap-7 text-[0.95rem] whitespace-nowrap text-ink-soft">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="transition-colors hover:text-ink">
@@ -28,10 +29,11 @@ export function SiteHeader() {
             ))}
           </ul>
         </nav>
-        <div className="hidden items-center gap-5 md:flex">
+        <div className="ml-auto hidden items-center gap-4 md:flex xl:ml-0 xl:gap-5">
+          <LocaleSwitcherSlot />
           <a
             href={`tel:${clinic.phone.e164}`}
-            className="hidden items-center gap-2 text-[0.95rem] text-ink-soft hover:text-ink lg:inline-flex"
+            className="hidden items-center gap-2 text-[0.95rem] whitespace-nowrap text-ink-soft hover:text-ink xl:inline-flex"
           >
             <PhoneIcon size={18} />
             <span className="tabular">{clinic.phone.display}</span>

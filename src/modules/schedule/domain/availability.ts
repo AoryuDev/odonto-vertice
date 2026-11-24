@@ -86,15 +86,12 @@ function dentistSlotStarts(
   const starts: Date[] = []
 
   for (const window of workingWindows(schedule, date, policy.timeZone)) {
-    for (
-      let start = window.start;
-      addMinutes(start, durationMinutes).getTime() <= window.end.getTime();
-      start = addMinutes(start, policy.slotStepMinutes)
-    ) {
+    let start = window.start
+    while (addMinutes(start, durationMinutes).getTime() <= window.end.getTime()) {
       const candidate = { start, end: addMinutes(start, durationMinutes) }
-      if (start.getTime() < earliestStart.getTime()) continue
-      if (busy.some((period) => overlaps(candidate, period))) continue
-      starts.push(start)
+      const isFarEnough = start.getTime() >= earliestStart.getTime()
+      if (isFarEnough && !busy.some((period) => overlaps(candidate, period))) starts.push(start)
+      start = addMinutes(start, policy.slotStepMinutes)
     }
   }
 
@@ -127,8 +124,10 @@ export type DaySummary = { readonly date: LocalDate; readonly slotCount: number 
 export function summarizeDays(context: AvailabilityContext): DaySummary[] {
   const { first, last } = bookableDateRange(context.now, context.policy)
   const days: DaySummary[] = []
-  for (let date = first; compareLocalDates(date, last) <= 0; date = addDays(date, 1)) {
+  let date = first
+  while (compareLocalDates(date, last) <= 0) {
     days.push({ date, slotCount: computeDailySlots(date, context).length })
+    date = addDays(date, 1)
   }
   return days
 }

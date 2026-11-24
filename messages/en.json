@@ -1,0 +1,7 @@
+{
+  "localeSwitcher": {
+    "label": "Language",
+    "current": "Current language: {language}",
+    "switchTo": "View the site in {language}"
+  }
+}

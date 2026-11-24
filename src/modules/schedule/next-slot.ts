@@ -22,9 +22,13 @@ export async function findNextSlot(treatmentSlug: string): Promise<NextSlot | un
   const context = await loadAvailabilityContext(treatment, candidates)
   const { first, last } = bookableDateRange(context.now, context.policy)
 
-  for (let date = first; compareLocalDates(date, last) <= 0; date = addDays(date, 1)) {
+  let date = first
+  while (compareLocalDates(date, last) <= 0) {
     const [slot] = computeDailySlots(date, context)
-    if (!slot) continue
+    if (!slot) {
+      date = addDays(date, 1)
+      continue
+    }
     return {
       date,
       slot,

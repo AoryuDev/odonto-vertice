@@ -126,16 +126,14 @@ export async function suggestAlternatives(
   const context = await loadAvailabilityContext(treatment, candidates)
   const requested = request.slot.startsAt.getTime()
   const suggestions: string[] = []
-  for (
-    let date = toLocalDate(request.slot.startsAt, clinicPolicy.timeZone), checked = 0;
-    suggestions.length < limit && checked < 14;
-    date = addDays(date, 1), checked += 1
-  ) {
+  let date = toLocalDate(request.slot.startsAt, clinicPolicy.timeZone)
+  for (let checked = 0; suggestions.length < limit && checked < 14; checked += 1) {
     for (const slot of computeDailySlots(date, context)) {
       if (slot.start.getTime() <= requested && checked === 0) continue
       suggestions.push(slot.start.toISOString())
       if (suggestions.length === limit) break
     }
+    date = addDays(date, 1)
   }
   return suggestions
 }

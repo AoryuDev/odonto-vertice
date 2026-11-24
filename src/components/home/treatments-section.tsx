@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { Reveal } from '@/components/site/motion'
 import { ButtonLink } from '@/components/ui/button'
 import { Eyebrow } from '@/components/ui/eyebrow'

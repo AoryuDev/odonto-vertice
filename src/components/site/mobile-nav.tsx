@@ -1,8 +1,9 @@
 'use client'
 
-import Link from 'next/link'
-import { useEffect, useId, useRef, useState } from 'react'
+import { Link } from '@/i18n/navigation'
+import { Suspense, useEffect, useId, useRef, useState } from 'react'
 import { CloseIcon, MenuIcon } from '@/components/ui/icons'
+import { LocaleSwitcher, LocaleSwitcherFallback } from './locale-switcher'
 import type { NavItem } from './nav-items'
 
 export function MobileNav({ items, phone }: { items: readonly NavItem[]; phone: string }) {
@@ -25,7 +26,7 @@ export function MobileNav({ items, phone }: { items: readonly NavItem[]; phone: 
   const close = () => setOpen(false)
 
   return (
-    <div className="md:hidden">
+    <div className="xl:hidden">
       <button
         ref={buttonRef}
         type="button"
@@ -65,6 +66,11 @@ export function MobileNav({ items, phone }: { items: readonly NavItem[]; phone: 
               Fale com a recepção
             </a>
           </p>
+          <div className="mt-5 border-t border-line pt-4">
+            <Suspense fallback={<LocaleSwitcherFallback variant="full" />}>
+              <LocaleSwitcher variant="full" />
+            </Suspense>
+          </div>
         </nav>
       </div>
     </div>

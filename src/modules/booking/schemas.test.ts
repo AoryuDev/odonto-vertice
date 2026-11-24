@@ -61,6 +61,7 @@ describe('bookingRequestSchema', () => {
     const result = bookingRequestSchema.safeParse({
       slot: { treatmentSlug: 'limpeza', dentistSlug: 'qualquer', startsAt: '2026-11-25T09:00' },
       patient: validPatient,
+      locale: 'pt',
     })
 
     expect(result.success).toBe(false)
@@ -74,6 +75,7 @@ describe('bookingRequestSchema', () => {
         startsAt: '2026-11-25T09:00:00-03:00',
       },
       patient: validPatient,
+      locale: 'pt',
     })
 
     expect(parsed.slot.startsAt.toISOString()).toBe('2026-11-25T12:00:00.000Z')

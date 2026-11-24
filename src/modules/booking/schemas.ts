@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { localeSchema } from '@/i18n/locales'
 import {
   patientEmailSchema,
   patientNameSchema,
@@ -48,6 +49,7 @@ export const slotSelectionSchema = z.object({
 export const bookingRequestSchema = z.object({
   slot: slotSelectionSchema,
   patient: patientDetailsSchema,
+  locale: localeSchema,
 })
 
 export type BookingRequest = z.output<typeof bookingRequestSchema>

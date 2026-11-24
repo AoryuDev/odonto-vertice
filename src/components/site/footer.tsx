@@ -1,5 +1,5 @@
 import { cacheLife } from 'next/cache'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { formatHour } from '@/lib/format'
 import { listTreatments, openingHours, technicalLead } from '@/modules/catalog/catalog.repository'
 import { clinic, directionsUrl, formatAddressLine, whatsappUrl } from '@/modules/catalog/clinic'

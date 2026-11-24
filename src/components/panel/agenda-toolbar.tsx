@@ -1,4 +1,5 @@
-import Link from 'next/link'
+import { getPathname, Link } from '@/i18n/navigation'
+import type { AppLocale } from '@/i18n/routing'
 import { ArrowLeftIcon, ArrowRightIcon } from '@/components/ui/icons'
 import { cn } from '@/lib/cn'
 import { capitalize, formatLongDate, localDateNoon } from '@/lib/format'
@@ -13,6 +14,7 @@ export function AgendaToolbar({
   title,
   dentists,
   canFilter,
+  locale,
 }: {
   params: AgendaParams
   date: LocalDate
@@ -20,6 +22,7 @@ export function AgendaToolbar({
   title: string
   dentists: readonly Dentist[]
   canFilter: boolean
+  locale: AppLocale
 }) {
   const step = params.view === 'semana' ? 7 : 1
   const link = (overrides: Partial<AgendaParams> & { date?: LocalDate }) =>
@@ -76,7 +79,10 @@ export function AgendaToolbar({
               </span>
             </Link>
           </div>
-          <form action="/painel" className="flex items-center gap-2">
+          <form
+            action={getPathname({ href: '/painel', locale })}
+            className="flex items-center gap-2"
+          >
             <label htmlFor="agenda-date" className="sr-only">
               Ir para a data
             </label>

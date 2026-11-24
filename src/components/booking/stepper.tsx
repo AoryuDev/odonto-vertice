@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { CheckIcon } from '@/components/ui/icons'
 import { cn } from '@/lib/cn'
 import type { BookingStep } from '@/modules/booking/booking-routes'

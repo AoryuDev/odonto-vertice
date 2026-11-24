@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import type { ComponentProps, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
@@ -20,7 +20,7 @@ const SIZES: Record<Size, string> = {
 
 export function buttonClasses(variant: Variant = 'primary', size: Size = 'md'): string {
   return cn(
-    'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors duration-200 select-none disabled:cursor-not-allowed disabled:opacity-60',
+    'inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-colors duration-200 select-none disabled:cursor-not-allowed disabled:opacity-60',
     variant !== 'quiet' && SIZES[size],
     VARIANTS[variant],
   )

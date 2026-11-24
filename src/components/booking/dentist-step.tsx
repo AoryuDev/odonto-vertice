@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { ArrowRightIcon, CalendarIcon } from '@/components/ui/icons'
 import { dentistPhoto } from '@/content/photos'
 import { bookingHref } from '@/modules/booking/booking-routes'

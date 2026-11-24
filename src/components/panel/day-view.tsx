@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { dentistPhoto } from '@/content/photos'
 import { cn } from '@/lib/cn'
 import { formatTime } from '@/lib/format'

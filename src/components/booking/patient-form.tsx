@@ -1,11 +1,12 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import { useEffect, useRef, useState, useTransition } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
-import { submitBooking, type BookingActionResult } from '@/app/(booking)/agendar/actions'
+import { submitBooking, type BookingActionResult } from '@/app/[locale]/(booking)/agendar/actions'
 import { Button } from '@/components/ui/button'
+import { useRouter } from '@/i18n/navigation'
 import { describedBy, Field, FieldError, inputClasses } from '@/components/ui/field'
 import { AlertIcon } from '@/components/ui/icons'
 import { cn } from '@/lib/cn'
@@ -38,6 +39,7 @@ const FIELD_ORDER = [
 
 export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFormProps) {
   const router = useRouter()
+  const locale = useLocale()
   const [submission, setSubmission] = useState<{
     startsAt: string
     result: BookingActionResult
@@ -78,6 +80,7 @@ export function PatientForm({ treatmentSlug, dentistSlug, startsAt }: PatientFor
       const response = await submitBooking({
         slot: { treatmentSlug, dentistSlug, startsAt },
         patient: getValues(),
+        locale,
       })
       setSubmission({ startsAt, result: response })
       for (const field of FIELD_ORDER) {
