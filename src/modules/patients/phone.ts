@@ -31,3 +31,7 @@ export function maskBrazilianPhoneInput(raw: string): string {
   if (rest.length <= split) return `(${ddd}) ${rest}`
   return `(${ddd}) ${rest.slice(0, split)}-${rest.slice(split)}`
 }
+
+export function whatsappLinkFor(e164: string): string {
+  return `https://wa.me/${e164.replace(/\D/g, '')}`
+}

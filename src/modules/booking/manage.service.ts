@@ -7,7 +7,7 @@ import { sendAppointmentNotice } from '@/modules/notifications/notifier'
 import { loadAvailabilityContext } from '@/modules/schedule/availability.service'
 import { findSlot, type AvailabilityContext } from '@/modules/schedule/domain/availability'
 import { addMinutes, toLocalDate } from '@/modules/schedule/domain/clinic-time'
-import { clinicPolicy } from '@/modules/schedule/domain/policy'
+import { clinicPolicy, type AvailabilityPolicy } from '@/modules/schedule/domain/policy'
 import {
   findAppointmentByToken,
   toPeriodLiteral,
@@ -29,7 +29,7 @@ export function canManageOnline(appointment: AppointmentDetails, now: Date): boo
 
 export function withoutOwnPeriod(
   context: AvailabilityContext,
-  appointment: AppointmentDetails,
+  appointment: Pick<AppointmentDetails, 'dentist' | 'startsAt' | 'endsAt'>,
 ): AvailabilityContext {
   return {
     ...context,
@@ -55,13 +55,14 @@ async function loadManageable(
 }
 
 export async function rescheduleContext(
-  appointment: AppointmentDetails,
+  appointment: Pick<AppointmentDetails, 'treatment' | 'dentist' | 'startsAt' | 'endsAt'>,
+  policy?: AvailabilityPolicy,
 ): Promise<AvailabilityContext | undefined> {
   const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
   const treatment = treatments.find((candidate) => candidate.id === appointment.treatment.id)
   const dentist = dentists.find((candidate) => candidate.id === appointment.dentist.id)
   if (!treatment || !dentist) return undefined
-  return withoutOwnPeriod(await loadAvailabilityContext(treatment, [dentist]), appointment)
+  return withoutOwnPeriod(await loadAvailabilityContext(treatment, [dentist], policy), appointment)
 }
 
 export async function cancelByToken(token: string, reason?: string): Promise<ManageResult> {

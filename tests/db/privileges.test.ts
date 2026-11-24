@@ -11,7 +11,9 @@ async function inRole<T>(
   try {
     await client.query('begin')
     await client.query(`set local role ${role}`)
-    await client.query(`select set_config('request.jwt.claims', $1, true)`, [JSON.stringify(claims)])
+    await client.query(`select set_config('request.jwt.claims', $1, true)`, [
+      JSON.stringify(claims),
+    ])
     const result = await run(client.query.bind(client) as typeof pool.query)
     await client.query('commit')
     return result
@@ -42,7 +44,14 @@ describe('privileges of the roles the app actually uses', () => {
     const id = await inRole('service_role', { role: 'service_role' }, async (query) => {
       const { rows } = await query<{ id: string }>(
         `select public.book_appointment($1, $2, $3, $4, 'Paciente Teste', $5, '+5562999990000', 'private', $6) as id`,
-        [randomUUID(), dentist.id, SEED.evaluationTreatmentId, dentist.at('09:00'), `svc@${dentist.id}.test`, randomBytes(32)],
+        [
+          randomUUID(),
+          dentist.id,
+          SEED.evaluationTreatmentId,
+          dentist.at('09:00'),
+          `svc@${dentist.id}.test`,
+          randomBytes(32),
+        ],
       )
       return rows[0]?.id
     })
@@ -54,7 +63,14 @@ describe('privileges of the roles the app actually uses', () => {
     const id = randomUUID()
     await pool.query(
       `select public.book_appointment($1, $2, $3, $4, 'Paciente Teste', $5, '+5562999990000', 'private', $6)`,
-      [id, dentist.id, SEED.evaluationTreatmentId, dentist.at('09:00'), `rec@${dentist.id}.test`, randomBytes(32)],
+      [
+        id,
+        dentist.id,
+        SEED.evaluationTreatmentId,
+        dentist.at('09:00'),
+        `rec@${dentist.id}.test`,
+        randomBytes(32),
+      ],
     )
 
     const updated = await inRole(
