@@ -50,3 +50,26 @@ describe('WhatsApp channel', () => {
     expect(fetcher.mock.calls[0]?.[0]).toBe('https://graph.facebook.com/v21.0/123/messages')
   })
 })
+
+describe('WhatsApp channel failures', () => {
+  it('reports API and network errors without throwing', async () => {
+    const rejected = createWhatsAppChannel({
+      ...config,
+      fetcher: vi.fn<typeof fetch>(
+        async () => new Response('template not approved', { status: 400 }),
+      ),
+    })
+    const offline = createWhatsAppChannel({
+      ...config,
+      fetcher: vi.fn<typeof fetch>(async () => {
+        throw new Error('ENOTFOUND')
+      }),
+    })
+
+    await expect(rejected.send(notice)).resolves.toEqual({
+      ok: false,
+      error: 'WhatsApp responded 400: template not approved',
+    })
+    await expect(offline.send(notice)).resolves.toEqual({ ok: false, error: 'ENOTFOUND' })
+  })
+})

@@ -42,3 +42,17 @@ describe('notification templates', () => {
     expect(html).not.toContain('<script>')
   })
 })
+
+describe('every notice kind', () => {
+  it.each([
+    ['confirmation', 'Sua consulta está confirmada'],
+    ['reminder', 'Até amanhã'],
+    ['reschedule', 'Novo horário confirmado'],
+    ['cancellation', 'Consulta cancelada'],
+  ] as const)('renders %s with its own heading and call to action', (kind, heading) => {
+    const email = renderEmail({ ...notice, kind })
+
+    expect(email.html).toContain(heading)
+    expect(email.text.startsWith(`Odonto Vértice — ${heading}`)).toBe(true)
+  })
+})

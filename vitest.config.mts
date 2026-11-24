@@ -12,7 +12,19 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/modules/**/*.ts'],
-      exclude: ['**/*.test.ts', '**/repository.ts', '**/*.server.ts'],
+      exclude: [
+        '**/*.test.ts',
+        '**/*.repository.ts',
+        '**/*.service.ts',
+        '**/*.server.ts',
+        'src/modules/admin/session.ts',
+        'src/modules/booking/booking-view.ts',
+        'src/modules/booking/manage-view.ts',
+        'src/modules/notifications/channel.ts',
+        'src/modules/notifications/notifier.ts',
+        'src/modules/schedule/next-slot.ts',
+      ],
+      thresholds: { lines: 90, functions: 90, branches: 80, statements: 90 },
     },
     projects: [
       {

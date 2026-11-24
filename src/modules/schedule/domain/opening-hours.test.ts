@@ -50,3 +50,36 @@ describe('clinic opening hours', () => {
     ).toEqual(['Seg a Qua'])
   })
 })
+
+describe('summarizeWeekHours', () => {
+  it('merges weekdays into one line and keeps Saturday apart', async () => {
+    const { summarizeWeekHours } = await import('./opening-hours')
+    const hours = [1, 2, 3, 4, 5].map((weekday) => ({
+      weekday,
+      opensAt: parseLocalTime('08:00'),
+      closesAt: parseLocalTime(weekday % 2 ? '18:00' : '18:30'),
+    }))
+
+    expect(
+      summarizeWeekHours([
+        ...hours,
+        { weekday: 6, opensAt: parseLocalTime('08:00'), closesAt: parseLocalTime('12:00') },
+      ]),
+    ).toEqual([
+      { label: 'Segunda a sexta', opensAt: '08:00', closesAt: '18:30' },
+      { label: 'Sábado', opensAt: '08:00', closesAt: '12:00' },
+    ])
+  })
+
+  it('describes partial weeks and single days', async () => {
+    const { summarizeWeekHours, describeWeekdays } = await import('./opening-hours')
+
+    expect(
+      summarizeWeekHours([
+        { weekday: 2, opensAt: parseLocalTime('09:00'), closesAt: parseLocalTime('12:00') },
+      ]),
+    ).toEqual([{ label: 'Terça-feira', opensAt: '09:00', closesAt: '12:00' }])
+    expect(describeWeekdays([2, 4])).toBe('Ter e Qui')
+    expect(describeWeekdays([])).toBe('')
+  })
+})
