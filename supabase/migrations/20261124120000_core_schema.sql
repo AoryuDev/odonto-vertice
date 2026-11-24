@@ -340,6 +340,7 @@ revoke all on all functions in schema private from public;
 grant execute on function private.staff_role() to authenticated;
 grant execute on function private.staff_dentist_id() to authenticated;
 grant execute on function private.can_access_dentist(uuid) to authenticated;
+grant execute on function private.assert_slot_bookable(uuid, uuid, tstzrange) to authenticated, service_role;
 
 alter table public.dentists enable row level security;
 alter table public.treatments enable row level security;

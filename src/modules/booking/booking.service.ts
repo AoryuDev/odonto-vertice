@@ -8,8 +8,12 @@ import { listDentists, listTreatments } from '@/modules/catalog/catalog.reposito
 import type { Dentist, Treatment } from '@/modules/catalog/types'
 import { sendAppointmentNotice } from '@/modules/notifications/notifier'
 import { loadAvailabilityContext } from '@/modules/schedule/availability.service'
-import { findSlot, rankDentistsForSlot } from '@/modules/schedule/domain/availability'
-import { toLocalDate } from '@/modules/schedule/domain/clinic-time'
+import {
+  computeDailySlots,
+  findSlot,
+  rankDentistsForSlot,
+} from '@/modules/schedule/domain/availability'
+import { addDays, toLocalDate } from '@/modules/schedule/domain/clinic-time'
 import { clinicPolicy } from '@/modules/schedule/domain/policy'
 import { manageTokenFor } from './manage-token'
 import { ANY_DENTIST, type BookingRequest } from './schemas'
@@ -107,4 +111,31 @@ export async function bookAppointment(
   }
 
   return { ok: false, reason: 'slot_unavailable' }
+}
+
+export async function suggestAlternatives(
+  request: Pick<BookingRequest, 'slot'>,
+  limit = 4,
+): Promise<string[]> {
+  const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
+  const treatment = treatments.find((candidate) => candidate.slug === request.slot.treatmentSlug)
+  if (!treatment) return []
+  const candidates = candidateDentists(treatment, dentists, request.slot.dentistSlug)
+  if (candidates.length === 0) return []
+
+  const context = await loadAvailabilityContext(treatment, candidates)
+  const requested = request.slot.startsAt.getTime()
+  const suggestions: string[] = []
+  for (
+    let date = toLocalDate(request.slot.startsAt, clinicPolicy.timeZone), checked = 0;
+    suggestions.length < limit && checked < 14;
+    date = addDays(date, 1), checked += 1
+  ) {
+    for (const slot of computeDailySlots(date, context)) {
+      if (slot.start.getTime() <= requested && checked === 0) continue
+      suggestions.push(slot.start.toISOString())
+      if (suggestions.length === limit) break
+    }
+  }
+  return suggestions
 }

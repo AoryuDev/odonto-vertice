@@ -35,7 +35,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="pt-BR" className={`${newsreader.variable} ${hanken.variable}`}>
+    <html
+      lang="pt-BR"
+      data-scroll-behavior="smooth"
+      className={`${newsreader.variable} ${hanken.variable}`}
+    >
       <body>{children}</body>
     </html>
   )

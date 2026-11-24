@@ -63,7 +63,9 @@ function LeadDentist({ dentist }: { dentist: Dentist }) {
           {SPECIALTY_LABELS[dentist.specialty]} · Responsável técnica
         </p>
         <p className="mt-2 font-display text-[2rem] leading-tight">{dentist.displayName}</p>
-        <p className="mt-2 hidden max-w-md text-[0.95rem] text-pine-100 sm:block">{dentist.headline}</p>
+        <p className="mt-2 hidden max-w-md text-[0.95rem] text-pine-100 sm:block">
+          {dentist.headline}
+        </p>
         <p className="mt-4 inline-flex items-center gap-2 text-sm font-medium">
           {describeWorkingDays(dentist.schedules)}
           <ArrowRightIcon size={16} className="transition-transform group-hover:translate-x-1" />
