@@ -422,7 +422,8 @@ Demo panel accounts (password `vertice-demo-2026`):
 
 The seed generates appointments from two weeks ago to three weeks ahead relative to the day you
 run it, so the panel is never empty. `pnpm db:reset` regenerates everything. Confirmation and
-reminder messages print to the terminal while `NOTIFICATION_CHANNEL=console`.
+reminder messages print to the terminal while `NOTIFICATION_CHANNEL=console`, and the
+confirmation screens then ask the patient to keep the link instead of saying a message was sent.
 
 Other scripts: `pnpm lint`, `pnpm typecheck`, `pnpm format`, `pnpm messages:check`, `pnpm test:coverage`,
 `pnpm db:types` (regenerates `database.types.ts`) and `node scripts/capture-media.mjs` (regenerates
