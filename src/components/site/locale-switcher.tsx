@@ -1,9 +1,9 @@
 'use client'
 
 import { useLocale, useTranslations } from 'next-intl'
-import { useSearchParams } from 'next/navigation'
+import type { MouseEvent } from 'react'
 import { HTML_LANG, LOCALE_NAMES } from '@/i18n/locales'
-import { Link, usePathname } from '@/i18n/navigation'
+import { Link, usePathname, useRouter } from '@/i18n/navigation'
 import { routing, type AppLocale } from '@/i18n/routing'
 import { cn } from '@/lib/cn'
 
@@ -36,26 +36,44 @@ export function LocaleItemLabel({ variant, locale }: { variant: Variant; locale:
   )
 }
 
-export function LocaleSwitcher({ variant = 'compact' }: { variant?: Variant }) {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const query = Object.fromEntries(searchParams.entries())
-  return <LocaleLinks variant={variant} href={{ pathname, query }} />
-}
-
 export function LocaleSwitcherFallback({ variant = 'compact' }: { variant?: Variant }) {
-  return <LocaleLinks variant={variant} href="/" />
-}
-
-function LocaleLinks({
-  variant,
-  href,
-}: {
-  variant: Variant
-  href: string | { pathname: string; query: Record<string, string> }
-}) {
   const t = useTranslations('localeSwitcher')
   const active = useLocale()
+  return (
+    <nav aria-label={t('label')}>
+      <ul className={cn('flex items-center', variant === 'full' ? 'gap-2' : 'gap-0.5')}>
+        {routing.locales.map((locale) => (
+          <li key={locale}>
+            <Link
+              href="/"
+              locale={locale}
+              lang={HTML_LANG[locale]}
+              hrefLang={HTML_LANG[locale]}
+              aria-current={locale === active ? 'true' : undefined}
+              className={localeItemClass(variant, locale === active)}
+            >
+              <LocaleItemLabel variant={variant} locale={locale} />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+export function LocaleSwitcher({ variant = 'compact' }: { variant?: Variant }) {
+  const pathname = usePathname()
+  const router = useRouter()
+  const t = useTranslations('localeSwitcher')
+  const active = useLocale()
+
+  const keepQuery = (locale: AppLocale) => (event: MouseEvent<HTMLAnchorElement>) => {
+    const { search } = window.location
+    const modified = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+    if (!search || modified || event.button !== 0) return
+    event.preventDefault()
+    router.push(`${pathname}${search}`, { locale, scroll: false })
+  }
 
   return (
     <nav aria-label={t('label')}>
@@ -65,12 +83,13 @@ function LocaleLinks({
           return (
             <li key={locale}>
               <Link
-                href={href}
+                href={pathname}
                 locale={locale}
                 lang={HTML_LANG[locale]}
                 hrefLang={HTML_LANG[locale]}
                 aria-current={current ? 'true' : undefined}
                 scroll={false}
+                onClick={current ? undefined : keepQuery(locale)}
                 className={localeItemClass(variant, current)}
               >
                 <LocaleItemLabel variant={variant} locale={locale} />

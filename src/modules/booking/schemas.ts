@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { localeSchema } from '@/i18n/locales'
+import { localeSchema } from '@/i18n/locale-schema'
 import { issue } from '@/i18n/validation'
 import {
   patientEmailSchema,

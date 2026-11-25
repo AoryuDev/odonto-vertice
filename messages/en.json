@@ -332,7 +332,7 @@
       "titleMany": "Who would you like to see?",
       "titleOne": "Who you’ll see",
       "bodyMany": "Pick “any dentist” to see every open time for your {treatmentLower}.",
-      "bodyOne": "Your {treatmentLower} will be with {dentist}. Tap to see open times.",
+      "bodyOne": "{treatment} appointments are with {dentist}. Tap to see open times.",
       "team": "our team",
       "anyTitle": "Any available dentist",
       "anyBody": "More times to choose from. We’ll assign the dentist when you confirm."

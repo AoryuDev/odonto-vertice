@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
+    "messages:check": "node scripts/check-messages.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run --project unit",

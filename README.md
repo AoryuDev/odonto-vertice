@@ -7,8 +7,11 @@
 > tratamento, do almoço, de feriados e de bloqueios. O agendamento duplo é impossível no próprio
 > Postgres, por uma _exclusion constraint_ com `tstzrange` e `btree_gist`. A clínica tem um painel
 > com login (recepção vê todas as agendas, dentista só a sua, garantido por Row Level Security) e
-> um lembrete automático na véspera por e-mail, pronto para trocar por WhatsApp. Feito com
-> Next.js 16, TypeScript, Tailwind, Supabase, Zod, React Hook Form, Motion, Vitest e Playwright.
+> um lembrete automático na véspera por e-mail, pronto para trocar por WhatsApp. O site, o
+> agendamento, os e-mails e o painel são bilíngues (português do Brasil e inglês), com rotas
+> `/pt` e `/en`, conteúdo do catálogo traduzido no banco e mensagens enviadas no idioma em que o
+> paciente agendou. Feito com Next.js 16, TypeScript, Tailwind, Supabase, next-intl, Zod, React
+> Hook Form, Motion, Vitest e Playwright.
 
 <p align="center">
   <img src="docs/media/booking-flow.gif" width="300" alt="Booking flow on a phone: treatment, dentist, slot, patient details and confirmation" />
@@ -38,6 +41,7 @@
 - [Availability engine](#availability-engine)
 - [Security](#security)
 - [Reminders and notification channels](#reminders-and-notification-channels)
+- [Internationalization](#internationalization)
 - [Performance, accessibility and SEO](#performance-accessibility-and-seo)
 - [Tests](#tests)
 - [Running locally](#running-locally)
@@ -46,6 +50,10 @@
 
 ## What it does
 
+**Two languages** — every page exists in Brazilian Portuguese and English under `/pt` and `/en`.
+The language switcher sits in the header on desktop and in the menu on phones, and keeps you on
+the same page. See [Internationalization](#internationalization).
+
 **Public site** — home with a live "next free evaluation" card streamed from the database,
 editorial treatment list, team, how the clinic works, testimonials, FAQ, an OpenStreetMap-based
 location section and a booking CTA that stays visible on phones. Every treatment and dentist has
@@ -53,7 +61,7 @@ its own page generated from the database. No prices or promotions anywhere, as r
 Brazilian dental advertising, and the footer shows the technical lead with her CRO-GO number.
 
 **Booking** — `/agendar` → `/agendar/[treatment]` → `/agendar/[treatment]/[dentist]` →
-`/agendar/[treatment]/[dentist]/dados`. Each step is a URL, so the back button and shared links
+`/agendar/[treatment]/[dentist]/dados`, each under the language prefix (`/pt/agendar`, `/en/agendar`). Each step is a URL, so the back button and shared links
 work. Steps one and two are fully static; the slot board and patient form stream behind a static
 shell. "Any dentist" merges every dentist's free slots and the server picks the least busy one
 when confirming. If someone takes the slot first, the patient gets the next free times instead of
@@ -78,6 +86,7 @@ tomorrow's reminders exactly once each.
 | Styling       | Tailwind CSS 4 with a custom token set, no component library                                                           |
 | Data          | Supabase: Postgres 17, Auth, Row Level Security, pg_cron, pg_net, Vault                                                |
 | Validation    | Zod 4, shared by forms and server, always re-run on the server                                                         |
+| i18n          | next-intl 4 (App Router, `/pt` and `/en` routes, typed message keys), `Intl` for dates, times, durations and lists     |
 | Forms         | React Hook Form 7 with `@hookform/resolvers`                                                                           |
 | Motion        | Motion 14 (`LazyMotion` with lazily loaded features, `prefers-reduced-motion` respected)                               |
 | Tests         | Vitest 5 (unit and database), Playwright 1.63 (end-to-end), axe-core (WCAG)                                            |
@@ -128,6 +137,9 @@ Code is organized by domain under `src/modules`:
 | `patients`      | Name, e-mail and Brazilian phone validation and formatting                          |
 | `admin`         | Staff session (data access layer), agenda queries, panel schemas                    |
 | `notifications` | Channel interface, templates, confirmation notifier and reminder dispatch           |
+
+Language plumbing lives in `src/i18n` (routing, message loading, SEO alternates, weekday labels),
+and the copy lives in `messages/pt.json` and `messages/en.json`.
 
 Decisions worth calling out:
 
@@ -226,6 +238,9 @@ pg_cron (21:00 UTC = 18:00 BRT)
             └─ record receipt             sent / failed (retried up to 3 times)
 ```
 
+Every message goes out in the language saved on the appointment (`appointments.locale`), with
+the manage link pointing at that language, whatever language the clinic staff use.
+
 Claims are idempotent, so the job can run twice (for example Supabase Cron and the fallback Vercel
 Cron in `vercel.json`) without sending anything twice, and a rescheduled appointment gets a fresh
 reminder for its new time. Channels implement one interface:
@@ -242,18 +257,105 @@ templates (`consulta_confirmada`, `consulta_lembrete`, `consulta_remarcada`, `co
 The WhatsApp channel is covered by unit tests against the API contract but has not been exercised
 against a live number.
 
+## Internationalization
+
+The site, booking flow, appointment pages, e-mails, reminders and clinic panel are bilingual:
+Brazilian Portuguese (default) and English. The English copy was written for an English-speaking
+patient, not translated word for word.
+
+**Routing.** [next-intl](https://next-intl.dev) with `localePrefix: 'always'`: every page lives
+under `/pt` or `/en`. A visit to `/` goes to the browser's language on the first visit and to the
+saved choice (`NEXT_LOCALE` cookie, one year) afterwards. Old links without a prefix redirect to the
+prefixed URL. URL slugs (`/tratamentos/limpeza`, `/agendar`) are the same in both languages, so
+links never break when someone switches language. The proxy composes the next-intl middleware with
+the panel's session check. Internal links, redirects, Server Actions and manage links all keep the
+current language.
+
+**Copy.** All interface text lives in `messages/<locale>.json`, typed from the Portuguese file, so
+a wrong key fails `pnpm typecheck`. Server Components read messages directly; client components
+receive only the namespaces they use (`src/i18n/client-messages.tsx`), so the message files never
+ship whole to the browser. Zod schemas return message keys instead of text, so the same schema
+validates in the browser and in the Server Action and the error is translated where it is shown.
+
+**Content in the database.** Treatments and dentists keep language-neutral data in their tables
+and their copy in `treatment_translations` and `dentist_translations`, keyed by `app_locale`.
+Queries ask only for the requested language plus the Portuguese fallback, and the results are cached
+per language.
+
+**The patient's language.** `book_appointment` stores the language the patient booked in on
+`appointments.locale`; appointments made before this existed are Portuguese. Confirmation,
+reschedule, cancellation and reminder messages use that language, and WhatsApp templates are
+requested in the matching template language. Patient cancellation reasons are stored as codes and
+shown in the reader's language.
+
+**The panel.** Each staff member's language is saved on `staff_profiles.locale`. The panel's
+language switcher saves the choice, and signing in lands each person in their saved language.
+
+**Dates and times.** Everything goes through `Intl` in `America/Sao_Paulo`: `terça-feira, 24 de
+novembro, 08:30` in Portuguese, `Tuesday, November 24 at 8:30 AM` in English, with AM and PM never
+split from the time.
+
+**SEO.** Each page declares its canonical URL in the current language and `hreflang` alternates
+for `pt-BR` and `en`, with `x-default` pointing at Portuguese. Titles, descriptions, Open Graph
+tags, the social card image and JSON-LD are localized, and the sitemap lists both versions of every
+page with their alternates.
+
+**Checks.** `pnpm messages:check` (in CI) fails when a key is missing from any language, when a
+message is empty, or when placeholders such as `{phone}` or rich-text tags differ between languages.
+The end-to-end suite runs the public site and booking flow in both languages, books, reschedules
+and cancels in English while asserting that no untranslated text or missing-key marker appears,
+switches language with the keyboard and on a phone, and checks that the panel remembers each staff
+member's choice.
+
+### Adding a language
+
+Every per-language map is a `Record<AppLocale, …>`, so after step 1 `pnpm typecheck` lists each place
+that still needs a value.
+
+1. Add the code to `locales` in `src/i18n/routing.ts`, for example `['pt', 'en', 'es']`.
+2. Fill in the new entries that `pnpm typecheck` asks for: `HTML_LANG`, `INTL_LOCALE`,
+   `OPEN_GRAPH_LOCALE` and `LOCALE_NAMES` in `src/i18n/locales.ts`, the time and hour styles in
+   `src/lib/format.ts`, and the WhatsApp template language in
+   `src/modules/notifications/channels/whatsapp.channel.ts`.
+3. Copy `messages/pt.json` to `messages/es.json`, translate it, and register it in
+   `src/i18n/server-messages.ts` (used by e-mails). Run `pnpm messages:check` until it passes.
+4. Add a migration that extends the enum and adds the catalog copy (missing rows fall back to
+   Portuguese):
+
+   ```sql
+   alter type public.app_locale add value 'es';
+   ```
+
+   Then insert the new rows into `treatment_translations` and `dentist_translations`, and run
+   `pnpm db:types`.
+
+5. Approve the WhatsApp templates in the new language if that channel is in use.
+6. Add the language to `LOCALES` and `CATALOG` in `tests/e2e/support/i18n.ts` so the end-to-end
+   suite runs in it too.
+
 ## Performance, accessibility and SEO
 
 Lighthouse 13.6, mobile preset (Moto G Power emulation, simulated slow 4G), production build behind
-a local HTTP/2 proxy. Median of three runs:
+a local HTTP/2 proxy. Median of three runs per page and language:
 
-| Page                            | Performance | Accessibility | Best practices | SEO |
-| ------------------------------- | :---------: | :-----------: | :------------: | :-: |
-| `/`                             |     95      |      100      |      100       | 100 |
-| `/tratamentos/limpeza`          |     96      |      100      |      100       | 100 |
-| `/equipe/helena-prado`          |     98      |      100      |      100       | 100 |
-| `/agendar`                      |     99      |      100      |      100       | 100 |
-| `/agendar/limpeza/helena-prado` |     98      |      100      |      100       | 100 |
+| Page                            | Performance (pt) | Performance (en) | Accessibility | Best practices | SEO |
+| ------------------------------- | :--------------: | :--------------: | :-----------: | :------------: | :-: |
+| `/`                             |        91        |        88        |      100      |      100       | 100 |
+| `/tratamentos/limpeza`          |        90        |        89        |      100      |      100       | 100 |
+| `/equipe/helena-prado`          |        97        |        96        |      100      |      100       | 100 |
+| `/agendar`                      |        97        |        98        |      100      |      100       | 100 |
+| `/agendar/limpeza/helena-prado` |        95        |        95        |      100      |      100       | 100 |
+
+These runs came from a slower and noisier machine than the first release's measurements (Lighthouse
+CPU benchmark around 1,700–2,300, against 2,100–2,600 before), when the same pages scored 95–99.
+On this same machine the build from before internationalization scored 71 on the home page (layout
+shift plus blocking time) and 91 on the treatment page, so the bilingual build is at least as fast.
+The home and treatment pages are held back by main-thread time during hydration, not by downloads.
+
+Internationalization kept the client bundle lean: messages are precompiled at build time, so the ICU
+parser never reaches the browser; client components receive only the namespaces they use; Zod stays
+out of the public pages; and the global error page lazy-loads its copy. The public home page ships
+187 KB of JavaScript, against 181 KB before.
 
 What moved the needle: Motion's animation features load lazily (150 KB → 34 KB on the critical
 path), Newsreader without the optical-size axis and a lazily loaded italic (307 KB → 115 KB of
@@ -265,17 +367,18 @@ pages, booking steps and the panel login; focus is always visible; every field h
 and error wired through `aria-describedby`; the stepper uses `aria-current="step"`; and a skip link
 is the first focusable element.
 
-Local SEO: per-page metadata and canonical URLs, generated Open Graph image, `sitemap.xml`,
-`robots.txt`, and JSON-LD for `Dentist` (address, geo, opening hours derived from the dentists'
-schedules, telephone, staff), `Person`, `MedicalProcedure`, `FAQPage` and `BreadcrumbList`.
+Local SEO: per-page metadata, canonical URLs and `hreflang` alternates in both languages,
+a generated Open Graph image per language, a bilingual `sitemap.xml`, `robots.txt`, and JSON-LD
+for `Dentist` (address, geo, opening hours derived from the dentists' schedules, telephone,
+staff), `Person`, `MedicalProcedure`, `FAQPage` and `BreadcrumbList`.
 
 ## Tests
 
-| Suite           | Command         | What it covers                                                                                                                                 |
-| --------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Unit (112)      | `pnpm test`     | Availability engine, clinic time, schemas, phone rules, tokens, `.ics`, templates, channels, agenda helpers, JSON-LD                           |
-| Database (37)   | `pnpm test:db`  | Exclusion constraint under concurrency, slot-rule trigger, RLS per role, role privileges, rate limit, reminder claims                          |
-| End-to-end (25) | `pnpm test:e2e` | Full booking → reschedule → cancel, validation, double booking with two browsers, panel roles and blocks, SEO, no sideways scroll, axe WCAG AA |
+| Suite           | Command         | What it covers                                                                                                                                                                                                                                                               |
+| --------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit (140)      | `pnpm test`     | Availability engine, clinic time, schemas and their translations, phone rules, tokens, `.ics`, templates in both languages, channels, agenda helpers, JSON-LD, SEO alternates, message file check                                                                            |
+| Database (43)   | `pnpm test:db`  | Exclusion constraint under concurrency, slot-rule trigger, RLS per role, role privileges, rate limit, reminder claims, translation tables, appointment and staff language                                                                                                    |
+| End-to-end (50) | `pnpm test:e2e` | Full booking → reschedule → cancel in both languages with an untranslated-text check, validation, double booking with two browsers, language routing and switcher, panel roles, blocks and language, hreflang and sitemap, no sideways scroll, axe WCAG AA in both languages |
 
 Unit coverage on domain logic: 98% lines, 87% branches (enforced thresholds in CI).
 
@@ -300,7 +403,8 @@ pnpm dev
 ```
 
 `db:start` runs Supabase locally (Postgres, Auth, REST) and applies the migrations and seed;
-`db:env` writes `.env.local` from the local stack. Open http://localhost:3000.
+`db:env` writes `.env.local` from the local stack. Open http://localhost:3000, which redirects to
+`/pt` or `/en` depending on your browser.
 
 Demo panel accounts (password `vertice-demo-2026`):
 
@@ -315,7 +419,7 @@ The seed generates appointments from two weeks ago to three weeks ahead relative
 run it, so the panel is never empty. `pnpm db:reset` regenerates everything. Confirmation and
 reminder messages print to the terminal while `NOTIFICATION_CHANNEL=console`.
 
-Other scripts: `pnpm lint`, `pnpm typecheck`, `pnpm format`, `pnpm test:coverage`,
+Other scripts: `pnpm lint`, `pnpm typecheck`, `pnpm format`, `pnpm messages:check`, `pnpm test:coverage`,
 `pnpm db:types` (regenerates `database.types.ts`) and `node scripts/capture-media.mjs` (regenerates
 the screenshots and GIF against a running build on port 3100).
 

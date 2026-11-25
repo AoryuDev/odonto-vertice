@@ -30,7 +30,7 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        test: { name: 'unit', include: ['src/**/*.test.ts'] },
+        test: { name: 'unit', include: ['src/**/*.test.ts', 'scripts/**/*.test.ts'] },
       },
       {
         extends: true,

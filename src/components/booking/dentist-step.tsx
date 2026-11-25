@@ -30,7 +30,6 @@ export async function DentistStep({
           ? t('bodyMany', { treatmentLower: treatment.name.toLowerCase() })
           : t('bodyOne', {
               treatment: treatment.name,
-              treatmentLower: treatment.name.toLowerCase(),
               dentist: dentists[0]?.displayName ?? t('team'),
             })}
       </StepHeading>

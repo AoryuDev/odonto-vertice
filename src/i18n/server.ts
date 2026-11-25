@@ -1,6 +1,6 @@
 import 'server-only'
 import { getLocale } from 'next-intl/server'
-import { localeSchema } from './locales'
+import { localeSchema } from './locale-schema'
 import { routing, type AppLocale } from './routing'
 
 export async function currentLocale(): Promise<AppLocale> {
