@@ -24,7 +24,7 @@ export async function ApproachSection() {
               className="aspect-[4/5] w-full rounded-[var(--radius-card)] object-cover object-[35%_50%]"
             />
           </Reveal>
-          <figure className="relative -mt-10 mr-6 ml-auto max-w-xs rounded-[1.25rem] bg-pine-900 p-5 text-paper md:absolute md:right-[-2.5rem] md:bottom-12 md:mt-0 md:mr-0">
+          <figure className="relative z-10 mx-auto -mt-12 max-w-[min(20rem,calc(100%-2.5rem))] rounded-[1.25rem] bg-pine-900 p-5 text-paper">
             <blockquote className="font-display text-[1.3rem] leading-snug italic">
               {t('quote')}
             </blockquote>
