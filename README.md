@@ -1,5 +1,10 @@
 # Odonto Vértice
 
+**Live:** [odonto-vertice-one.vercel.app](https://odonto-vertice-one.vercel.app) · Portuguese at
+[`/pt`](https://odonto-vertice-one.vercel.app/pt), English at
+[`/en`](https://odonto-vertice-one.vercel.app/en), clinic panel at
+[`/pt/painel`](https://odonto-vertice-one.vercel.app/pt/painel) (demo accounts below).
+
 > **Resumo em português** — Site e sistema de agendamento de uma clínica odontológica fictícia
 > no Setor Bueno, em Goiânia. O paciente escolhe tratamento, dentista (ou "qualquer disponível"),
 > dia e horário, e recebe por e-mail um link único para remarcar ou cancelar sem login. Os
@@ -447,8 +452,12 @@ the screenshots and GIF against a running build on port 3100).
    (`NEXT_PUBLIC_SITE_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`,
    `MANAGE_TOKEN_SECRET`, `CRON_SECRET`, `NOTIFICATION_CHANNEL` and the e-mail or WhatsApp keys).
 
-3. **GitHub Actions** deploys `main` after the quality and integration jobs pass. Add the
-   repository secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` and `SUPABASE_DB_URL`.
+3. **Continuous delivery**: either connect the repository in Vercel (Git integration deploys
+   every push to `main` and a preview for each pull request), or let GitHub Actions build and
+   deploy `main` after the quality and integration jobs pass by adding the repository secrets
+   `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`. Add `SUPABASE_DB_URL` (the Session
+   pooler connection string, port 5432) and the same job applies new migrations first. Steps
+   whose secrets are missing are skipped and listed in the run summary instead of failing.
 
 ## Photo credits
 

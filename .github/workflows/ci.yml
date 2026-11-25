@@ -78,6 +78,8 @@ jobs:
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      HAS_DATABASE_URL: ${{ secrets.SUPABASE_DB_URL != '' }}
+      HAS_VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -87,10 +89,22 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Apply database migrations
+        if: env.HAS_DATABASE_URL == 'true'
         run: pnpm exec supabase db push --db-url "${{ secrets.SUPABASE_DB_URL }}"
       - name: Pull Vercel environment
+        if: env.HAS_VERCEL_TOKEN == 'true'
         run: pnpm dlx vercel@66.4.0 pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
       - name: Build
+        if: env.HAS_VERCEL_TOKEN == 'true'
         run: pnpm dlx vercel@66.4.0 build --prod --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy
+        if: env.HAS_VERCEL_TOKEN == 'true'
         run: pnpm dlx vercel@66.4.0 deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Report skipped steps
+        if: env.HAS_DATABASE_URL != 'true' || env.HAS_VERCEL_TOKEN != 'true'
+        run: |
+          {
+            echo '### Deploy steps skipped'
+            [ "$HAS_DATABASE_URL" = 'true' ] || echo '- Migrations: add the `SUPABASE_DB_URL` secret to run them here.'
+            [ "$HAS_VERCEL_TOKEN" = 'true' ] || echo '- Vercel: add `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`, or let the Vercel Git integration deploy `main`.'
+          } >> "$GITHUB_STEP_SUMMARY"
