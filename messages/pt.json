@@ -410,11 +410,11 @@
     "banners": {
       "booked": {
         "title": "Consulta confirmada",
-        "body": "Enviamos os detalhes para {email}. Guarde este link para remarcar ou cancelar."
+        "body": "{delivery, select, email {Enviamos os detalhes para {email}. Guarde este link para remarcar ou cancelar.} whatsapp {Enviamos os detalhes pelo WhatsApp. Guarde este link para remarcar ou cancelar.} other {Guarde este link para remarcar ou cancelar.}}"
       },
       "rescheduled": {
         "title": "Consulta remarcada",
-        "body": "O novo horário já está na agenda e a confirmação foi enviada por e-mail."
+        "body": "{delivery, select, email {O novo horário já está na agenda e a confirmação foi enviada por e-mail.} whatsapp {O novo horário já está na agenda e a confirmação foi enviada pelo WhatsApp.} other {O novo horário já está na agenda.}}"
       },
       "cancelled": {
         "title": "Consulta cancelada",
@@ -593,7 +593,7 @@
       "back": "Agenda de {date}",
       "flash": {
         "cancelada": "Consulta cancelada.",
-        "remarcada": "Consulta remarcada. O paciente recebeu o novo horário por e-mail.",
+        "remarcada": "{delivery, select, email {Consulta remarcada. O paciente recebeu o novo horário por e-mail.} whatsapp {Consulta remarcada. O paciente recebeu o novo horário pelo WhatsApp.} other {Consulta remarcada.}}",
         "presenca": "Presença registrada.",
         "status": "Essa ação não vale para o status atual da consulta.",
         "horario": "Esse horário não está mais livre. Escolha outro.",

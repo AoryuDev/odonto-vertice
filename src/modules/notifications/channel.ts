@@ -25,3 +25,10 @@ export function notificationChannel(): NotificationChannel {
       return consoleChannel
   }
 }
+
+export type NoticeDelivery = 'email' | 'whatsapp' | 'none'
+
+export function noticeDelivery(): NoticeDelivery {
+  const channel = serverEnv().NOTIFICATION_CHANNEL
+  return channel === 'console' ? 'none' : channel
+}

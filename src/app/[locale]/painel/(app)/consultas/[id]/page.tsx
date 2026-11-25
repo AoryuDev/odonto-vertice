@@ -23,6 +23,7 @@ import { currentLocale } from '@/i18n/server'
 import { parseCancellationNote } from '@/modules/booking/cancellation'
 import { requireStaff } from '@/modules/admin/session'
 import { buildSlotBoard } from '@/modules/booking/booking-view'
+import { noticeDelivery } from '@/modules/notifications/channel'
 import { rescheduleContext } from '@/modules/booking/manage.service'
 import { listDentists } from '@/modules/catalog/catalog.repository'
 import { formatBrazilianPhone, whatsappLinkFor } from '@/modules/patients/phone'
@@ -92,7 +93,10 @@ async function AppointmentContent({ params, searchParams }: Props) {
   const date = toLocalDate(appointment.start, CLINIC_TIME_ZONE)
   const flashKey = flashKeyFrom(query.ok) ?? flashKeyFrom(query.erro)
   const flash = flashKey
-    ? { tone: FLASH_TONES[flashKey], text: t(`appointment.flash.${flashKey}`) }
+    ? {
+        tone: FLASH_TONES[flashKey],
+        text: t(`appointment.flash.${flashKey}`, { delivery: noticeDelivery() }),
+      }
     : undefined
   const canReschedule = appointment.status === 'scheduled' && isFuture
 

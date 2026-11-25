@@ -7,6 +7,7 @@ import {
   localized,
   MESSAGES,
   plain,
+  translate,
   type Locale,
 } from './support/i18n'
 
@@ -52,7 +53,13 @@ for (const locale of LOCALES) {
       await expect(
         page.getByRole('heading', { name: text.manage.banners.booked.title }),
       ).toBeVisible()
-      await expect(page.getByRole('main').getByText(patient.email)).toBeVisible()
+      const bookedBanner = page
+        .getByRole('status')
+        .filter({ hasText: text.manage.banners.booked.title })
+      await expect(bookedBanner).toContainText(
+        translate(locale, 'manage.banners.booked.body', { delivery: 'none', email: patient.email }),
+      )
+      await expect(bookedBanner).not.toContainText(patient.email)
       await expect(page.getByRole('definition').filter({ hasText: dentist })).toBeVisible()
       await expect(
         page.getByRole('main').getByText(text.manage.status.scheduled, { exact: true }),

@@ -1,4 +1,5 @@
 import { expect, type Page } from '@playwright/test'
+import { createTranslator } from 'next-intl'
 import en from '../../../messages/en.json'
 import pt from '../../../messages/pt.json'
 
@@ -41,6 +42,15 @@ export function plain(message: string): string {
 
 export function format(message: string, values: Record<string, string | number>): string {
   return plain(message).replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ''))
+}
+
+export function translate(
+  locale: Locale,
+  key: string,
+  values: Record<string, string | number> = {},
+): string {
+  const t = createTranslator({ locale, messages: MESSAGES[locale] })
+  return t(key as never, values as never) as string
 }
 
 const PORTUGUESE_ONLY =

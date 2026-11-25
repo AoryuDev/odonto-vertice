@@ -13,6 +13,7 @@ import { cn } from '@/lib/cn'
 import { PATIENT_CANCELLATION_REASONS } from '@/modules/booking/schemas'
 import { clinic, directionsUrl } from '@/modules/catalog/clinic'
 import { loadManageView, manageFailureFrom } from '@/modules/booking/manage-view'
+import { noticeDelivery } from '@/modules/notifications/channel'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('manage')
@@ -75,7 +76,10 @@ async function ManageContent({ params, searchParams }: Props) {
   const banner = bannerKey
     ? {
         title: t(`banners.${bannerKey}.title`),
-        body: t(`banners.${bannerKey}.body`, { email: appointment.patient.email }),
+        body: t(`banners.${bannerKey}.body`, {
+          email: appointment.patient.email,
+          delivery: noticeDelivery(),
+        }),
       }
     : undefined
 

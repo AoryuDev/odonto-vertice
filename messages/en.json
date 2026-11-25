@@ -410,11 +410,11 @@
     "banners": {
       "booked": {
         "title": "Appointment confirmed",
-        "body": "We’ve sent the details to {email}. Keep this link to reschedule or cancel."
+        "body": "{delivery, select, email {We’ve sent the details to {email}. Keep this link to reschedule or cancel.} whatsapp {We’ve sent the details on WhatsApp. Keep this link to reschedule or cancel.} other {Keep this link to reschedule or cancel.}}"
       },
       "rescheduled": {
         "title": "Appointment rescheduled",
-        "body": "Your new time is in the schedule and the confirmation is on its way by email."
+        "body": "{delivery, select, email {Your new time is in the schedule and the confirmation is on its way by email.} whatsapp {Your new time is in the schedule and the confirmation is on its way on WhatsApp.} other {Your new time is in the schedule.}}"
       },
       "cancelled": {
         "title": "Appointment cancelled",
@@ -593,7 +593,7 @@
       "back": "Schedule for {date}",
       "flash": {
         "cancelada": "Appointment cancelled.",
-        "remarcada": "Appointment rescheduled. The patient has been emailed the new time.",
+        "remarcada": "{delivery, select, email {Appointment rescheduled. The patient has been emailed the new time.} whatsapp {Appointment rescheduled. The patient has been sent the new time on WhatsApp.} other {Appointment rescheduled.}}",
         "presenca": "Attendance recorded.",
         "status": "That action doesn’t apply to this appointment’s current status.",
         "horario": "That time is no longer free. Please pick another.",
