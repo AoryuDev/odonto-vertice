@@ -13,13 +13,21 @@ import { absoluteUrl } from '@/lib/site'
 import { listDentists, openingHours } from '@/modules/catalog/catalog.repository'
 import { dentistOrganizationSchema } from '@/modules/catalog/structured-data'
 import { currentLocale } from '@/i18n/server'
+import type { Metadata } from 'next'
+import { localizedAlternates } from '@/i18n/seo'
+import { getStructuredDataText } from '@/i18n/structured-data-text'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return { alternates: localizedAlternates('/', await currentLocale()) }
+}
 
 export default async function HomePage() {
   const locale = await currentLocale()
-  const [hours, dentists, faqs] = await Promise.all([
+  const [hours, dentists, faqs, text] = await Promise.all([
     openingHours(),
     listDentists(locale),
     homeFaqs(),
+    getStructuredDataText(locale),
   ])
 
   return (
@@ -29,6 +37,8 @@ export default async function HomePage() {
           hours,
           dentists,
           imageUrl: absoluteUrl(photos.clinicRoom.src.src),
+          locale,
+          text,
         })}
       />
       <JsonLd

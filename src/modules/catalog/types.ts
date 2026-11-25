@@ -12,13 +12,7 @@ export const treatmentContentSchema = z.object({
 
 export type TreatmentContent = z.infer<typeof treatmentContentSchema>
 
-export const SPECIALTY_LABELS = {
-  general_dentistry: 'Clínica geral',
-  orthodontics: 'Ortodontia',
-  implantology: 'Implantodontia',
-} as const
-
-export type Specialty = keyof typeof SPECIALTY_LABELS
+export type Specialty = 'general_dentistry' | 'orthodontics' | 'implantology'
 
 export type Treatment = {
   readonly id: string

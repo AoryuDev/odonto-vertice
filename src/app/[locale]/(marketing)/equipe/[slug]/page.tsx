@@ -16,8 +16,10 @@ import { formatDuration, formatHour } from '@/lib/format'
 import { absoluteUrl } from '@/lib/site'
 import { findDentist, listDentists, listTreatments } from '@/modules/catalog/catalog.repository'
 import { breadcrumbSchema, dentistPersonSchema } from '@/modules/catalog/structured-data'
-import { SPECIALTY_LABELS } from '@/modules/catalog/types'
 import { routing } from '@/i18n/routing'
+import { localizedAlternates, localizedPath, openGraphLocales } from '@/i18n/seo'
+import { getStructuredDataText } from '@/i18n/structured-data-text'
+import { clinic } from '@/modules/catalog/clinic'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -26,20 +28,31 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const dentist = await findDentist((await params).slug, await currentLocale())
+  const locale = await currentLocale()
+  const dentist = await findDentist((await params).slug, locale)
   if (!dentist) return {}
   const photo = dentistPhoto(dentist.photoKey)
-  const tPhoto = await getTranslations('photoAlt')
-  const title = `${dentist.displayName}, ${SPECIALTY_LABELS[dentist.specialty].toLowerCase()} em Goiânia`
+  const [tPhoto, tSeo, tSpecialty] = await Promise.all([
+    getTranslations({ locale, namespace: 'photoAlt' }),
+    getTranslations({ locale, namespace: 'seo' }),
+    getTranslations({ locale, namespace: 'specialty' }),
+  ])
+  const title = tSeo('dentistTitle', {
+    dentist: dentist.displayName,
+    specialty: tSpecialty(dentist.specialty).toLowerCase(),
+  })
+  const path = `/equipe/${dentist.slug}`
   return {
     title,
     description: dentist.headline,
-    alternates: { canonical: `/equipe/${dentist.slug}` },
+    alternates: localizedAlternates(path, locale),
     openGraph: {
-      title: `${title} · Odonto Vértice`,
+      siteName: clinic.name,
+      title: `${title} · ${clinic.name}`,
       description: dentist.headline,
-      url: `/equipe/${dentist.slug}`,
+      url: localizedPath(path, locale),
       type: 'profile',
+      ...openGraphLocales(locale),
       images: [
         {
           url: photo.src.src,
@@ -57,7 +70,7 @@ export const instant = false
 export default async function DentistPage({ params }: Props) {
   const { slug } = await params
   const locale = await currentLocale()
-  const [t, tCrumbs, tSpecialty, tPhoto, weekdays, dentist, treatments] = await Promise.all([
+  const [t, tCrumbs, tSpecialty, tPhoto, weekdays, dentist, treatments, text] = await Promise.all([
     getTranslations({ locale, namespace: 'dentistPage' }),
     getTranslations({ locale, namespace: 'breadcrumbs' }),
     getTranslations({ locale, namespace: 'specialty' }),
@@ -65,6 +78,7 @@ export default async function DentistPage({ params }: Props) {
     getWeekdayLabels(locale),
     findDentist(slug, locale),
     listTreatments(locale),
+    getStructuredDataText(locale),
   ])
   if (!dentist) notFound()
 
@@ -81,8 +95,8 @@ export default async function DentistPage({ params }: Props) {
 
   return (
     <>
-      <JsonLd data={dentistPersonSchema(dentist, absoluteUrl(photo.src.src))} />
-      <JsonLd data={breadcrumbSchema(crumbs)} />
+      <JsonLd data={dentistPersonSchema(dentist, absoluteUrl(photo.src.src), locale, text)} />
+      <JsonLd data={breadcrumbSchema(crumbs, locale)} />
 
       <section className="container-page pt-8 pb-16 md:pt-12 md:pb-24">
         <Breadcrumbs items={crumbs} />

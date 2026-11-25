@@ -1,14 +1,30 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { cacheLife } from 'next/cache'
 import { ImageResponse } from 'next/og'
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-async function loadFonts() {
+async function readFonts(): Promise<[Uint8Array, Uint8Array]> {
+  'use cache'
+  cacheLife('max')
   const [display, sans] = await Promise.all([
     readFile(join(process.cwd(), 'src/assets/fonts/Newsreader-Medium.woff')),
     readFile(join(process.cwd(), 'src/assets/fonts/HankenGrotesk-Medium.woff')),
   ])
+  return [new Uint8Array(display), new Uint8Array(sans)]
+}
+
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new Uint8Array(bytes.byteLength)
+  copy.set(bytes)
+  return copy.buffer
+}
+
+async function loadFonts() {
+  const [displayBytes, sansBytes] = await readFonts()
+  const display = toArrayBuffer(displayBytes)
+  const sans = toArrayBuffer(sansBytes)
   return [
     { name: 'Newsreader', data: display, weight: 500 as const, style: 'normal' as const },
     { name: 'Hanken Grotesk', data: sans, weight: 500 as const, style: 'normal' as const },

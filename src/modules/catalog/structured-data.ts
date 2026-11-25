@@ -1,31 +1,35 @@
-import { absoluteUrl, siteUrl } from '@/lib/site'
+import type { AppLocale } from '@/i18n/routing'
+import { localizedUrl } from '@/i18n/seo'
+import { siteUrl } from '@/lib/site'
 import { SCHEMA_ORG_WEEKDAYS, type OpeningHours } from '@/modules/schedule/domain/opening-hours'
 import { clinic } from './clinic'
-import { SPECIALTY_LABELS, type Dentist, type Treatment } from './types'
+import type { Dentist, Treatment } from './types'
 
 const CLINIC_ID = `${siteUrl}/#clinic`
 
-function jobTitle(dentist: Dentist): string {
-  const title = dentist.displayName.startsWith('Dra.') ? 'Cirurgiã-dentista' : 'Cirurgião-dentista'
-  return `${title} — ${SPECIALTY_LABELS[dentist.specialty]}`
+export type StructuredDataText = {
+  readonly paymentAccepted: string
+  readonly jobTitle: (dentist: Dentist) => string
 }
 
 export function dentistOrganizationSchema(input: {
   hours: readonly OpeningHours[]
   dentists: readonly Dentist[]
   imageUrl: string
+  locale: AppLocale
+  text: StructuredDataText
 }): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'Dentist',
     '@id': CLINIC_ID,
     name: clinic.name,
-    url: siteUrl,
+    url: localizedUrl('/', input.locale),
     image: input.imageUrl,
     telephone: clinic.phone.e164,
     email: clinic.email,
     currenciesAccepted: 'BRL',
-    paymentAccepted: 'Particular, convênios odontológicos',
+    paymentAccepted: input.text.paymentAccepted,
     address: {
       '@type': 'PostalAddress',
       streetAddress: clinic.address.street,
@@ -39,7 +43,7 @@ export function dentistOrganizationSchema(input: {
       latitude: clinic.geo.latitude,
       longitude: clinic.geo.longitude,
     },
-    areaServed: { '@type': 'City', name: 'Goiânia' },
+    areaServed: { '@type': 'City', name: clinic.address.city },
     openingHoursSpecification: input.hours.map((entry) => ({
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: `https://schema.org/${SCHEMA_ORG_WEEKDAYS[entry.weekday]}`,
@@ -50,13 +54,16 @@ export function dentistOrganizationSchema(input: {
     employee: input.dentists.map((dentist) => ({
       '@type': 'Person',
       name: dentist.fullName,
-      jobTitle: jobTitle(dentist),
-      url: absoluteUrl(`/equipe/${dentist.slug}`),
+      jobTitle: input.text.jobTitle(dentist),
+      url: localizedUrl(`/equipe/${dentist.slug}`, input.locale),
     })),
   }
 }
 
-export function breadcrumbSchema(items: readonly { name: string; path: string }[]) {
+export function breadcrumbSchema(
+  items: readonly { name: string; path: string }[],
+  locale: AppLocale,
+) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -64,33 +71,38 @@ export function breadcrumbSchema(items: readonly { name: string; path: string }[
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: absoluteUrl(item.path),
+      item: localizedUrl(item.path, locale),
     })),
   }
 }
 
-export function treatmentSchema(treatment: Treatment, imageUrl: string) {
+export function treatmentSchema(treatment: Treatment, imageUrl: string, locale: AppLocale) {
   return {
     '@context': 'https://schema.org',
     '@type': 'MedicalProcedure',
     name: treatment.name,
     description: treatment.summary,
-    url: absoluteUrl(`/tratamentos/${treatment.slug}`),
+    url: localizedUrl(`/tratamentos/${treatment.slug}`, locale),
     image: imageUrl,
     procedureType: 'https://schema.org/NoninvasiveProcedure',
     provider: { '@id': CLINIC_ID },
   }
 }
 
-export function dentistPersonSchema(dentist: Dentist, imageUrl: string) {
+export function dentistPersonSchema(
+  dentist: Dentist,
+  imageUrl: string,
+  locale: AppLocale,
+  text: StructuredDataText,
+) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: dentist.fullName,
-    jobTitle: jobTitle(dentist),
+    jobTitle: text.jobTitle(dentist),
     description: dentist.headline,
     image: imageUrl,
-    url: absoluteUrl(`/equipe/${dentist.slug}`),
+    url: localizedUrl(`/equipe/${dentist.slug}`, locale),
     identifier: dentist.croRegistration,
     worksFor: { '@id': CLINIC_ID },
   }

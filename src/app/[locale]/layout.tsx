@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { hasLocale } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import * as rootParams from 'next/root-params'
 import type { ReactNode } from 'react'
@@ -9,27 +10,28 @@ import { routing } from '@/i18n/routing'
 import { siteUrl } from '@/lib/site'
 import { hanken, newsreader, newsreaderItalic } from '../fonts'
 import '../globals.css'
+import { openGraphLocales } from '@/i18n/seo'
+import { clinic } from '@/modules/catalog/clinic'
 
-const description =
-  'Clínica odontológica no Setor Bueno, em Goiânia. Clínica geral, ortodontia e implantes, com atendimento particular e por convênio e agendamento online.'
-
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: 'Odonto Vértice — Dentista no Setor Bueno, Goiânia',
-    template: '%s · Odonto Vértice',
-  },
-  description,
-  applicationName: 'Odonto Vértice',
-  openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
-    siteName: 'Odonto Vértice',
-    title: 'Odonto Vértice — Dentista no Setor Bueno, Goiânia',
-    description,
-  },
-  twitter: { card: 'summary_large_image' },
-  formatDetection: { telephone: false, address: false, email: false },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('seo')
+  const locale = await rootParams.locale()
+  const resolved = hasLocale(routing.locales, locale) ? locale : routing.defaultLocale
+  return {
+    metadataBase: new URL(siteUrl),
+    title: { default: t('siteTitle'), template: t('titleTemplate') },
+    description: t('description'),
+    applicationName: clinic.name,
+    openGraph: {
+      type: 'website',
+      siteName: clinic.name,
+      title: t('siteTitle'),
+      description: t('description'),
+      ...openGraphLocales(resolved),
+    },
+    twitter: { card: 'summary_large_image' },
+    formatDetection: { telephone: false, address: false, email: false },
+  }
 }
 
 export const viewport: Viewport = {

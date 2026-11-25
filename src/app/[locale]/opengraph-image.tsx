@@ -1,12 +1,17 @@
+import { getTranslations } from 'next-intl/server'
+import { localeFrom } from '@/i18n/server'
 import { OG_SIZE, renderOgImage } from '../og-template'
 
-export const alt = 'Odonto Vértice — clínica odontológica no Setor Bueno, Goiânia'
-export const size = OG_SIZE
+type Props = { params: Promise<{ locale: string }> }
+
 export const contentType = 'image/png'
 
-export default function OpenGraphImage() {
-  return renderOgImage({
-    eyebrow: 'Clínica odontológica',
-    title: 'Clínica geral, ortodontia e implantes no Setor Bueno.',
-  })
+export async function generateImageMetadata({ params }: Props) {
+  const t = await getTranslations({ locale: localeFrom((await params).locale), namespace: 'seo' })
+  return [{ id: 'card', alt: t('ogAlt'), size: OG_SIZE, contentType }]
+}
+
+export default async function OpenGraphImage({ params }: Props) {
+  const t = await getTranslations({ locale: localeFrom((await params).locale), namespace: 'seo' })
+  return renderOgImage({ eyebrow: t('ogEyebrow'), title: t('ogTitle') })
 }

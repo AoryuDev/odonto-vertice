@@ -6,6 +6,7 @@ import {
   dentistOrganizationSchema,
   dentistPersonSchema,
   treatmentSchema,
+  type StructuredDataText,
 } from './structured-data'
 import { treatmentContentSchema, type Dentist, type Treatment } from './types'
 
@@ -50,12 +51,20 @@ describe('clinic contact helpers', () => {
   })
 })
 
+const text: StructuredDataText = {
+  paymentAccepted: 'Particular, convênios odontológicos',
+  jobTitle: (person) =>
+    `${person.displayName.startsWith('Dra.') ? 'Cirurgiã' : 'Cirurgião'}-dentista — Clínica geral`,
+}
+
 describe('structured data', () => {
   it('describes the clinic as a Dentist with address, geo, hours and staff', () => {
     const schema = dentistOrganizationSchema({
       hours: [{ weekday: 1, opensAt: parseLocalTime('08:00'), closesAt: parseLocalTime('18:30') }],
       dentists: [dentist],
       imageUrl: 'https://example.com/clinic.jpg',
+      locale: 'pt',
+      text,
     })
 
     expect(schema).toMatchObject({
@@ -69,32 +78,43 @@ describe('structured data', () => {
       openingHoursSpecification: [
         { dayOfWeek: 'https://schema.org/Monday', opens: '08:00', closes: '18:30' },
       ],
-      employee: [{ name: 'Helena Prado Sato', jobTitle: 'Cirurgiã-dentista — Clínica geral' }],
+      employee: [
+        {
+          name: 'Helena Prado Sato',
+          jobTitle: 'Cirurgiã-dentista — Clínica geral',
+          url: 'http://localhost:3000/pt/equipe/helena-prado',
+        },
+      ],
     })
     expect(JSON.stringify(schema)).not.toMatch(/price|offer/i)
   })
 
   it('describes people, procedures and breadcrumbs', () => {
     expect(
-      dentistPersonSchema({ ...dentist, displayName: 'Dr. Rafael Tavares' }, 'x'),
+      dentistPersonSchema({ ...dentist, displayName: 'Dr. Rafael Tavares' }, 'x', 'en', text),
     ).toMatchObject({
       '@type': 'Person',
       jobTitle: 'Cirurgião-dentista — Clínica geral',
       identifier: 'CRO-GO 11482',
+      url: 'http://localhost:3000/en/equipe/helena-prado',
     })
-    expect(treatmentSchema(treatment, 'x')).toMatchObject({
+    expect(treatmentSchema(treatment, 'x', 'pt')).toMatchObject({
       '@type': 'MedicalProcedure',
       name: 'Limpeza',
+      url: 'http://localhost:3000/pt/tratamentos/limpeza',
     })
     expect(
-      breadcrumbSchema([
-        { name: 'Início', path: '/' },
-        { name: 'Limpeza', path: '/tratamentos/limpeza' },
-      ]),
+      breadcrumbSchema(
+        [
+          { name: 'Home', path: '/' },
+          { name: 'Cleaning', path: '/tratamentos/limpeza' },
+        ],
+        'en',
+      ),
     ).toMatchObject({
       itemListElement: [
-        { position: 1, name: 'Início' },
-        { position: 2, name: 'Limpeza' },
+        { position: 1, name: 'Home', item: 'http://localhost:3000/en' },
+        { position: 2, name: 'Cleaning', item: 'http://localhost:3000/en/tratamentos/limpeza' },
       ],
     })
   })

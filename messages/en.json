@@ -661,5 +661,20 @@
         "saveFailed": "Couldn’t save the block."
       }
     }
+  },
+  "seo": {
+    "siteTitle": "Odonto Vértice — Dentist in Setor Bueno, Goiânia",
+    "titleTemplate": "%s · Odonto Vértice",
+    "description": "Dental clinic in Setor Bueno, Goiânia. General dentistry, orthodontics and implants, with self-pay and insurance appointments and online booking.",
+    "treatmentTitle": "{treatment} in Setor Bueno, Goiânia",
+    "dentistTitle": "{dentist}, {specialty} in Goiânia",
+    "creditsTitle": "Photo credits",
+    "creditsDescription": "The photographs used on the Odonto Vértice website, with credits and license.",
+    "ogAlt": "Odonto Vértice — dental clinic in Setor Bueno, Goiânia",
+    "ogEyebrow": "Dental clinic",
+    "ogTitle": "General dentistry, orthodontics and implants in Setor Bueno.",
+    "paymentAccepted": "Self-pay, dental insurance",
+    "jobTitleFemale": "Dentist — {specialty}",
+    "jobTitleMale": "Dentist — {specialty}"
   }
 }

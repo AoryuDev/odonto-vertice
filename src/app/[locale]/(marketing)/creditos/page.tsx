@@ -3,12 +3,18 @@ import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 import { Eyebrow } from '@/components/ui/eyebrow'
 import { uniquePhotoCredits } from '@/content/photos'
+import { currentLocale } from '@/i18n/server'
+import { localizedAlternates } from '@/i18n/seo'
 
-export const metadata: Metadata = {
-  title: 'Créditos das fotos',
-  description: 'Fotografias usadas no site da Odonto Vértice, com autoria e licença.',
-  alternates: { canonical: '/creditos' },
-  robots: { index: false, follow: true },
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await currentLocale()
+  const t = await getTranslations({ locale, namespace: 'seo' })
+  return {
+    title: t('creditsTitle'),
+    description: t('creditsDescription'),
+    alternates: localizedAlternates('/creditos', locale),
+    robots: { index: false, follow: true },
+  }
 }
 
 export default async function CreditsPage() {

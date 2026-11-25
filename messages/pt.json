@@ -661,5 +661,20 @@
         "saveFailed": "Não foi possível salvar o bloqueio."
       }
     }
+  },
+  "seo": {
+    "siteTitle": "Odonto Vértice — Dentista no Setor Bueno, Goiânia",
+    "titleTemplate": "%s · Odonto Vértice",
+    "description": "Clínica odontológica no Setor Bueno, em Goiânia. Clínica geral, ortodontia e implantes, com atendimento particular e por convênio e agendamento online.",
+    "treatmentTitle": "{treatment} no Setor Bueno, Goiânia",
+    "dentistTitle": "{dentist}, {specialty} em Goiânia",
+    "creditsTitle": "Créditos das fotos",
+    "creditsDescription": "Fotografias usadas no site da Odonto Vértice, com autoria e licença.",
+    "ogAlt": "Odonto Vértice — clínica odontológica no Setor Bueno, Goiânia",
+    "ogEyebrow": "Clínica odontológica",
+    "ogTitle": "Clínica geral, ortodontia e implantes no Setor Bueno.",
+    "paymentAccepted": "Particular, convênios odontológicos",
+    "jobTitleFemale": "Cirurgiã-dentista — {specialty}",
+    "jobTitleMale": "Cirurgião-dentista — {specialty}"
   }
 }

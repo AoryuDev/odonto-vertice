@@ -20,6 +20,7 @@ import {
 } from '@/modules/booking/booking-view'
 import { ANY_DENTIST } from '@/modules/booking/schemas'
 import { currentLocale } from '@/i18n/server'
+import { localizedAlternates } from '@/i18n/seo'
 
 export const instant = false
 
@@ -40,13 +41,18 @@ async function resolve(params: Promise<Params>): Promise<BookingChoice | undefin
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const [choice, t] = await Promise.all([resolve(params), getTranslations('booking.meta')])
+  const locale = await currentLocale()
+  const [choice, t] = await Promise.all([
+    resolve(params),
+    getTranslations({ locale, namespace: 'booking.meta' }),
+  ])
   return choice
     ? {
         title: t('slotsTitle', { treatment: choice.treatment.name }),
-        alternates: {
-          canonical: bookingHref({ treatment: choice.treatment.slug, dentist: choice.dentistSlug }),
-        },
+        alternates: localizedAlternates(
+          bookingHref({ treatment: choice.treatment.slug, dentist: choice.dentistSlug }),
+          locale,
+        ),
       }
     : {}
 }

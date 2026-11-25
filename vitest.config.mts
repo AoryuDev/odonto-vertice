@@ -9,6 +9,7 @@ export default defineConfig({
     environment: 'node',
     exclude: ['tests/e2e/**', 'node_modules/**'],
     setupFiles: ['./tests/setup/server-only.ts'],
+    server: { deps: { inline: ['next-intl'] } },
     coverage: {
       provider: 'v8',
       include: ['src/modules/**/*.ts'],

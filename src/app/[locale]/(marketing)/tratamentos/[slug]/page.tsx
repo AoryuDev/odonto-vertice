@@ -18,6 +18,8 @@ import { absoluteUrl } from '@/lib/site'
 import { findTreatment, listDentists, listTreatments } from '@/modules/catalog/catalog.repository'
 import { breadcrumbSchema, treatmentSchema } from '@/modules/catalog/structured-data'
 import { routing } from '@/i18n/routing'
+import { localizedAlternates, localizedPath, openGraphLocales } from '@/i18n/seo'
+import { clinic } from '@/modules/catalog/clinic'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -28,19 +30,27 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const treatment = await findTreatment((await params).slug, await currentLocale())
+  const locale = await currentLocale()
+  const treatment = await findTreatment((await params).slug, locale)
   if (!treatment) return {}
   const photo = treatmentPhoto(treatment.photoKey)
-  const tPhoto = await getTranslations('photoAlt')
-  const title = `${treatment.name} no Setor Bueno, Goiânia`
+  const [tPhoto, tSeo] = await Promise.all([
+    getTranslations({ locale, namespace: 'photoAlt' }),
+    getTranslations({ locale, namespace: 'seo' }),
+  ])
+  const title = tSeo('treatmentTitle', { treatment: treatment.name })
+  const path = `/tratamentos/${treatment.slug}`
   return {
     title,
     description: treatment.summary,
-    alternates: { canonical: `/tratamentos/${treatment.slug}` },
+    alternates: localizedAlternates(path, locale),
     openGraph: {
-      title: `${title} · Odonto Vértice`,
+      type: 'website',
+      siteName: clinic.name,
+      title: `${title} · ${clinic.name}`,
       description: treatment.summary,
-      url: `/tratamentos/${treatment.slug}`,
+      url: localizedPath(path, locale),
+      ...openGraphLocales(locale),
       images: [
         {
           url: photo.src.src,
@@ -83,8 +93,8 @@ export default async function TreatmentPage({ params }: Props) {
 
   return (
     <>
-      <JsonLd data={treatmentSchema(treatment, absoluteUrl(photo.src.src))} />
-      <JsonLd data={breadcrumbSchema(crumbs)} />
+      <JsonLd data={treatmentSchema(treatment, absoluteUrl(photo.src.src), locale)} />
+      <JsonLd data={breadcrumbSchema(crumbs, locale)} />
       {content.faqs.length > 0 ? (
         <JsonLd
           data={{

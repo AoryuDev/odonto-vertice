@@ -8,6 +8,7 @@ import { findTreatmentWithDentists } from '@/modules/booking/booking-view'
 import { listTreatments } from '@/modules/catalog/catalog.repository'
 import { currentLocale } from '@/i18n/server'
 import { routing } from '@/i18n/routing'
+import { localizedAlternates } from '@/i18n/seo'
 
 export const instant = false
 
@@ -21,14 +22,15 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { tratamento } = await params
+  const locale = await currentLocale()
   const found = isTreatmentParam(tratamento)
-    ? await findTreatmentWithDentists(tratamento, await currentLocale())
+    ? await findTreatmentWithDentists(tratamento, locale)
     : undefined
-  const t = await getTranslations('booking.meta')
+  const t = await getTranslations({ locale, namespace: 'booking.meta' })
   return found
     ? {
         title: t('treatmentTitle', { treatment: found.treatment.name.toLowerCase() }),
-        alternates: { canonical: bookingHref({ treatment: found.treatment.slug }) },
+        alternates: localizedAlternates(bookingHref({ treatment: found.treatment.slug }), locale),
       }
     : {}
 }
