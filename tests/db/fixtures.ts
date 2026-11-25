@@ -44,14 +44,19 @@ export async function createTestDentist(daysAhead = 200): Promise<TestDentist> {
   const suffix = id.slice(0, 8)
   const date = await findOpenDate(daysAhead)
   await pool.query(
-    `insert into public.dentists
-       (id, slug, full_name, display_name, specialty, cro_registration, headline, bio, photo_key)
-     values ($1, $2, 'Test Dentist', 'Dr. Test', 'general_dentistry', $3, 'Test', array['Test'], 'test')`,
+    `insert into public.dentists (id, slug, full_name, specialty, cro_registration, photo_key)
+     values ($1, $2, 'Test Dentist', 'general_dentistry', $3, 'test')`,
     [
       id,
       `test-${suffix}`,
       `CRO-GO ${String(Number.parseInt(suffix, 16) % 900000).padStart(6, '1')}`,
     ],
+  )
+  await pool.query(
+    `insert into public.dentist_translations (dentist_id, locale, display_name, headline, bio)
+     values ($1, 'pt', 'Dra. Teste', 'Teste', array['Teste']),
+            ($1, 'en', 'Dr. Test', 'Test', array['Test'])`,
+    [id],
   )
   await pool.query(
     `insert into public.weekly_schedules (dentist_id, weekday, starts_at, ends_at, lunch_starts_at, lunch_ends_at)
@@ -89,6 +94,7 @@ export function tokenHash(): Buffer {
 }
 
 export type BookInput = {
+  locale?: 'pt' | 'en'
   dentistId: string
   treatmentId?: string
   startsAt: string
@@ -100,7 +106,9 @@ export async function book(
   client: Pick<PoolClient, 'query'> = pool,
 ): Promise<string> {
   const { rows } = await client.query<{ id: string }>(
-    `select public.book_appointment(gen_random_uuid(), $1, $2, $3, $4, $5, $6, 'private', $7) as id`,
+    `select public.book_appointment(
+       gen_random_uuid(), $1, $2, $3, $4, $5, $6, 'private', $7, null, null, $8
+     ) as id`,
     [
       input.dentistId,
       input.treatmentId ?? SEED.evaluationTreatmentId,
@@ -109,6 +117,7 @@ export async function book(
       input.patientEmail ?? `p-${randomUUID().slice(0, 8)}@${input.dentistId}.test`,
       '+5562999990000',
       tokenHash(),
+      input.locale ?? 'pt',
     ],
   )
   const row = rows[0]
@@ -124,4 +133,29 @@ export function sqlState(error: unknown): string | undefined {
 
 export function sqlMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
+}
+
+export type Role = { kind: 'anon' } | { kind: 'authenticated'; userId: string }
+
+export async function asRole<T>(
+  role: Role,
+  run: (query: typeof pool.query) => Promise<T>,
+): Promise<T> {
+  const client = await pool.connect()
+  try {
+    await client.query('begin')
+    if (role.kind === 'anon') {
+      await client.query(`set local role anon`)
+      await client.query(`select set_config('request.jwt.claims', '{"role":"anon"}', true)`)
+    } else {
+      await client.query(`set local role authenticated`)
+      await client.query(`select set_config('request.jwt.claims', $1, true)`, [
+        JSON.stringify({ sub: role.userId, role: 'authenticated' }),
+      ])
+    }
+    return await run(client.query.bind(client) as typeof pool.query)
+  } finally {
+    await client.query('rollback')
+    client.release()
+  }
 }

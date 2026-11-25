@@ -6,19 +6,23 @@ import { DentistStep } from '@/components/booking/dentist-step'
 import { bookingHref, isTreatmentParam } from '@/modules/booking/booking-routes'
 import { findTreatmentWithDentists } from '@/modules/booking/booking-view'
 import { listTreatments } from '@/modules/catalog/catalog.repository'
+import { currentLocale } from '@/i18n/server'
+import { routing } from '@/i18n/routing'
 
 export const instant = false
 
 type Props = { params: Promise<{ tratamento: string }> }
 
 export async function generateStaticParams() {
-  return (await listTreatments()).map((treatment) => ({ tratamento: treatment.slug }))
+  return (await listTreatments(routing.defaultLocale)).map((treatment) => ({
+    tratamento: treatment.slug,
+  }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { tratamento } = await params
   const found = isTreatmentParam(tratamento)
-    ? await findTreatmentWithDentists(tratamento)
+    ? await findTreatmentWithDentists(tratamento, await currentLocale())
     : undefined
   const t = await getTranslations('booking.meta')
   return found
@@ -32,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BookingDentistPage({ params }: Props) {
   const { tratamento } = await params
   const found = isTreatmentParam(tratamento)
-    ? await findTreatmentWithDentists(tratamento)
+    ? await findTreatmentWithDentists(tratamento, await currentLocale())
     : undefined
   if (!found) notFound()
 

@@ -16,7 +16,7 @@ export async function NextSlotCard() {
   const locale = await currentLocale()
   const [t, next] = await Promise.all([
     getTranslations({ locale, namespace: 'home.nextSlot' }),
-    findNextSlot('avaliacao'),
+    findNextSlot('avaliacao', locale),
   ])
 
   if (!next) {

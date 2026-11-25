@@ -1,3 +1,4 @@
+import type { AppLocale } from '@/i18n/routing'
 import type { WeeklySchedule } from '@/modules/schedule/domain/availability'
 import {
   addDays,
@@ -21,6 +22,7 @@ export type AgendaAppointment = {
   readonly treatmentName: string
   readonly paymentMethod: 'private' | 'insurance'
   readonly insuranceProvider: string | null
+  readonly locale: AppLocale
 }
 
 export type AgendaBlock = {

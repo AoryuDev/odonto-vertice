@@ -13,7 +13,7 @@ export async function GET(_request: Request, { params }: Context) {
   const locale = localeFrom(requested)
   const [t, view] = await Promise.all([
     getTranslations({ locale, namespace: 'calendar' }),
-    loadManageView(token),
+    loadManageView(token, locale),
   ])
   if (!view) return new Response(t('notFound'), { status: 404 })
 

@@ -48,7 +48,7 @@ export default async function BookingDetailsPage({ params, searchParams }: Props
   const { tratamento, dentista } = await params
   const choice =
     isTreatmentParam(tratamento) && isDentistParam(dentista)
-      ? await resolveBookingChoice(tratamento, dentista)
+      ? await resolveBookingChoice(tratamento, dentista, await currentLocale())
       : undefined
   if (!choice) notFound()
   const tStepper = await getTranslations('booking.stepper')

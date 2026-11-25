@@ -1,5 +1,6 @@
 import 'server-only'
 import { connection } from 'next/server'
+import type { AppLocale } from '@/i18n/routing'
 import { manageTokenSchema } from './schemas'
 import { findAppointmentByToken, type AppointmentDetails } from './appointment.repository'
 import { canManageOnline, type ManageFailure } from './manage.service'
@@ -10,10 +11,13 @@ export type ManageView = {
   readonly isPast: boolean
 }
 
-export async function loadManageView(token: string): Promise<ManageView | undefined> {
+export async function loadManageView(
+  token: string,
+  displayLocale: AppLocale,
+): Promise<ManageView | undefined> {
   await connection()
   if (!manageTokenSchema.safeParse(token).success) return undefined
-  const appointment = await findAppointmentByToken(token)
+  const appointment = await findAppointmentByToken(token, displayLocale)
   if (!appointment) return undefined
   const now = new Date()
   return {

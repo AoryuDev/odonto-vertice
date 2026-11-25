@@ -8,6 +8,7 @@ import { cancelAppointment } from '@/app/[locale]/(booking)/agendamento/actions'
 import { BookingSummary } from '@/components/booking/booking-summary'
 import { Button, ButtonLink } from '@/components/ui/button'
 import { AlertIcon, CalendarIcon, CheckIcon } from '@/components/ui/icons'
+import { currentLocale } from '@/i18n/server'
 import { cn } from '@/lib/cn'
 import { PATIENT_CANCELLATION_REASONS } from '@/modules/booking/schemas'
 import { clinic, directionsUrl } from '@/modules/catalog/clinic'
@@ -52,8 +53,13 @@ const STATUS_TONES = {
 } as const
 
 async function ManageContent({ params, searchParams }: Props) {
-  const [{ token }, query, t] = await Promise.all([params, searchParams, getTranslations('manage')])
-  const view = await loadManageView(token)
+  const locale = await currentLocale()
+  const [{ token }, query, t] = await Promise.all([
+    params,
+    searchParams,
+    getTranslations({ locale, namespace: 'manage' }),
+  ])
+  const view = await loadManageView(token, locale)
   if (!view) notFound()
 
   const { appointment, canManage, isPast } = view

@@ -64,7 +64,10 @@ export async function bookAppointment(
   request: BookingRequest,
   fingerprint: string,
 ): Promise<BookingResult> {
-  const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
+  const [treatments, dentists] = await Promise.all([
+    listTreatments(request.locale),
+    listDentists(request.locale),
+  ])
   const treatment = treatments.find((candidate) => candidate.slug === request.slot.treatmentSlug)
   if (!treatment) return { ok: false, reason: 'treatment_unavailable' }
 
@@ -96,6 +99,7 @@ export async function bookAppointment(
       p_manage_token_hash: hash,
       p_insurance_provider: patient.insuranceProvider,
       p_patient_notes: patient.notes,
+      p_locale: request.locale,
     })
 
     if (!error) {
@@ -114,10 +118,13 @@ export async function bookAppointment(
 }
 
 export async function suggestAlternatives(
-  request: Pick<BookingRequest, 'slot'>,
+  request: Pick<BookingRequest, 'slot' | 'locale'>,
   limit = 4,
 ): Promise<string[]> {
-  const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
+  const [treatments, dentists] = await Promise.all([
+    listTreatments(request.locale),
+    listDentists(request.locale),
+  ])
   const treatment = treatments.find((candidate) => candidate.slug === request.slot.treatmentSlug)
   if (!treatment) return []
   const candidates = candidateDentists(treatment, dentists, request.slot.dentistSlug)

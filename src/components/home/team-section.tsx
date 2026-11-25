@@ -24,7 +24,7 @@ export async function TeamSection() {
     getTranslations({ locale, namespace: 'specialty' }),
     getTranslations({ locale, namespace: 'photoAlt' }),
     getWeekdayLabels(locale),
-    listDentists(),
+    listDentists(locale),
   ])
   const textFor = (dentist: Dentist): DentistCardText => ({
     specialty: tSpecialty(dentist.specialty),

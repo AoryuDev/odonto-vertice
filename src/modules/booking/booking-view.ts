@@ -1,4 +1,5 @@
 import 'server-only'
+import { routing, type AppLocale } from '@/i18n/routing'
 import { listDentists, listTreatments } from '@/modules/catalog/catalog.repository'
 import type { Dentist, Treatment } from '@/modules/catalog/types'
 import { loadAvailabilityContext } from '@/modules/schedule/availability.service'
@@ -56,8 +57,9 @@ function toChoice(slot: Slot, dentists: readonly Dentist[]): SlotChoice {
 
 export async function findTreatmentWithDentists(
   treatmentSlug: string,
+  locale: AppLocale,
 ): Promise<{ treatment: Treatment; dentists: Dentist[] } | undefined> {
-  const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
+  const [treatments, dentists] = await Promise.all([listTreatments(locale), listDentists(locale)])
   const treatment = treatments.find((candidate) => candidate.slug === treatmentSlug)
   if (!treatment) return undefined
   return { treatment, dentists: candidateDentists(treatment, dentists, ANY_DENTIST) }
@@ -66,8 +68,9 @@ export async function findTreatmentWithDentists(
 export async function resolveBookingChoice(
   treatmentSlug: string,
   dentistSlug: string,
+  locale: AppLocale,
 ): Promise<BookingChoice | undefined> {
-  const found = await findTreatmentWithDentists(treatmentSlug)
+  const found = await findTreatmentWithDentists(treatmentSlug, locale)
   if (!found) return undefined
   const candidates =
     dentistSlug === ANY_DENTIST
@@ -83,7 +86,10 @@ export async function resolveBookingChoice(
 }
 
 export async function bookingParams(): Promise<{ tratamento: string; dentista: string }[]> {
-  const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
+  const [treatments, dentists] = await Promise.all([
+    listTreatments(routing.defaultLocale),
+    listDentists(routing.defaultLocale),
+  ])
   return treatments.flatMap((treatment) => [
     { tratamento: treatment.slug, dentista: ANY_DENTIST },
     ...candidateDentists(treatment, dentists, ANY_DENTIST).map((dentist) => ({

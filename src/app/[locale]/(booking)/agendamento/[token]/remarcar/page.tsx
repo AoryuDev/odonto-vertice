@@ -58,7 +58,7 @@ async function RescheduleContent({ params, searchParams }: Props) {
     getTranslations({ locale, namespace: 'manage' }),
     getTranslations({ locale, namespace: 'booking.summary' }),
   ])
-  const view = await loadManageView(token)
+  const view = await loadManageView(token, locale)
   if (!view) notFound()
   if (!view.canManage)
     redirect({
@@ -67,7 +67,10 @@ async function RescheduleContent({ params, searchParams }: Props) {
     })
 
   const { appointment } = view
-  const [context, dentists] = await Promise.all([rescheduleContext(appointment), listDentists()])
+  const [context, dentists] = await Promise.all([
+    rescheduleContext(appointment),
+    listDentists(locale),
+  ])
   if (!context) notFound()
 
   const requestedDate =

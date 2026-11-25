@@ -12,7 +12,7 @@ export async function TreatmentsSection() {
   const locale = await currentLocale()
   const [t, treatments] = await Promise.all([
     getTranslations({ locale, namespace: 'home.treatments' }),
-    listTreatments(),
+    listTreatments(locale),
   ])
 
   return (

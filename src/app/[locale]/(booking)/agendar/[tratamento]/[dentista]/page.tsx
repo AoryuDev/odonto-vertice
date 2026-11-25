@@ -19,6 +19,7 @@ import {
   type BookingChoice,
 } from '@/modules/booking/booking-view'
 import { ANY_DENTIST } from '@/modules/booking/schemas'
+import { currentLocale } from '@/i18n/server'
 
 export const instant = false
 
@@ -35,7 +36,7 @@ export async function generateStaticParams() {
 async function resolve(params: Promise<Params>): Promise<BookingChoice | undefined> {
   const { tratamento, dentista } = await params
   if (!isTreatmentParam(tratamento) || !isDentistParam(dentista)) return undefined
-  return resolveBookingChoice(tratamento, dentista)
+  return resolveBookingChoice(tratamento, dentista, await currentLocale())
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

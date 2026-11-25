@@ -11,6 +11,7 @@ export type Database = {
           dentist_id: string
           id: string
           insurance_provider: string | null
+          locale: Database['public']['Enums']['app_locale']
           manage_token_hash: string
           patient_id: string
           patient_notes: string | null
@@ -30,6 +31,7 @@ export type Database = {
           dentist_id: string
           id?: string
           insurance_provider?: string | null
+          locale?: Database['public']['Enums']['app_locale']
           manage_token_hash: string
           patient_id: string
           patient_notes?: string | null
@@ -48,6 +50,7 @@ export type Database = {
           dentist_id?: string
           id?: string
           insurance_provider?: string | null
+          locale?: Database['public']['Enums']['app_locale']
           manage_token_hash?: string
           patient_id?: string
           patient_notes?: string | null
@@ -79,6 +82,42 @@ export type Database = {
             columns: ['treatment_id']
             isOneToOne: false
             referencedRelation: 'treatments'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      dentist_translations: {
+        Row: {
+          bio: string[]
+          dentist_id: string
+          display_name: string
+          education: string[]
+          headline: string
+          locale: Database['public']['Enums']['app_locale']
+        }
+        ComputedFields: never
+        Insert: {
+          bio: string[]
+          dentist_id: string
+          display_name: string
+          education?: string[]
+          headline: string
+          locale: Database['public']['Enums']['app_locale']
+        }
+        Update: {
+          bio?: string[]
+          dentist_id?: string
+          display_name?: string
+          education?: string[]
+          headline?: string
+          locale?: Database['public']['Enums']['app_locale']
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'dentist_translations_dentist_id_fkey'
+            columns: ['dentist_id']
+            isOneToOne: false
+            referencedRelation: 'dentists'
             referencedColumns: ['id']
           },
         ]
@@ -116,13 +155,9 @@ export type Database = {
       }
       dentists: {
         Row: {
-          bio: string[]
           created_at: string
           cro_registration: string
-          display_name: string
-          education: string[]
           full_name: string
-          headline: string
           id: string
           is_active: boolean
           is_technical_lead: boolean
@@ -133,13 +168,9 @@ export type Database = {
         }
         ComputedFields: never
         Insert: {
-          bio: string[]
           created_at?: string
           cro_registration: string
-          display_name: string
-          education?: string[]
           full_name: string
-          headline: string
           id?: string
           is_active?: boolean
           is_technical_lead?: boolean
@@ -149,13 +180,9 @@ export type Database = {
           specialty: Database['public']['Enums']['specialty']
         }
         Update: {
-          bio?: string[]
           created_at?: string
           cro_registration?: string
-          display_name?: string
-          education?: string[]
           full_name?: string
-          headline?: string
           id?: string
           is_active?: boolean
           is_technical_lead?: boolean
@@ -302,6 +329,7 @@ export type Database = {
           created_at: string
           dentist_id: string | null
           full_name: string
+          locale: Database['public']['Enums']['app_locale']
           role: Database['public']['Enums']['staff_role']
           user_id: string
         }
@@ -310,6 +338,7 @@ export type Database = {
           created_at?: string
           dentist_id?: string | null
           full_name: string
+          locale?: Database['public']['Enums']['app_locale']
           role: Database['public']['Enums']['staff_role']
           user_id: string
         }
@@ -317,6 +346,7 @@ export type Database = {
           created_at?: string
           dentist_id?: string | null
           full_name?: string
+          locale?: Database['public']['Enums']['app_locale']
           role?: Database['public']['Enums']['staff_role']
           user_id?: string
         }
@@ -330,46 +360,70 @@ export type Database = {
           },
         ]
       }
-      treatments: {
+      treatment_translations: {
         Row: {
           content: NonNullable<Json>
+          locale: Database['public']['Enums']['app_locale']
+          name: string
+          summary: string
+          treatment_id: string
+        }
+        ComputedFields: never
+        Insert: {
+          content?: NonNullable<Json>
+          locale: Database['public']['Enums']['app_locale']
+          name: string
+          summary: string
+          treatment_id: string
+        }
+        Update: {
+          content?: NonNullable<Json>
+          locale?: Database['public']['Enums']['app_locale']
+          name?: string
+          summary?: string
+          treatment_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'treatment_translations_treatment_id_fkey'
+            columns: ['treatment_id']
+            isOneToOne: false
+            referencedRelation: 'treatments'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      treatments: {
+        Row: {
           created_at: string
           duration_minutes: number
           id: string
           is_bookable: boolean
           is_urgent: boolean
-          name: string
           photo_key: string
           slug: string
           sort_order: number
-          summary: string
         }
         ComputedFields: never
         Insert: {
-          content?: NonNullable<Json>
           created_at?: string
           duration_minutes: number
           id?: string
           is_bookable?: boolean
           is_urgent?: boolean
-          name: string
           photo_key: string
           slug: string
           sort_order?: number
-          summary: string
         }
         Update: {
-          content?: NonNullable<Json>
           created_at?: string
           duration_minutes?: number
           id?: string
           is_bookable?: boolean
           is_urgent?: boolean
-          name?: string
           photo_key?: string
           slug?: string
           sort_order?: number
-          summary?: string
         }
         Relationships: []
       }
@@ -422,6 +476,7 @@ export type Database = {
           p_appointment_id: string
           p_dentist_id: string
           p_insurance_provider?: string
+          p_locale?: Database['public']['Enums']['app_locale']
           p_manage_token_hash: string
           p_patient_email: string
           p_patient_name: string
@@ -440,6 +495,7 @@ export type Database = {
           delivery_id: string
           dentist_name: string
           ends_at: string
+          locale: Database['public']['Enums']['app_locale']
           patient_email: string
           patient_name: string
           patient_phone: string
@@ -461,6 +517,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_locale: 'pt' | 'en'
       appointment_source: 'website' | 'reception'
       appointment_status: 'scheduled' | 'cancelled' | 'completed' | 'no_show'
       delivery_status: 'pending' | 'sent' | 'failed'
@@ -579,6 +636,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_locale: ['pt', 'en'],
       appointment_source: ['website', 'reception'],
       appointment_status: ['scheduled', 'cancelled', 'completed', 'no_show'],
       delivery_status: ['pending', 'sent', 'failed'],

@@ -33,7 +33,7 @@ export async function cancelAppointmentAsStaff(formData: FormData): Promise<void
   const parsed = staffCancelSchema.safeParse(Object.fromEntries(formData))
   if (!parsed.success) go(locale, '/painel?erro=dados')
 
-  const appointment = await findStaffAppointment(db, parsed.data.id)
+  const appointment = await findStaffAppointment(db, parsed.data.id, locale)
   if (!appointment || !canManageDentist(staff, appointment.dentistId))
     go(locale, '/painel?erro=acesso')
   if (appointment.status !== 'scheduled') go(locale, appointmentPath(appointment.id, 'erro=status'))
@@ -56,7 +56,7 @@ export async function rescheduleAppointmentAsStaff(formData: FormData): Promise<
   const parsed = staffRescheduleSchema.safeParse(Object.fromEntries(formData))
   if (!parsed.success) go(locale, '/painel?erro=dados')
 
-  const appointment = await findStaffAppointment(db, parsed.data.id)
+  const appointment = await findStaffAppointment(db, parsed.data.id, locale)
   if (!appointment || !canManageDentist(staff, appointment.dentistId))
     go(locale, '/painel?erro=acesso')
   if (appointment.status !== 'scheduled') go(locale, appointmentPath(appointment.id, 'erro=status'))
@@ -95,7 +95,7 @@ export async function setAttendance(formData: FormData): Promise<void> {
   const parsed = attendanceSchema.safeParse(Object.fromEntries(formData))
   if (!parsed.success) go(locale, '/painel?erro=dados')
 
-  const appointment = await findStaffAppointment(db, parsed.data.id)
+  const appointment = await findStaffAppointment(db, parsed.data.id, locale)
   if (!appointment || !canManageDentist(staff, appointment.dentistId))
     go(locale, '/painel?erro=acesso')
   if (appointment.status === 'cancelled' || appointment.start.getTime() > Date.now()) {

@@ -88,6 +88,7 @@ describe('agenda helpers', () => {
       treatmentName: 'Avaliação',
       paymentMethod: 'private',
       insuranceProvider: null,
+      locale: 'pt',
     },
     {
       kind: 'appointment',
@@ -100,6 +101,7 @@ describe('agenda helpers', () => {
       treatmentName: 'Limpeza',
       paymentMethod: 'insurance',
       insuranceProvider: 'Plano',
+      locale: 'en',
     },
     {
       kind: 'block',

@@ -69,7 +69,7 @@ async function AppointmentContent({ params, searchParams }: Props) {
   const locale = await currentLocale()
   const [{ db }, { id }, query] = await Promise.all([requireStaff(locale), params, searchParams])
   if (!appointmentIdSchema.safeParse(id).success) notFound()
-  const appointment = await findStaffAppointment(db, id)
+  const appointment = await findStaffAppointment(db, id, locale)
   if (!appointment) notFound()
 
   const tCancellation = await getTranslations({ locale, namespace: 'cancellationReasons' })
@@ -103,7 +103,7 @@ async function AppointmentContent({ params, searchParams }: Props) {
             },
             staffPolicy,
           ),
-          listDentists(),
+          listDentists(locale),
         ])
         if (!context) return undefined
         const requested =

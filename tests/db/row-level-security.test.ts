@@ -1,29 +1,7 @@
 import { afterAll, describe, expect, it } from 'vitest'
-import { pool, SEED, sqlState } from './fixtures'
+import { asRole, pool, SEED, sqlState, type Role } from './fixtures'
 
 const PERMISSION_DENIED = '42501'
-
-type Role = { kind: 'anon' } | { kind: 'authenticated'; userId: string }
-
-async function asRole<T>(role: Role, run: (query: typeof pool.query) => Promise<T>): Promise<T> {
-  const client = await pool.connect()
-  try {
-    await client.query('begin')
-    if (role.kind === 'anon') {
-      await client.query(`set local role anon`)
-      await client.query(`select set_config('request.jwt.claims', '{"role":"anon"}', true)`)
-    } else {
-      await client.query(`set local role authenticated`)
-      await client.query(`select set_config('request.jwt.claims', $1, true)`, [
-        JSON.stringify({ sub: role.userId, role: 'authenticated' }),
-      ])
-    }
-    return await run(client.query.bind(client) as typeof pool.query)
-  } finally {
-    await client.query('rollback')
-    client.release()
-  }
-}
 
 const reception: Role = { kind: 'authenticated', userId: SEED.receptionUserId }
 const helena: Role = { kind: 'authenticated', userId: SEED.helenaUserId }

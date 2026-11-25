@@ -45,7 +45,7 @@ async function Agenda({ searchParams }: Props) {
   const [{ db, staff }, raw, dentists] = await Promise.all([
     requireStaff(locale),
     searchParams,
-    listDentists(),
+    listDentists(locale),
   ])
   await connection()
   const params = parseAgendaParams(raw)
@@ -69,6 +69,7 @@ async function Agenda({ searchParams }: Props) {
       from: toInstant(firstDay, MIDNIGHT, CLINIC_TIME_ZONE),
       to: toInstant(addDays(lastDay, 1), MIDNIGHT, CLINIC_TIME_ZONE),
       dentistIds: visibleDentists.map((dentist) => dentist.id),
+      locale,
     })
   ).filter((entry) => isVisible(entry, params.showCancelled))
 

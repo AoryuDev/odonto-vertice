@@ -1,5 +1,6 @@
 import 'server-only'
 import { after } from 'next/server'
+import { routing } from '@/i18n/routing'
 import { createServiceClient } from '@/lib/supabase/clients'
 import { isExclusionViolation, raisedReason } from '@/lib/supabase/errors'
 import { listDentists, listTreatments } from '@/modules/catalog/catalog.repository'
@@ -60,7 +61,10 @@ export async function rescheduleContext(
   appointment: Pick<AppointmentDetails, 'treatment' | 'dentist' | 'startsAt' | 'endsAt'>,
   policy?: AvailabilityPolicy,
 ): Promise<AvailabilityContext | undefined> {
-  const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
+  const [treatments, dentists] = await Promise.all([
+    listTreatments(routing.defaultLocale),
+    listDentists(routing.defaultLocale),
+  ])
   const treatment = treatments.find((candidate) => candidate.id === appointment.treatment.id)
   const dentist = dentists.find((candidate) => candidate.id === appointment.dentist.id)
   if (!treatment || !dentist) return undefined

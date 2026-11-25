@@ -42,12 +42,12 @@ async function BlocksContent({ searchParams }: Props) {
   const locale = await currentLocale()
   const [{ db, staff }, dentists, query] = await Promise.all([
     requireStaff(locale),
-    listDentists(),
+    listDentists(locale),
     searchParams,
   ])
   await connection()
   const now = new Date()
-  const blocks = await listUpcomingBlocks(db, now)
+  const blocks = await listUpcomingBlocks(db, now, locale)
   const own = dentists.find((dentist) => dentist.id === staff.dentistId)
   const options = dentists.map((dentist) => ({ id: dentist.id, name: dentist.displayName }))
 

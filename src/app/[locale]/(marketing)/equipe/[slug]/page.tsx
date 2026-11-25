@@ -17,15 +17,16 @@ import { absoluteUrl } from '@/lib/site'
 import { findDentist, listDentists, listTreatments } from '@/modules/catalog/catalog.repository'
 import { breadcrumbSchema, dentistPersonSchema } from '@/modules/catalog/structured-data'
 import { SPECIALTY_LABELS } from '@/modules/catalog/types'
+import { routing } from '@/i18n/routing'
 
 type Props = { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams() {
-  return (await listDentists()).map((dentist) => ({ slug: dentist.slug }))
+  return (await listDentists(routing.defaultLocale)).map((dentist) => ({ slug: dentist.slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const dentist = await findDentist((await params).slug)
+  const dentist = await findDentist((await params).slug, await currentLocale())
   if (!dentist) return {}
   const photo = dentistPhoto(dentist.photoKey)
   const tPhoto = await getTranslations('photoAlt')
@@ -62,8 +63,8 @@ export default async function DentistPage({ params }: Props) {
     getTranslations({ locale, namespace: 'specialty' }),
     getTranslations({ locale, namespace: 'photoAlt' }),
     getWeekdayLabels(locale),
-    findDentist(slug),
-    listTreatments(),
+    findDentist(slug, locale),
+    listTreatments(locale),
   ])
   if (!dentist) notFound()
 

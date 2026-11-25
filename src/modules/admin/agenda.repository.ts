@@ -1,4 +1,6 @@
 import 'server-only'
+import type { AppLocale } from '@/i18n/routing'
+import { pickTranslation, translationLocales } from '@/i18n/translations'
 import type { Db } from '@/lib/supabase/clients'
 import { parsePeriod } from '@/modules/booking/appointment.repository'
 import type { AgendaAppointment, AgendaBlock, AgendaEntry, AppointmentStatus } from './agenda'
@@ -18,17 +20,29 @@ function rangeLiteral(from: Date, to: Date): string {
   return `[${from.toISOString()},${to.toISOString()})`
 }
 
+type NameRow = { readonly locale: string; readonly name: string }
+type DisplayNameRow = { readonly locale: string; readonly display_name: string }
+
+function treatmentName(rows: readonly NameRow[], locale: AppLocale): string {
+  return pickTranslation(rows, locale)?.name ?? ''
+}
+
+function dentistName(rows: readonly DisplayNameRow[], locale: AppLocale): string {
+  return pickTranslation(rows, locale)?.display_name ?? ''
+}
+
 export async function listAgenda(
   db: Db,
-  options: { from: Date; to: Date; dentistIds?: readonly string[] },
+  options: { from: Date; to: Date; dentistIds?: readonly string[]; locale: AppLocale },
 ): Promise<AgendaEntry[]> {
   const range = rangeLiteral(options.from, options.to)
   let appointments = db
     .from('appointments')
     .select(
-      'id, dentist_id, period, status, payment_method, insurance_provider, patients!inner(full_name), treatments!inner(name)',
+      'id, dentist_id, period, status, payment_method, insurance_provider, locale, patients!inner(full_name), treatments!inner(treatment_translations(locale, name))',
     )
     .overlaps('period', range)
+    .in('treatments.treatment_translations.locale', translationLocales(options.locale))
   let blocks = db
     .from('schedule_blocks')
     .select('id, dentist_id, period, reason')
@@ -53,9 +67,10 @@ export async function listAgenda(
       end,
       status: row.status as AppointmentStatus,
       patientName: row.patients.full_name,
-      treatmentName: row.treatments.name,
+      treatmentName: treatmentName(row.treatments.treatment_translations, options.locale),
       paymentMethod: row.payment_method,
       insuranceProvider: row.insurance_provider,
+      locale: row.locale,
     }
   })
   const blockEntries: AgendaBlock[] = blockResult.data.map((row) => {
@@ -70,18 +85,22 @@ export async function listAgenda(
 export async function findStaffAppointment(
   db: Db,
   id: string,
+  locale: AppLocale,
 ): Promise<StaffAppointment | undefined> {
   const { data, error } = await db
     .from('appointments')
     .select(
-      'id, dentist_id, period, status, payment_method, insurance_provider, patient_notes, source, rescheduled_count, cancellation_reason, created_at, patients!inner(full_name, email, phone), treatments!inner(id, slug, name), dentists!inner(id, slug, display_name)',
+      'id, dentist_id, period, status, payment_method, insurance_provider, patient_notes, source, rescheduled_count, cancellation_reason, created_at, locale, patients!inner(full_name, email, phone), treatments!inner(id, slug, treatment_translations(locale, name)), dentists!inner(id, slug, dentist_translations(locale, display_name))',
     )
     .eq('id', id)
+    .in('treatments.treatment_translations.locale', translationLocales(locale))
+    .in('dentists.dentist_translations.locale', translationLocales(locale))
     .maybeSingle()
   if (error) throw new Error(`Failed to load appointment: ${error.message}`)
   if (!data) return undefined
 
   const { start, end } = parsePeriod(data.period)
+  const name = treatmentName(data.treatments.treatment_translations, locale)
   return {
     kind: 'appointment',
     id: data.id,
@@ -90,14 +109,15 @@ export async function findStaffAppointment(
     end,
     status: data.status as AppointmentStatus,
     patientName: data.patients.full_name,
-    treatmentName: data.treatments.name,
+    treatmentName: name,
     paymentMethod: data.payment_method,
     insuranceProvider: data.insurance_provider,
-    treatment: data.treatments,
+    locale: data.locale,
+    treatment: { id: data.treatments.id, slug: data.treatments.slug, name },
     dentist: {
       id: data.dentists.id,
       slug: data.dentists.slug,
-      displayName: data.dentists.display_name,
+      displayName: dentistName(data.dentists.dentist_translations, locale),
     },
     patient: {
       fullName: data.patients.full_name,
@@ -114,11 +134,18 @@ export async function findStaffAppointment(
 
 export type UpcomingBlock = AgendaBlock & { readonly dentistName: string }
 
-export async function listUpcomingBlocks(db: Db, from: Date): Promise<UpcomingBlock[]> {
+export async function listUpcomingBlocks(
+  db: Db,
+  from: Date,
+  locale: AppLocale,
+): Promise<UpcomingBlock[]> {
   const { data, error } = await db
     .from('schedule_blocks')
-    .select('id, dentist_id, period, reason, dentists!inner(display_name)')
+    .select(
+      'id, dentist_id, period, reason, dentists!inner(dentist_translations(locale, display_name))',
+    )
     .overlaps('period', rangeLiteral(from, new Date(from.getTime() + 1000 * 60 * 60 * 24 * 120)))
+    .in('dentists.dentist_translations.locale', translationLocales(locale))
     .order('period')
   if (error) throw new Error(`Failed to load blocks: ${error.message}`)
   return data.map((row) => {
@@ -130,7 +157,7 @@ export async function listUpcomingBlocks(db: Db, from: Date): Promise<UpcomingBl
       start,
       end,
       reason: row.reason,
-      dentistName: row.dentists.display_name,
+      dentistName: dentistName(row.dentists.dentist_translations, locale),
     }
   })
 }

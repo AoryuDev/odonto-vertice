@@ -1,9 +1,13 @@
 import type { MetadataRoute } from 'next'
 import { absoluteUrl } from '@/lib/site'
 import { listDentists, listTreatments } from '@/modules/catalog/catalog.repository'
+import { routing } from '@/i18n/routing'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
+  const [treatments, dentists] = await Promise.all([
+    listTreatments(routing.defaultLocale),
+    listDentists(routing.defaultLocale),
+  ])
   return [
     { url: absoluteUrl('/'), changeFrequency: 'weekly', priority: 1 },
     { url: absoluteUrl('/agendar'), changeFrequency: 'daily', priority: 0.9 },

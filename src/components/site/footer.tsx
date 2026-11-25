@@ -17,9 +17,9 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
     getTranslations({ locale, namespace: 'footer' }),
     getTranslations({ locale, namespace: 'clinic' }),
     getWeekdayLabels(locale),
-    technicalLead(),
+    technicalLead(locale),
     openingHours(),
-    listTreatments(),
+    listTreatments(locale),
   ])
   const year = new Date().getFullYear()
 

@@ -1,4 +1,5 @@
 import 'server-only'
+import type { AppLocale } from '@/i18n/routing'
 import { listDentists, listTreatments } from '@/modules/catalog/catalog.repository'
 import { loadAvailabilityContext } from './availability.service'
 import { bookableDateRange, computeDailySlots, type Slot } from './domain/availability'
@@ -13,8 +14,11 @@ export type NextSlot = {
   readonly isTomorrow: boolean
 }
 
-export async function findNextSlot(treatmentSlug: string): Promise<NextSlot | undefined> {
-  const [treatments, dentists] = await Promise.all([listTreatments(), listDentists()])
+export async function findNextSlot(
+  treatmentSlug: string,
+  locale: AppLocale,
+): Promise<NextSlot | undefined> {
+  const [treatments, dentists] = await Promise.all([listTreatments(locale), listDentists(locale)])
   const treatment = treatments.find((candidate) => candidate.slug === treatmentSlug)
   if (!treatment) return undefined
 

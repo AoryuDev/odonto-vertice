@@ -1,4 +1,6 @@
 import 'server-only'
+import type { AppLocale } from '@/i18n/routing'
+import { pickTranslation } from '@/i18n/translations'
 import { createServiceClient } from '@/lib/supabase/clients'
 import type { Database } from '@/lib/supabase/database.types'
 import { hashManageToken } from './manage-token'
@@ -8,6 +10,7 @@ export type AppointmentStatus = Database['public']['Enums']['appointment_status'
 export type AppointmentDetails = {
   readonly id: string
   readonly status: AppointmentStatus
+  readonly locale: AppLocale
   readonly startsAt: Date
   readonly endsAt: Date
   readonly paymentMethod: Database['public']['Enums']['payment_method']
@@ -19,7 +22,7 @@ export type AppointmentDetails = {
 }
 
 const DETAILS_COLUMNS =
-  'id, status, period, payment_method, insurance_provider, rescheduled_count, treatments!inner(id, slug, name), dentists!inner(id, slug, display_name), patients!inner(full_name, email, phone)'
+  'id, status, locale, period, payment_method, insurance_provider, rescheduled_count, treatments!inner(id, slug, treatment_translations(locale, name)), dentists!inner(id, slug, dentist_translations(locale, display_name)), patients!inner(full_name, email, phone)'
 
 export function parsePeriod(period: unknown): { start: Date; end: Date } {
   const match = /^\[\"?([^",]+)\"?,\"?([^"\)]+)\"?\)$/.exec(String(period))
@@ -34,30 +37,45 @@ export function toPeriodLiteral(start: Date, end: Date): string {
 type DetailsRow = {
   id: string
   status: AppointmentStatus
+  locale: AppLocale
   period: unknown
   payment_method: AppointmentDetails['paymentMethod']
   insurance_provider: string | null
   rescheduled_count: number
-  treatments: { id: string; slug: string; name: string }
-  dentists: { id: string; slug: string; display_name: string }
+  treatments: {
+    id: string
+    slug: string
+    treatment_translations: { locale: string; name: string }[]
+  }
+  dentists: {
+    id: string
+    slug: string
+    dentist_translations: { locale: string; display_name: string }[]
+  }
   patients: { full_name: string; email: string; phone: string }
 }
 
-function toDetails(row: DetailsRow): AppointmentDetails {
+function toDetails(row: DetailsRow, displayLocale: AppLocale): AppointmentDetails {
   const { start, end } = parsePeriod(row.period)
   return {
     id: row.id,
     status: row.status,
+    locale: row.locale,
     startsAt: start,
     endsAt: end,
     paymentMethod: row.payment_method,
     insuranceProvider: row.insurance_provider,
     rescheduledCount: row.rescheduled_count,
-    treatment: row.treatments,
+    treatment: {
+      id: row.treatments.id,
+      slug: row.treatments.slug,
+      name: pickTranslation(row.treatments.treatment_translations, displayLocale)?.name ?? '',
+    },
     dentist: {
       id: row.dentists.id,
       slug: row.dentists.slug,
-      displayName: row.dentists.display_name,
+      displayName:
+        pickTranslation(row.dentists.dentist_translations, displayLocale)?.display_name ?? '',
     },
     patient: {
       fullName: row.patients.full_name,
@@ -72,19 +90,20 @@ export async function findAppointmentById(id: string): Promise<AppointmentDetail
     .from('appointments')
     .select(DETAILS_COLUMNS)
     .eq('id', id)
-    .maybeSingle()
+    .maybeSingle<DetailsRow>()
   if (error) throw new Error(`Failed to load appointment: ${error.message}`)
-  return data ? toDetails(data as DetailsRow) : undefined
+  return data ? toDetails(data, data.locale) : undefined
 }
 
 export async function findAppointmentByToken(
   token: string,
+  displayLocale?: AppLocale,
 ): Promise<AppointmentDetails | undefined> {
   const { data, error } = await createServiceClient()
     .from('appointments')
     .select(DETAILS_COLUMNS)
     .eq('manage_token_hash', hashManageToken(token))
-    .maybeSingle()
+    .maybeSingle<DetailsRow>()
   if (error) throw new Error(`Failed to load appointment: ${error.message}`)
-  return data ? toDetails(data as DetailsRow) : undefined
+  return data ? toDetails(data, displayLocale ?? data.locale) : undefined
 }

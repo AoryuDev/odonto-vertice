@@ -12,9 +12,15 @@ import { photos } from '@/content/photos'
 import { absoluteUrl } from '@/lib/site'
 import { listDentists, openingHours } from '@/modules/catalog/catalog.repository'
 import { dentistOrganizationSchema } from '@/modules/catalog/structured-data'
+import { currentLocale } from '@/i18n/server'
 
 export default async function HomePage() {
-  const [hours, dentists, faqs] = await Promise.all([openingHours(), listDentists(), homeFaqs()])
+  const locale = await currentLocale()
+  const [hours, dentists, faqs] = await Promise.all([
+    openingHours(),
+    listDentists(locale),
+    homeFaqs(),
+  ])
 
   return (
     <>
