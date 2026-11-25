@@ -5,7 +5,7 @@ import type { AppLocale } from '@/i18n/routing'
 import { getWeekdayLabels } from '@/i18n/weekday-labels'
 import { formatHour } from '@/lib/format'
 import { listTreatments, openingHours, technicalLead } from '@/modules/catalog/catalog.repository'
-import { clinic, directionsUrl, formatAddressLine, whatsappUrl } from '@/modules/catalog/clinic'
+import { clinic, directionsUrl, formatAddressLine } from '@/modules/catalog/clinic'
 import { summarizeWeekHours } from '@/modules/schedule/domain/opening-hours'
 import { Logo } from './logo'
 
@@ -77,19 +77,6 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
             <li>
               <a href={`tel:${clinic.phone.e164}`} className="tabular hover:text-paper">
                 {clinic.phone.display}
-              </a>
-            </li>
-            <li>
-              <a
-                href={whatsappUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-paper"
-              >
-                {t.rich('whatsapp', {
-                  number: clinic.whatsapp.display,
-                  tabular: (chunks) => <span className="tabular">{chunks}</span>,
-                })}
               </a>
             </li>
             <li>

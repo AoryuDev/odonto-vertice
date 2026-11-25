@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { parseLocalTime } from '@/modules/schedule/domain/clinic-time'
-import { clinic, directionsUrl, formatAddressLine, whatsappUrl } from './clinic'
+import { clinic, directionsUrl, formatAddressLine } from './clinic'
 import {
   breadcrumbSchema,
   dentistOrganizationSchema,
@@ -39,14 +39,10 @@ const treatment: Treatment = {
 }
 
 describe('clinic contact helpers', () => {
-  it('formats the address and builds map and WhatsApp links', () => {
+  it('formats the address and builds the map link', () => {
     expect(formatAddressLine()).toBe(`${clinic.address.street} — Setor Bueno, Goiânia — GO`)
     expect(directionsUrl()).toBe(
       `https://www.google.com/maps/dir/?api=1&destination=${clinic.geo.latitude},${clinic.geo.longitude}`,
-    )
-    expect(whatsappUrl()).toBe('https://wa.me/5562994182730')
-    expect(whatsappUrl('Olá, tudo bem?')).toBe(
-      'https://wa.me/5562994182730?text=Ol%C3%A1%2C%20tudo%20bem%3F',
     )
   })
 })

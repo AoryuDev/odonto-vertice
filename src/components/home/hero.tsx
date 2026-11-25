@@ -2,9 +2,8 @@ import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 import { Suspense } from 'react'
 import { ButtonLink } from '@/components/ui/button'
-import { ChatIcon } from '@/components/ui/icons'
 import { photos } from '@/content/photos'
-import { clinic, whatsappUrl } from '@/modules/catalog/clinic'
+import { clinic } from '@/modules/catalog/clinic'
 import { NextSlotCard, NextSlotSkeleton } from './next-slot-card'
 
 export async function Hero() {
@@ -29,16 +28,6 @@ export async function Hero() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <ButtonLink href="/agendar" size="lg">
               {t('bookOnline')}
-            </ButtonLink>
-            <ButtonLink
-              href={whatsappUrl(t('whatsappMessage'))}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="secondary"
-              size="lg"
-            >
-              <ChatIcon size={20} />
-              {t('whatsapp')}
             </ButtonLink>
           </div>
           <p className="mt-5 text-sm text-ink-soft">{t('note')}</p>

@@ -72,15 +72,6 @@ export function PhoneIcon(props: IconProps) {
   )
 }
 
-export function ChatIcon(props: IconProps) {
-  return (
-    <Icon {...props}>
-      <path d="M20 11.5a8 8 0 0 1-11.7 7.1L4 20l1.4-4.1A8 8 0 1 1 20 11.5Z" />
-      <path d="M8.5 10.5h7M8.5 13.5h4" />
-    </Icon>
-  )
-}
-
 export function MapPinIcon(props: IconProps) {
   return (
     <Icon {...props}>

@@ -24,9 +24,7 @@
     "preferCall": "Prefere ligar? <call>Fale com a recepção</call>"
   },
   "mobileBar": {
-    "book": "Agendar consulta",
-    "whatsapp": "Conversar pelo WhatsApp",
-    "whatsappMessage": "Olá! Gostaria de tirar uma dúvida sobre um atendimento."
+    "book": "Agendar consulta"
   },
   "footer": {
     "about": "Clínica geral, ortodontia e implantes no Setor Bueno. Atendimento particular e por convênio.",
@@ -36,7 +34,6 @@
     "hours": "Horários",
     "hoursRange": "{opens} às {closes}",
     "contact": "Contato",
-    "whatsapp": "WhatsApp <tabular>{number}</tabular>",
     "treatments": "Tratamentos",
     "technicalLead": "Responsável técnico:",
     "copyright": "© {year} {name}. {note}",
@@ -75,8 +72,6 @@
       "title": "Cuidar dos dentes fica mais simples quando alguém <em>explica</em>.",
       "lead": "Somos três dentistas, de clínica geral, ortodontia e implantes, atendendo famílias no Setor Bueno. Você sai de cada consulta sabendo o que foi feito, o que vem depois e quantas sessões ainda faltam.",
       "bookOnline": "Agendar pelo site",
-      "whatsapp": "Falar no WhatsApp",
-      "whatsappMessage": "Olá! Gostaria de agendar uma consulta.",
       "note": "Particular e convênio · Confirmação na hora, por e-mail"
     },
     "nextSlot": {

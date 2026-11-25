@@ -11,7 +11,6 @@ export const clinic = {
   },
   geo: { latitude: -16.7068, longitude: -49.2712 },
   phone: { display: '(62) 3920-4815', e164: '+556239204815' },
-  whatsapp: { display: '(62) 99418-2730', e164: '+5562994182730' },
   email: 'contato@odontovertice.example',
   parking: 'Estacionamento conveniado no térreo do edifício.',
   landmark: 'A duas quadras do Parque Vaca Brava.',
@@ -25,9 +24,4 @@ export function formatAddressLine(): string {
 export function directionsUrl(): string {
   const { latitude, longitude } = clinic.geo
   return `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`
-}
-
-export function whatsappUrl(message?: string): string {
-  const base = `https://wa.me/${clinic.whatsapp.e164.replace('+', '')}`
-  return message ? `${base}?text=${encodeURIComponent(message)}` : base
 }

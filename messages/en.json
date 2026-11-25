@@ -24,9 +24,7 @@
     "preferCall": "Rather call? <call>Talk to our front desk</call>"
   },
   "mobileBar": {
-    "book": "Book a visit",
-    "whatsapp": "Chat on WhatsApp",
-    "whatsappMessage": "Hi! I have a question about an appointment."
+    "book": "Book a visit"
   },
   "footer": {
     "about": "General dentistry, orthodontics and implants in Setor Bueno. Self-pay and dental insurance welcome.",
@@ -36,7 +34,6 @@
     "hours": "Hours",
     "hoursRange": "{opens} to {closes}",
     "contact": "Contact",
-    "whatsapp": "WhatsApp <tabular>{number}</tabular>",
     "treatments": "Treatments",
     "technicalLead": "Clinical director:",
     "copyright": "© {year} {name}. {note}",
@@ -75,8 +72,6 @@
       "title": "Dental care is simpler when someone takes the time to <em>explain</em>.",
       "lead": "We’re three dentists covering general care, orthodontics and implants, looking after families in Setor Bueno. You leave every visit knowing what was done, what comes next and how many sessions are left.",
       "bookOnline": "Book online",
-      "whatsapp": "Chat on WhatsApp",
-      "whatsappMessage": "Hi! I’d like to book an appointment.",
       "note": "Self-pay or insurance · Instant confirmation by email"
     },
     "nextSlot": {
