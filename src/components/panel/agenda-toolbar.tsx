@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl'
 import { getPathname, Link } from '@/i18n/navigation'
 import type { AppLocale } from '@/i18n/routing'
 import { ArrowLeftIcon, ArrowRightIcon } from '@/components/ui/icons'
@@ -24,6 +25,7 @@ export function AgendaToolbar({
   canFilter: boolean
   locale: AppLocale
 }) {
+  const t = useTranslations('panel.agenda')
   const step = params.view === 'semana' ? 7 : 1
   const link = (overrides: Partial<AgendaParams> & { date?: LocalDate }) =>
     agendaHref({ ...params, ...overrides, date: overrides.date ?? date })
@@ -33,7 +35,7 @@ export function AgendaToolbar({
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-sm text-ink-soft">
-            {params.view === 'semana' ? 'Semana' : date === today ? 'Hoje' : 'Dia'}
+            {params.view === 'semana' ? t('week') : date === today ? t('today') : t('day')}
           </p>
           <h1 className="font-display text-[2rem] leading-tight text-ink">{title}</h1>
         </div>
@@ -49,7 +51,7 @@ export function AgendaToolbar({
                   params.view === view ? 'bg-pine-800 text-paper' : 'text-ink-soft hover:text-ink',
                 )}
               >
-                {view}
+                {t(`views.${view}`)}
               </Link>
             ))}
           </div>
@@ -60,14 +62,14 @@ export function AgendaToolbar({
             >
               <ArrowLeftIcon size={18} />
               <span className="sr-only">
-                {params.view === 'semana' ? 'Semana anterior' : 'Dia anterior'}
+                {params.view === 'semana' ? t('previousWeek') : t('previousDay')}
               </span>
             </Link>
             <Link
               href={link({ date: today })}
               className="rounded-full border border-line-strong bg-card px-4 py-2 text-sm hover:border-ink"
             >
-              Hoje
+              {t('today')}
             </Link>
             <Link
               href={link({ date: addDays(date, step) })}
@@ -75,7 +77,7 @@ export function AgendaToolbar({
             >
               <ArrowRightIcon size={18} />
               <span className="sr-only">
-                {params.view === 'semana' ? 'Próxima semana' : 'Próximo dia'}
+                {params.view === 'semana' ? t('nextWeek') : t('nextDay')}
               </span>
             </Link>
           </div>
@@ -84,7 +86,7 @@ export function AgendaToolbar({
             className="flex items-center gap-2"
           >
             <label htmlFor="agenda-date" className="sr-only">
-              Ir para a data
+              {t('goToDate')}
             </label>
             <input
               id="agenda-date"
@@ -96,7 +98,7 @@ export function AgendaToolbar({
             {params.view === 'semana' ? <input type="hidden" name="visao" value="semana" /> : null}
             {params.dentist ? <input type="hidden" name="dentista" value={params.dentist} /> : null}
             <button type="submit" className="h-10 rounded-full bg-pine-800 px-4 text-sm text-paper">
-              Ir
+              {t('go')}
             </button>
           </form>
         </div>
@@ -104,9 +106,9 @@ export function AgendaToolbar({
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         {canFilter ? (
-          <nav aria-label="Filtrar por dentista" className="flex flex-wrap gap-2">
+          <nav aria-label={t('filterLabel')} className="flex flex-wrap gap-2">
             <FilterPill href={link({ dentist: undefined })} active={!params.dentist}>
-              Todos
+              {t('all')}
             </FilterPill>
             {dentists.map((dentist) => (
               <FilterPill
@@ -125,7 +127,7 @@ export function AgendaToolbar({
           href={link({ showCancelled: !params.showCancelled })}
           className="text-sm text-ink-soft underline underline-offset-4 hover:text-ink"
         >
-          {params.showCancelled ? 'Ocultar canceladas' : 'Mostrar canceladas'}
+          {params.showCancelled ? t('hideCancelled') : t('showCancelled')}
         </Link>
       </div>
     </div>

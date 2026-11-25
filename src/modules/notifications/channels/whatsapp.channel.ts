@@ -1,26 +1,24 @@
-import { routing } from '@/i18n/routing'
-import { capitalize, formatLongDate, formatTime } from '@/lib/format'
+import type { AppLocale } from '@/i18n/routing'
+import { describeWhenForWhatsApp } from '../templates'
 import type { AppointmentNotice, NoticeKind, NotificationChannel } from '../types'
 
-const locale = routing.defaultLocale
+const TEMPLATE_LANGUAGES: Record<AppLocale, string> = { pt: 'pt_BR', en: 'en_US' }
 
 export type WhatsAppChannelConfig = {
   readonly accessToken: string
   readonly phoneNumberId: string
   readonly templates: Readonly<Record<NoticeKind, string>>
-  readonly languageCode?: string
   readonly apiVersion?: string
   readonly fetcher?: typeof fetch
 }
 
 export function whatsappTemplatePayload(notice: AppointmentNotice, config: WhatsAppChannelConfig) {
   const firstName = notice.patient.name.trim().split(/\s+/)[0] ?? notice.patient.name
-  const when = `${capitalize(formatLongDate(notice.appointment.startsAt, locale))}, ${formatTime(notice.appointment.startsAt, locale)}`
   const parameters = [
     firstName,
     notice.appointment.treatmentName,
     notice.appointment.dentistName,
-    when,
+    describeWhenForWhatsApp(notice),
     notice.appointment.manageUrl,
   ]
   return {
@@ -29,7 +27,7 @@ export function whatsappTemplatePayload(notice: AppointmentNotice, config: Whats
     type: 'template',
     template: {
       name: config.templates[notice.kind],
-      language: { code: config.languageCode ?? 'pt_BR' },
+      language: { code: TEMPLATE_LANGUAGES[notice.locale] },
       components: [
         { type: 'body', parameters: parameters.map((text) => ({ type: 'text', text })) },
       ],

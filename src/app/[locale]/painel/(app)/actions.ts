@@ -1,5 +1,6 @@
 'use server'
 
+import { getTranslations } from 'next-intl/server'
 import { after } from 'next/server'
 import { redirect } from '@/i18n/navigation'
 import type { AppLocale } from '@/i18n/routing'
@@ -122,6 +123,7 @@ export async function createBlock(
 ): Promise<BlockFormState> {
   const locale = formLocale(formData)
   const { db, staff } = await requireStaff(locale)
+  const t = await getTranslations({ locale, namespace: 'panel.blocks.errors' })
   const raw = Object.fromEntries(formData)
   const parsed = blockFormSchema.safeParse({
     ...raw,
@@ -133,12 +135,10 @@ export async function createBlock(
       const key = String(issue.path[0] ?? 'form')
       fieldErrors[key] ??= issue.message
     }
-    return { error: 'Confira os campos destacados.', fieldErrors }
+    return { error: t('invalid'), fieldErrors }
   }
-  if (!canManageDentist(staff, parsed.data.dentistId))
-    return { error: 'Você não pode bloquear a agenda de outro dentista.' }
-  if (parsed.data.end.getTime() <= Date.now())
-    return { error: 'O bloqueio precisa terminar no futuro.' }
+  if (!canManageDentist(staff, parsed.data.dentistId)) return { error: t('forbidden') }
+  if (parsed.data.end.getTime() <= Date.now()) return { error: t('past') }
 
   const overlapping = await countScheduledOverlaps(
     db,
@@ -147,9 +147,7 @@ export async function createBlock(
     parsed.data.end,
   )
   if (overlapping > 0) {
-    return {
-      error: `Há ${overlapping} ${overlapping === 1 ? 'consulta marcada' : 'consultas marcadas'} nesse intervalo. Remarque ou cancele antes de bloquear.`,
-    }
+    return { error: t('overlapping', { count: overlapping }) }
   }
 
   const { error } = await db.from('schedule_blocks').insert({
@@ -159,7 +157,7 @@ export async function createBlock(
   })
   if (error) {
     console.error(`Block insert failed: ${error.message}`)
-    return { error: 'Não foi possível salvar o bloqueio.' }
+    return { error: t('saveFailed') }
   }
   return { ok: true }
 }

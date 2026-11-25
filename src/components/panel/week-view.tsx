@@ -1,4 +1,4 @@
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 import { formatShortDate, formatTime, formatWeekdayShort, localDateNoon } from '@/lib/format'
@@ -25,6 +25,7 @@ export function WeekView({
   params: AgendaParams
 }) {
   const locale = useLocale()
+  const t = useTranslations('panel.agenda')
   const byDate = groupByDate(entries, CLINIC_TIME_ZONE)
   const dot = (dentistId: string) =>
     DENTIST_DOTS[
@@ -68,11 +69,11 @@ export function WeekView({
                   {formatWeekdayShort(localDateNoon(date), locale)}{' '}
                   <span className="tabular">{formatShortDate(localDateNoon(date), locale)}</span>
                 </span>
-                <span className="text-xs text-ink-soft">{appointments} consultas</span>
+                <span className="text-xs text-ink-soft">{t('count', { count: appointments })}</span>
               </Link>
               <ul className="space-y-1.5 p-2">
                 {dayEntries.length === 0 ? (
-                  <li className="px-2 py-3 text-sm text-ink-soft">Sem consultas</li>
+                  <li className="px-2 py-3 text-sm text-ink-soft">{t('empty')}</li>
                 ) : null}
                 {dayEntries.map((entry) =>
                   entry.kind === 'block' ? (
@@ -83,7 +84,7 @@ export function WeekView({
                       <span className="tabular">
                         {formatTime(entry.start, locale)}–{formatTime(entry.end, locale)}
                       </span>{' '}
-                      · Bloqueado: {entry.reason}
+                      · {t('blockedWithReason', { reason: entry.reason })}
                     </li>
                   ) : (
                     <li key={entry.id}>

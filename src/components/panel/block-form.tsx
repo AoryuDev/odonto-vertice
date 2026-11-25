@@ -1,11 +1,12 @@
 'use client'
 
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useActionState, useEffect, useRef, useState } from 'react'
 import { createBlock, type BlockFormState } from '@/app/[locale]/painel/(app)/actions'
 import { Button } from '@/components/ui/button'
 import { describedBy, Field, inputClasses } from '@/components/ui/field'
 import { AlertIcon, CheckIcon } from '@/components/ui/icons'
+import type { ValidationKey } from '@/i18n/validation'
 
 type Option = { readonly id: string; readonly name: string }
 
@@ -19,10 +20,19 @@ export function BlockForm({
   minDate: string
 }) {
   const locale = useLocale()
+  const t = useTranslations('panel.blocks.form')
+  const tValidation = useTranslations('validation')
   const [state, action, pending] = useActionState<BlockFormState, FormData>(createBlock, {})
   const [allDay, setAllDay] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
-  const errors = state.fieldErrors ?? {}
+  const errors = Object.fromEntries(
+    Object.entries(state.fieldErrors ?? {}).map(([field, message]) => [
+      field,
+      message && tValidation.has(message as ValidationKey)
+        ? tValidation(message as ValidationKey)
+        : message,
+    ]),
+  )
 
   useEffect(() => {
     if (state.ok) formRef.current?.reset()
@@ -46,14 +56,14 @@ export function BlockForm({
           className="flex items-center gap-2 rounded-[0.8rem] bg-pine-100 p-3 text-sm text-pine-950 sm:col-span-2"
         >
           <CheckIcon size={18} />
-          Bloqueio salvo. Os horários já sumiram do agendamento online.
+          {t('saved')}
         </p>
       ) : null}
 
       {fixedDentist ? (
         <input type="hidden" name="dentistId" value={fixedDentist.id} />
       ) : (
-        <Field id="dentistId" label="Dentista" error={errors.dentistId}>
+        <Field id="dentistId" label={t('dentist')} error={errors.dentistId}>
           <select
             id="dentistId"
             name="dentistId"
@@ -64,7 +74,7 @@ export function BlockForm({
             defaultValue=""
           >
             <option value="" disabled>
-              Escolha
+              {t('choose')}
             </option>
             {dentists.map((dentist) => (
               <option key={dentist.id} value={dentist.id}>
@@ -75,7 +85,7 @@ export function BlockForm({
         </Field>
       )}
 
-      <Field id="date" label="Data" error={errors.date}>
+      <Field id="date" label={t('date')} error={errors.date}>
         <input
           id="date"
           name="date"
@@ -96,12 +106,12 @@ export function BlockForm({
           onChange={(event) => setAllDay(event.target.checked)}
           className="size-4 accent-pine-800"
         />
-        Dia inteiro
+        {t('allDay')}
       </label>
 
       {!allDay ? (
         <>
-          <Field id="startTime" label="Das" error={errors.startTime}>
+          <Field id="startTime" label={t('from')} error={errors.startTime}>
             <input
               id="startTime"
               name="startTime"
@@ -113,7 +123,7 @@ export function BlockForm({
               aria-describedby={describedBy('startTime', { error: Boolean(errors.startTime) })}
             />
           </Field>
-          <Field id="endTime" label="Até" error={errors.endTime}>
+          <Field id="endTime" label={t('to')} error={errors.endTime}>
             <input
               id="endTime"
               name="endTime"
@@ -129,13 +139,13 @@ export function BlockForm({
       ) : null}
 
       <div className="sm:col-span-2">
-        <Field id="reason" label="Motivo" hint="Aparece só no painel." error={errors.reason}>
+        <Field id="reason" label={t('reason')} hint={t('reasonHint')} error={errors.reason}>
           <input
             id="reason"
             name="reason"
             required
             maxLength={140}
-            placeholder="Ex.: curso de atualização"
+            placeholder={t('reasonPlaceholder')}
             className={inputClasses}
             aria-invalid={Boolean(errors.reason)}
             aria-describedby={describedBy('reason', { hint: true, error: Boolean(errors.reason) })}
@@ -144,7 +154,7 @@ export function BlockForm({
       </div>
 
       <Button type="submit" disabled={pending} className="w-fit">
-        {pending ? 'Salvando…' : 'Bloquear horário'}
+        {pending ? t('submitting') : t('submit')}
       </Button>
     </form>
   )

@@ -1,7 +1,10 @@
+import type { AppLocale } from '@/i18n/routing'
+
 export type NoticeKind = 'confirmation' | 'reminder' | 'cancellation' | 'reschedule'
 
 export type AppointmentNotice = {
   readonly kind: NoticeKind
+  readonly locale: AppLocale
   readonly patient: { readonly name: string; readonly email: string; readonly phone: string }
   readonly appointment: {
     readonly treatmentName: string

@@ -13,6 +13,7 @@ export type Staff = {
   readonly fullName: string
   readonly role: StaffRole
   readonly dentistId: string | null
+  readonly locale: AppLocale
 }
 
 export type StaffSession = { readonly staff: Staff; readonly db: Db }
@@ -27,7 +28,7 @@ export const getStaffSession = cache(async (): Promise<StaffSession | null> => {
 
   const { data: profile } = await db
     .from('staff_profiles')
-    .select('user_id, full_name, role, dentist_id')
+    .select('user_id, full_name, role, dentist_id, locale')
     .eq('user_id', user.id)
     .maybeSingle()
   if (!profile) return null
@@ -39,6 +40,7 @@ export const getStaffSession = cache(async (): Promise<StaffSession | null> => {
       fullName: profile.full_name,
       role: profile.role,
       dentistId: profile.dentist_id,
+      locale: profile.locale,
     },
   }
 })

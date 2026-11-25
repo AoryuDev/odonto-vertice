@@ -4,6 +4,7 @@ import { createWhatsAppChannel, whatsappTemplatePayload } from './whatsapp.chann
 
 const notice: AppointmentNotice = {
   kind: 'reminder',
+  locale: 'pt',
   patient: { name: 'Mariana Lopes', email: 'm@example.com', phone: '+5562991234567' },
   appointment: {
     treatmentName: 'Limpeza',
@@ -38,6 +39,23 @@ describe('WhatsApp channel', () => {
       'Quarta-feira, 25 de novembro, 09:00',
       'https://example.com/agendamento/t',
     ])
+  })
+
+  it('sends the template in the language the patient booked in', () => {
+    const payload = whatsappTemplatePayload(
+      {
+        ...notice,
+        locale: 'en',
+        appointment: { ...notice.appointment, treatmentName: 'Cleaning' },
+      },
+      config,
+    )
+
+    expect(payload.template.language.code).toBe('en_US')
+    expect(payload.template.components[0]?.parameters[3]?.text).toBe(
+      'Wednesday, November 25 at 9:00\u00a0AM',
+    )
+    expect(whatsappTemplatePayload(notice, config).template.language.code).toBe('pt_BR')
   })
 
   it('posts to the Cloud API and returns the message id', async () => {

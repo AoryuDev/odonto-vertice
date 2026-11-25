@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { issue } from '@/i18n/validation'
 import {
   isLocalDate,
   parseLocalTime,
@@ -7,28 +8,32 @@ import {
 } from '@/modules/schedule/domain/clinic-time'
 import { CLINIC_TIME_ZONE } from '@/modules/schedule/domain/policy'
 
-const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Use o formato HH:MM.')
+const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, issue('timeFormat'))
 
 export const blockFormSchema = z
   .object({
-    dentistId: z.uuid('Escolha um dentista.'),
-    date: z.string().refine(isLocalDate, 'Informe uma data válida.'),
+    dentistId: z.uuid(issue('dentistRequired')),
+    date: z.string(issue('dateInvalid')).refine(isLocalDate, issue('dateInvalid')),
     allDay: z.preprocess((value) => value === 'on' || value === true, z.boolean()),
     startTime: time.optional().or(z.literal('').transform(() => undefined)),
     endTime: time.optional().or(z.literal('').transform(() => undefined)),
-    reason: z.string().trim().min(3, 'Descreva o motivo em poucas palavras.').max(140),
+    reason: z
+      .string(issue('reasonShort'))
+      .trim()
+      .min(3, issue('reasonShort'))
+      .max(140, issue('reasonTooLong')),
   })
   .superRefine((value, context) => {
     if (value.allDay) return
     if (!value.startTime)
-      context.addIssue({ code: 'custom', path: ['startTime'], message: 'Informe o início.' })
+      context.addIssue({ code: 'custom', path: ['startTime'], message: issue('startRequired') })
     if (!value.endTime)
-      context.addIssue({ code: 'custom', path: ['endTime'], message: 'Informe o fim.' })
+      context.addIssue({ code: 'custom', path: ['endTime'], message: issue('endRequired') })
     if (value.startTime && value.endTime && value.startTime >= value.endTime) {
       context.addIssue({
         code: 'custom',
         path: ['endTime'],
-        message: 'O fim precisa ser depois do início.',
+        message: issue('endBeforeStart'),
       })
     }
   })
@@ -49,7 +54,7 @@ export const appointmentIdSchema = z.uuid()
 
 export const staffCancelSchema = z.object({
   id: appointmentIdSchema,
-  reason: z.string().trim().min(3, 'Informe o motivo.').max(280),
+  reason: z.string().trim().min(3, issue('cancelReasonRequired')).max(280),
   notify: z.preprocess((value) => value === 'on', z.boolean()),
 })
 

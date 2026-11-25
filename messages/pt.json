@@ -289,7 +289,16 @@
     "insuranceRequired": "Informe o nome do seu convênio.",
     "insuranceTooLong": "Use no máximo 80 caracteres.",
     "notesTooLong": "Use no máximo 500 caracteres.",
-    "consentRequired": "Precisamos da sua autorização para registrar o agendamento."
+    "consentRequired": "Precisamos da sua autorização para registrar o agendamento.",
+    "timeFormat": "Use o formato HH:MM.",
+    "dentistRequired": "Escolha um dentista.",
+    "dateInvalid": "Informe uma data válida.",
+    "reasonShort": "Descreva o motivo em poucas palavras.",
+    "reasonTooLong": "Use no máximo 140 caracteres.",
+    "startRequired": "Informe o início.",
+    "endRequired": "Informe o fim.",
+    "endBeforeStart": "O fim precisa ser depois do início.",
+    "cancelReasonRequired": "Informe o motivo."
   },
   "booking": {
     "meta": {
@@ -460,5 +469,197 @@
     "resolved_elsewhere": "Resolvi em outro lugar",
     "health_issue": "Problema de saúde",
     "financial": "Questão financeira"
+  },
+  "email": {
+    "kinds": {
+      "confirmation": {
+        "subject": "Consulta confirmada — {treatment}, {time}",
+        "heading": "Sua consulta está confirmada",
+        "lead": "Guarde este e-mail. Pelo link abaixo você remarca ou cancela sem precisar ligar.",
+        "cta": "Ver, remarcar ou cancelar"
+      },
+      "reminder": {
+        "subject": "Lembrete: amanhã às {time} na {clinic}",
+        "heading": "Até amanhã",
+        "lead": "Passando para lembrar da sua consulta. Se não puder vir, avise pelo link para liberarmos o horário para outro paciente.",
+        "cta": "Remarcar ou cancelar"
+      },
+      "reschedule": {
+        "subject": "Consulta remarcada para {date}",
+        "heading": "Novo horário confirmado",
+        "lead": "Sua consulta foi remarcada. O link para gerenciar continua o mesmo.",
+        "cta": "Ver detalhes"
+      },
+      "cancellation": {
+        "subject": "Consulta cancelada — {clinic}",
+        "heading": "Consulta cancelada",
+        "lead": "O horário foi liberado. Quando quiser, é só agendar de novo pelo site.",
+        "cta": "Agendar outro horário"
+      }
+    },
+    "greeting": "Olá, {name}.",
+    "when": "Quando",
+    "visit": "Consulta",
+    "where": "Onde",
+    "whenValue": "{date}, às {time}",
+    "visitValue": "{treatment} com {dentist}",
+    "whatsappWhen": "{date}, {time}",
+    "footer": "Chegue com 10 minutos de antecedência. Dúvidas: {phone}."
+  },
+  "panel": {
+    "meta": {
+      "title": "Painel",
+      "template": "%s · Painel Odonto Vértice",
+      "agenda": "Agenda",
+      "blocks": "Bloqueios",
+      "appointment": "Consulta",
+      "login": "Entrar"
+    },
+    "layout": {
+      "brandSuffix": "painel",
+      "viewSite": "Ver site",
+      "navLabel": "Painel",
+      "nav": {
+        "agenda": "Agenda",
+        "blocks": "Bloqueios"
+      }
+    },
+    "localeSwitcher": {
+      "saving": "Salvando idioma…"
+    },
+    "staff": {
+      "reception": "Recepção · todas as agendas",
+      "dentist": "Dentista · sua agenda",
+      "signOut": "Sair"
+    },
+    "login": {
+      "tagline": "A agenda da clínica, do jeito que a recepção precisa.",
+      "pitch": "Cada dentista vê só a própria agenda. A recepção vê todas, bloqueia horários e remarca.",
+      "restricted": "Acesso restrito à equipe da Odonto Vértice.",
+      "title": "Entrar no painel",
+      "body": "Use o e-mail e a senha cadastrados pela clínica.",
+      "demoTitle": "Acesso de demonstração",
+      "demoReception": "Recepção:",
+      "demoDentist": "Dentista:",
+      "demoPassword": "Senha:",
+      "back": "Voltar ao site",
+      "email": "E-mail",
+      "password": "Senha",
+      "submit": "Entrar",
+      "submitting": "Entrando…",
+      "errors": {
+        "invalid": "Informe e-mail e senha.",
+        "rateLimited": "Muitas tentativas. Aguarde alguns minutos antes de tentar de novo.",
+        "wrong": "E-mail ou senha incorretos."
+      }
+    },
+    "status": {
+      "scheduled": "Agendada",
+      "completed": "Realizada",
+      "no_show": "Faltou",
+      "cancelled": "Cancelada"
+    },
+    "agenda": {
+      "stats": {
+        "scheduled": "Agendadas",
+        "completed": "Realizadas",
+        "no_show": "Faltas",
+        "cancelled": "Canceladas"
+      },
+      "weekRange": "{from} a {to}",
+      "week": "Semana",
+      "today": "Hoje",
+      "day": "Dia",
+      "views": {
+        "dia": "dia",
+        "semana": "semana"
+      },
+      "previousWeek": "Semana anterior",
+      "previousDay": "Dia anterior",
+      "nextWeek": "Próxima semana",
+      "nextDay": "Próximo dia",
+      "goToDate": "Ir para a data",
+      "go": "Ir",
+      "filterLabel": "Filtrar por dentista",
+      "all": "Todos",
+      "hideCancelled": "Ocultar canceladas",
+      "showCancelled": "Mostrar canceladas",
+      "count": "{count, plural, one {# consulta} other {# consultas}}",
+      "empty": "Sem consultas",
+      "blocked": "Bloqueado",
+      "blockedWithReason": "Bloqueado: {reason}"
+    },
+    "appointment": {
+      "back": "Agenda de {date}",
+      "flash": {
+        "cancelada": "Consulta cancelada.",
+        "remarcada": "Consulta remarcada. O paciente recebeu o novo horário por e-mail.",
+        "presenca": "Presença registrada.",
+        "status": "Essa ação não vale para o status atual da consulta.",
+        "horario": "Esse horário não está mais livre. Escolha outro.",
+        "falha": "Não foi possível salvar. Tente novamente."
+      },
+      "summary": "{treatment} com {dentist}",
+      "fields": {
+        "phone": "Telefone",
+        "email": "E-mail",
+        "whatsapp": "WhatsApp",
+        "openChat": "Abrir conversa",
+        "payment": "Pagamento",
+        "insurance": "Convênio · {provider}",
+        "private": "Particular",
+        "source": "Origem",
+        "website": "Agendado pelo site",
+        "reception": "Agendado pela recepção",
+        "reschedules": "Remarcações"
+      },
+      "notes": "Observações do paciente",
+      "cancellationReason": "Motivo do cancelamento: {reason}",
+      "attendance": "Presença",
+      "attended": "Compareceu",
+      "noShow": "Faltou",
+      "reschedule": "Remarcar",
+      "rescheduleBody": "Horários livres na agenda de {dentist}.",
+      "newTime": "Novo horário:",
+      "confirmReschedule": "Confirmar remarcação",
+      "cancelTitle": "Cancelar consulta",
+      "reason": "Motivo",
+      "reasonPlaceholder": "Ex.: paciente pediu por telefone",
+      "notify": "Avisar o paciente por e-mail",
+      "cancelSubmit": "Cancelar consulta"
+    },
+    "blocks": {
+      "title": "Bloqueios de agenda",
+      "body": "Use para cursos, congressos, manutenção de equipamento ou qualquer ausência. Horários bloqueados somem na hora do agendamento online.",
+      "new": "Novo bloqueio",
+      "newFor": "Novo bloqueio na agenda de {dentist}",
+      "upcoming": "Próximos bloqueios",
+      "removed": "Bloqueio removido.",
+      "removeFailed": "Não foi possível remover esse bloqueio.",
+      "empty": "Nenhum bloqueio nos próximos meses.",
+      "remove": "Remover",
+      "removeLabel": "bloqueio {reason}",
+      "form": {
+        "saved": "Bloqueio salvo. Os horários já sumiram do agendamento online.",
+        "dentist": "Dentista",
+        "choose": "Escolha",
+        "date": "Data",
+        "allDay": "Dia inteiro",
+        "from": "Das",
+        "to": "Até",
+        "reason": "Motivo",
+        "reasonHint": "Aparece só no painel.",
+        "reasonPlaceholder": "Ex.: curso de atualização",
+        "submit": "Bloquear horário",
+        "submitting": "Salvando…"
+      },
+      "errors": {
+        "invalid": "Confira os campos destacados.",
+        "forbidden": "Você não pode bloquear a agenda de outro dentista.",
+        "past": "O bloqueio precisa terminar no futuro.",
+        "overlapping": "Há {count, plural, one {# consulta marcada} other {# consultas marcadas}} nesse intervalo. Remarque ou cancele antes de bloquear.",
+        "saveFailed": "Não foi possível salvar o bloqueio."
+      }
+    }
   }
 }

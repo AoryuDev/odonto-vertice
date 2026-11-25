@@ -4,13 +4,25 @@ import type { AppointmentNotice } from './types'
 
 const notice: AppointmentNotice = {
   kind: 'reminder',
+  locale: 'pt',
   patient: { name: 'Mariana <b>Lopes</b>', email: 'mariana@example.com', phone: '+5562991234567' },
   appointment: {
     treatmentName: 'Limpeza',
     dentistName: 'Dra. Helena Prado',
     startsAt: new Date('2026-11-25T09:00:00-03:00'),
     endsAt: new Date('2026-11-25T09:45:00-03:00'),
-    manageUrl: 'https://odontovertice.example/agendamento/abc',
+    manageUrl: 'https://odontovertice.example/pt/agendamento/abc',
+  },
+}
+
+const english: AppointmentNotice = {
+  ...notice,
+  locale: 'en',
+  appointment: {
+    ...notice.appointment,
+    treatmentName: 'Cleaning',
+    dentistName: 'Dr. Helena Prado',
+    manageUrl: 'https://odontovertice.example/en/agendamento/abc',
   },
 }
 
@@ -20,7 +32,20 @@ describe('notification templates', () => {
 
     expect(text).toContain('Quarta-feira, 25 de novembro, às 09:00')
     expect(text).toContain('Limpeza com Dra. Helena Prado')
-    expect(text).toContain('https://odontovertice.example/agendamento/abc')
+    expect(text).toContain('https://odontovertice.example/pt/agendamento/abc')
+  })
+
+  it('writes the whole message in English when the patient booked in English', () => {
+    const email = renderEmail(english)
+
+    expect(email.subject).toBe('Reminder: tomorrow at 9:00\u00a0AM at Odonto Vértice')
+    expect(email.text).toContain('Hi Mariana.')
+    expect(email.text).toContain('Wednesday, November 25 at 9:00\u00a0AM')
+    expect(email.text).toContain('Cleaning with Dr. Helena Prado')
+    expect(email.text).toContain('https://odontovertice.example/en/agendamento/abc')
+    expect(email.html).toContain('<html lang="en">')
+    expect(email.html).toContain('Please arrive 10 minutes early.')
+    expect(email.html).not.toMatch(/Olá|Quando|Consulta|Chegue/)
   })
 
   it('uses a subject that fits the notice kind', () => {
@@ -45,12 +70,16 @@ describe('notification templates', () => {
 
 describe('every notice kind', () => {
   it.each([
-    ['confirmation', 'Sua consulta está confirmada'],
-    ['reminder', 'Até amanhã'],
-    ['reschedule', 'Novo horário confirmado'],
-    ['cancellation', 'Consulta cancelada'],
-  ] as const)('renders %s with its own heading and call to action', (kind, heading) => {
-    const email = renderEmail({ ...notice, kind })
+    ['pt', 'confirmation', 'Sua consulta está confirmada'],
+    ['pt', 'reminder', 'Até amanhã'],
+    ['pt', 'reschedule', 'Novo horário confirmado'],
+    ['pt', 'cancellation', 'Consulta cancelada'],
+    ['en', 'confirmation', 'Your appointment is confirmed'],
+    ['en', 'reminder', 'See you tomorrow'],
+    ['en', 'reschedule', 'Your new time is confirmed'],
+    ['en', 'cancellation', 'Appointment cancelled'],
+  ] as const)('renders %s %s with its own heading', (locale, kind, heading) => {
+    const email = renderEmail({ ...(locale === 'en' ? english : notice), kind })
 
     expect(email.html).toContain(heading)
     expect(email.text.startsWith(`Odonto Vértice — ${heading}`)).toBe(true)

@@ -4,6 +4,7 @@ import { createEmailChannel } from './email.channel'
 
 const notice: AppointmentNotice = {
   kind: 'confirmation',
+  locale: 'pt',
   patient: { name: 'Mariana Lopes', email: 'mariana@example.com', phone: '+5562991234567' },
   appointment: {
     treatmentName: 'Avaliação',

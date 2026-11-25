@@ -11,7 +11,6 @@ import {
   setAttendance,
 } from '@/app/[locale]/painel/(app)/actions'
 import { SlotPicker } from '@/components/booking/slot-picker'
-import { STATUS_LABELS } from '@/components/panel/status'
 import { Button } from '@/components/ui/button'
 import { inputClasses } from '@/components/ui/field'
 import { AlertIcon, ArrowLeftIcon, CheckIcon } from '@/components/ui/icons'
@@ -31,23 +30,29 @@ import { staffPolicy } from '@/modules/schedule/availability.service'
 import { isLocalDate, toLocalDate, type LocalDate } from '@/modules/schedule/domain/clinic-time'
 import { CLINIC_TIME_ZONE } from '@/modules/schedule/domain/policy'
 
-export const metadata: Metadata = { title: 'Consulta' }
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('panel.meta')
+  return { title: t('appointment') }
+}
 
 type Props = {
   params: Promise<{ id: string }>
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-const MESSAGES: Record<string, { tone: 'ok' | 'error'; text: string }> = {
-  cancelada: { tone: 'ok', text: 'Consulta cancelada.' },
-  remarcada: {
-    tone: 'ok',
-    text: 'Consulta remarcada. O paciente recebeu o novo horário por e-mail.',
-  },
-  presenca: { tone: 'ok', text: 'Presença registrada.' },
-  status: { tone: 'error', text: 'Essa ação não vale para o status atual da consulta.' },
-  horario: { tone: 'error', text: 'Esse horário não está mais livre. Escolha outro.' },
-  falha: { tone: 'error', text: 'Não foi possível salvar. Tente novamente.' },
+const FLASH_TONES = {
+  cancelada: 'ok',
+  remarcada: 'ok',
+  presenca: 'ok',
+  status: 'error',
+  horario: 'error',
+  falha: 'error',
+} as const
+
+type FlashKey = keyof typeof FLASH_TONES
+
+function flashKeyFrom(value: unknown): FlashKey | undefined {
+  return typeof value === 'string' && value in FLASH_TONES ? (value as FlashKey) : undefined
 }
 
 export default function AppointmentPage(props: Props) {
@@ -72,7 +77,10 @@ async function AppointmentContent({ params, searchParams }: Props) {
   const appointment = await findStaffAppointment(db, id, locale)
   if (!appointment) notFound()
 
-  const tCancellation = await getTranslations({ locale, namespace: 'cancellationReasons' })
+  const [t, tCancellation] = await Promise.all([
+    getTranslations({ locale, namespace: 'panel' }),
+    getTranslations({ locale, namespace: 'cancellationReasons' }),
+  ])
   const cancellationLabel = (value: string) => {
     const note = parseCancellationNote(value)
     return note.kind === 'staff' ? note.text : tCancellation(note.reason ?? 'patient')
@@ -82,13 +90,10 @@ async function AppointmentContent({ params, searchParams }: Props) {
   const now = new Date()
   const isFuture = appointment.start.getTime() > now.getTime()
   const date = toLocalDate(appointment.start, CLINIC_TIME_ZONE)
-  const flashKey =
-    typeof query.ok === 'string'
-      ? query.ok
-      : typeof query.erro === 'string'
-        ? query.erro
-        : undefined
-  const flash = flashKey ? MESSAGES[flashKey] : undefined
+  const flashKey = flashKeyFrom(query.ok) ?? flashKeyFrom(query.erro)
+  const flash = flashKey
+    ? { tone: FLASH_TONES[flashKey], text: t(`appointment.flash.${flashKey}`) }
+    : undefined
   const canReschedule = appointment.status === 'scheduled' && isFuture
 
   const board = canReschedule
@@ -130,7 +135,7 @@ async function AppointmentContent({ params, searchParams }: Props) {
         className="inline-flex items-center gap-2 text-sm text-ink-soft hover:text-ink"
       >
         <ArrowLeftIcon size={16} />
-        Agenda de {formatShortDate(appointment.start, locale)}
+        {t('appointment.back', { date: formatShortDate(appointment.start, locale) })}
       </Link>
 
       {flash ? (
@@ -153,7 +158,10 @@ async function AppointmentContent({ params, searchParams }: Props) {
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm text-ink-soft">
-            {appointment.treatmentName} com {appointment.dentist.displayName}
+            {t('appointment.summary', {
+              treatment: appointment.treatmentName,
+              dentist: appointment.dentist.displayName,
+            })}
           </p>
           <h1 className="mt-1 font-display text-[2.2rem] leading-tight text-ink">
             {appointment.patient.fullName}
@@ -164,14 +172,14 @@ async function AppointmentContent({ params, searchParams }: Props) {
           </p>
         </div>
         <span className="rounded-full bg-paper-deep px-3 py-1 text-sm font-medium text-ink">
-          {STATUS_LABELS[appointment.status]}
+          {t(`status.${appointment.status}`)}
         </span>
       </header>
 
       <dl className="grid gap-px overflow-hidden rounded-[var(--radius-card)] border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
         {[
           [
-            'Telefone',
+            t('appointment.fields.phone'),
             <a
               key="t"
               href={`tel:${appointment.patient.phone}`}
@@ -181,7 +189,7 @@ async function AppointmentContent({ params, searchParams }: Props) {
             </a>,
           ],
           [
-            'E-mail',
+            t('appointment.fields.email'),
             <a
               key="e"
               href={`mailto:${appointment.patient.email}`}
@@ -191,7 +199,7 @@ async function AppointmentContent({ params, searchParams }: Props) {
             </a>,
           ],
           [
-            'WhatsApp',
+            t('appointment.fields.whatsapp'),
             <a
               key="w"
               href={whatsappLinkFor(appointment.patient.phone)}
@@ -199,20 +207,24 @@ async function AppointmentContent({ params, searchParams }: Props) {
               rel="noopener noreferrer"
               className="underline underline-offset-4"
             >
-              Abrir conversa
+              {t('appointment.fields.openChat')}
             </a>,
           ],
           [
-            'Pagamento',
+            t('appointment.fields.payment'),
             appointment.paymentMethod === 'insurance'
-              ? `Convênio · ${appointment.insuranceProvider ?? ''}`
-              : 'Particular',
+              ? t('appointment.fields.insurance', {
+                  provider: appointment.insuranceProvider ?? '',
+                })
+              : t('appointment.fields.private'),
           ],
           [
-            'Origem',
-            appointment.source === 'website' ? 'Agendado pelo site' : 'Agendado pela recepção',
+            t('appointment.fields.source'),
+            appointment.source === 'website'
+              ? t('appointment.fields.website')
+              : t('appointment.fields.reception'),
           ],
-          ['Remarcações', String(appointment.rescheduledCount)],
+          [t('appointment.fields.reschedules'), String(appointment.rescheduledCount)],
         ].map(([label, value]) => (
           <div key={String(label)} className="bg-card p-4">
             <dt className="text-sm text-ink-soft">{label}</dt>
@@ -223,13 +235,15 @@ async function AppointmentContent({ params, searchParams }: Props) {
 
       {appointment.notes ? (
         <section className="rounded-[var(--radius-soft)] border-l-4 border-clay-500 bg-card p-4">
-          <h2 className="text-sm font-semibold text-ink">Observações do paciente</h2>
+          <h2 className="text-sm font-semibold text-ink">{t('appointment.notes')}</h2>
           <p className="mt-1 whitespace-pre-line text-ink-soft">{appointment.notes}</p>
         </section>
       ) : null}
       {appointment.cancellationReason ? (
         <p className="text-ink-soft">
-          Motivo do cancelamento: {cancellationLabel(appointment.cancellationReason)}
+          {t('appointment.cancellationReason', {
+            reason: cancellationLabel(appointment.cancellationReason),
+          })}
         </p>
       ) : null}
 
@@ -239,13 +253,13 @@ async function AppointmentContent({ params, searchParams }: Props) {
           className="rounded-[var(--radius-card)] border border-line bg-card p-5"
         >
           <h2 id="presenca" className="font-display text-xl text-ink">
-            Presença
+            {t('appointment.attendance')}
           </h2>
           <div className="mt-4 flex flex-wrap gap-2">
             {(
               [
-                ['completed', 'Compareceu'],
-                ['no_show', 'Faltou'],
+                ['completed', t('appointment.attended')],
+                ['no_show', t('appointment.noShow')],
               ] as const
             ).map(([status, label]) => (
               <form key={status} action={setAttendance}>
@@ -270,10 +284,10 @@ async function AppointmentContent({ params, searchParams }: Props) {
           className="rounded-[var(--radius-card)] border border-line bg-card p-5 md:p-6"
         >
           <h2 id="remarcar" className="font-display text-xl text-ink">
-            Remarcar
+            {t('appointment.reschedule')}
           </h2>
           <p className="mt-1 text-sm text-ink-soft">
-            Horários livres na agenda de {appointment.dentist.displayName}.
+            {t('appointment.rescheduleBody', { dentist: appointment.dentist.displayName })}
           </p>
           <SlotPicker
             board={board}
@@ -292,13 +306,13 @@ async function AppointmentContent({ params, searchParams }: Props) {
               <input type="hidden" name="id" value={appointment.id} />
               <input type="hidden" name="startsAt" value={selectedStart} />
               <p>
-                Novo horário:{' '}
+                {t('appointment.newTime')}{' '}
                 <strong>
                   {capitalize(formatLongDate(new Date(selectedStart), locale))},{' '}
                   {formatTime(new Date(selectedStart), locale)}
                 </strong>
               </p>
-              <Button type="submit">Confirmar remarcação</Button>
+              <Button type="submit">{t('appointment.confirmReschedule')}</Button>
             </form>
           ) : null}
         </section>
@@ -310,14 +324,14 @@ async function AppointmentContent({ params, searchParams }: Props) {
           className="rounded-[var(--radius-card)] border border-line bg-card p-5 md:p-6"
         >
           <h2 id="cancelar" className="font-display text-xl text-ink">
-            Cancelar consulta
+            {t('appointment.cancelTitle')}
           </h2>
           <form action={cancelAppointmentAsStaff} className="mt-4 grid max-w-xl gap-4">
             <LocaleField />
             <input type="hidden" name="id" value={appointment.id} />
             <div>
               <label htmlFor="reason" className="text-[0.95rem] font-medium text-ink">
-                Motivo
+                {t('appointment.reason')}
               </label>
               <input
                 id="reason"
@@ -326,7 +340,7 @@ async function AppointmentContent({ params, searchParams }: Props) {
                 minLength={3}
                 maxLength={280}
                 className={cn(inputClasses, 'mt-2')}
-                placeholder="Ex.: paciente pediu por telefone"
+                placeholder={t('appointment.reasonPlaceholder')}
               />
             </div>
             <label className="flex items-center gap-2 text-[0.95rem] text-ink">
@@ -336,10 +350,10 @@ async function AppointmentContent({ params, searchParams }: Props) {
                 defaultChecked
                 className="size-4 accent-pine-800"
               />
-              Avisar o paciente por e-mail
+              {t('appointment.notify')}
             </label>
             <Button type="submit" className="w-fit bg-clay-600 text-paper hover:bg-clay-700">
-              Cancelar consulta
+              {t('appointment.cancelSubmit')}
             </Button>
           </form>
         </section>

@@ -1,4 +1,6 @@
 import 'server-only'
+import { getPathname } from '@/i18n/navigation'
+import type { AppLocale } from '@/i18n/routing'
 import { serverEnv } from '@/lib/env'
 import { absoluteUrl } from '@/lib/site'
 import { createServiceClient } from '@/lib/supabase/clients'
@@ -10,14 +12,16 @@ import { manageTokenFor } from '@/modules/booking/manage-token'
 import { notificationChannel } from './channel'
 import type { AppointmentNotice, NoticeKind } from './types'
 
-export function manageUrlFor(appointmentId: string): string {
+export function manageUrlFor(appointmentId: string, locale: AppLocale): string {
   const { token } = manageTokenFor(appointmentId, serverEnv().MANAGE_TOKEN_SECRET)
-  return absoluteUrl(`/agendamento/${token}`)
+  return absoluteUrl(getPathname({ href: `/agendamento/${token}`, locale }))
 }
 
 export function buildNotice(kind: NoticeKind, appointment: AppointmentDetails): AppointmentNotice {
+  const { locale } = appointment
   return {
     kind,
+    locale,
     patient: {
       name: appointment.patient.fullName,
       email: appointment.patient.email,
@@ -28,7 +32,10 @@ export function buildNotice(kind: NoticeKind, appointment: AppointmentDetails): 
       dentistName: appointment.dentist.displayName,
       startsAt: appointment.startsAt,
       endsAt: appointment.endsAt,
-      manageUrl: kind === 'cancellation' ? absoluteUrl('/agendar') : manageUrlFor(appointment.id),
+      manageUrl:
+        kind === 'cancellation'
+          ? absoluteUrl(getPathname({ href: '/agendar', locale }))
+          : manageUrlFor(appointment.id, locale),
     },
   }
 }

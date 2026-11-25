@@ -8,6 +8,7 @@ function reminder(id: string): ClaimedReminder {
   return {
     deliveryId: `d-${id}`,
     appointmentId: `a-${id}`,
+    locale: id === '1' ? 'en' : 'pt',
     startsAt: new Date('2026-11-25T12:00:00Z'),
     endsAt: new Date('2026-11-25T12:30:00Z'),
     patientName: 'Mariana Lopes',
@@ -52,7 +53,7 @@ describe('dispatchReminders', () => {
       channel,
       claim,
       record,
-      manageUrl: (id) => `https://example.com/agendamento/${id}`,
+      manageUrl: (id, locale) => `https://example.com/${locale}/agendamento/${id}`,
       concurrency: 2,
     })
 
@@ -61,7 +62,8 @@ describe('dispatchReminders', () => {
     expect(record).toHaveBeenCalledWith('d-2', { ok: false, error: 'bounce' })
     expect(vi.mocked(channel.send).mock.calls[0]?.[0]).toMatchObject({
       kind: 'reminder',
-      appointment: { manageUrl: 'https://example.com/agendamento/a-1' },
+      locale: 'en',
+      appointment: { manageUrl: 'https://example.com/en/agendamento/a-1' },
     })
   })
 

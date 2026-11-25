@@ -1,6 +1,6 @@
 'use client'
 
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useActionState } from 'react'
 import { signIn, type SignInState } from '@/app/[locale]/painel/actions'
 import { Button } from '@/components/ui/button'
@@ -9,6 +9,7 @@ import { AlertIcon } from '@/components/ui/icons'
 
 export function LoginForm() {
   const locale = useLocale()
+  const t = useTranslations('panel.login')
   const [state, action, pending] = useActionState<SignInState, FormData>(signIn, {})
 
   return (
@@ -23,7 +24,7 @@ export function LoginForm() {
           {state.error}
         </p>
       ) : null}
-      <Field id="email" label="E-mail">
+      <Field id="email" label={t('email')}>
         <input
           id="email"
           name="email"
@@ -34,7 +35,7 @@ export function LoginForm() {
           className={inputClasses}
         />
       </Field>
-      <Field id="password" label="Senha">
+      <Field id="password" label={t('password')}>
         <input
           id="password"
           name="password"
@@ -45,7 +46,7 @@ export function LoginForm() {
         />
       </Field>
       <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? 'Entrando…' : 'Entrar'}
+        {pending ? t('submitting') : t('submit')}
       </Button>
     </form>
   )

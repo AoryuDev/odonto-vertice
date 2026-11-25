@@ -289,7 +289,16 @@
     "insuranceRequired": "Please enter your insurance provider.",
     "insuranceTooLong": "Please use 80 characters or fewer.",
     "notesTooLong": "Please use 500 characters or fewer.",
-    "consentRequired": "We need your consent to record this booking."
+    "consentRequired": "We need your consent to record this booking.",
+    "timeFormat": "Use the HH:MM format.",
+    "dentistRequired": "Choose a dentist.",
+    "dateInvalid": "Enter a valid date.",
+    "reasonShort": "Describe the reason in a few words.",
+    "reasonTooLong": "Please use 140 characters or fewer.",
+    "startRequired": "Enter a start time.",
+    "endRequired": "Enter an end time.",
+    "endBeforeStart": "The end has to be after the start.",
+    "cancelReasonRequired": "Enter a reason."
   },
   "booking": {
     "meta": {
@@ -460,5 +469,197 @@
     "resolved_elsewhere": "Got it taken care of elsewhere",
     "health_issue": "Health issue",
     "financial": "Financial reasons"
+  },
+  "email": {
+    "kinds": {
+      "confirmation": {
+        "subject": "Appointment confirmed — {treatment}, {time}",
+        "heading": "Your appointment is confirmed",
+        "lead": "Keep this email. Use the link below to reschedule or cancel without having to call.",
+        "cta": "View, reschedule or cancel"
+      },
+      "reminder": {
+        "subject": "Reminder: tomorrow at {time} at {clinic}",
+        "heading": "See you tomorrow",
+        "lead": "Just a quick reminder about your appointment. If you can’t make it, let us know through the link so we can offer the time to another patient.",
+        "cta": "Reschedule or cancel"
+      },
+      "reschedule": {
+        "subject": "Appointment moved to {date}",
+        "heading": "Your new time is confirmed",
+        "lead": "Your appointment has been rescheduled. The link to manage it stays the same.",
+        "cta": "View details"
+      },
+      "cancellation": {
+        "subject": "Appointment cancelled — {clinic}",
+        "heading": "Appointment cancelled",
+        "lead": "The time has been released. Whenever you’re ready, you can book again on our website.",
+        "cta": "Book another time"
+      }
+    },
+    "greeting": "Hi {name}.",
+    "when": "When",
+    "visit": "Appointment",
+    "where": "Where",
+    "whenValue": "{date} at {time}",
+    "visitValue": "{treatment} with {dentist}",
+    "whatsappWhen": "{date} at {time}",
+    "footer": "Please arrive 10 minutes early. Questions? Call {phone}."
+  },
+  "panel": {
+    "meta": {
+      "title": "Clinic panel",
+      "template": "%s · Odonto Vértice panel",
+      "agenda": "Schedule",
+      "blocks": "Blocked time",
+      "appointment": "Appointment",
+      "login": "Sign in"
+    },
+    "layout": {
+      "brandSuffix": "panel",
+      "viewSite": "View website",
+      "navLabel": "Panel",
+      "nav": {
+        "agenda": "Schedule",
+        "blocks": "Blocked time"
+      }
+    },
+    "localeSwitcher": {
+      "saving": "Saving language…"
+    },
+    "staff": {
+      "reception": "Front desk · all schedules",
+      "dentist": "Dentist · your schedule",
+      "signOut": "Sign out"
+    },
+    "login": {
+      "tagline": "The clinic’s schedule, the way the front desk needs it.",
+      "pitch": "Each dentist sees only their own schedule. The front desk sees them all, blocks off time and reschedules.",
+      "restricted": "Restricted to the Odonto Vértice team.",
+      "title": "Sign in to the panel",
+      "body": "Use the email and password the clinic set up for you.",
+      "demoTitle": "Demo access",
+      "demoReception": "Front desk:",
+      "demoDentist": "Dentist:",
+      "demoPassword": "Password:",
+      "back": "Back to the website",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "errors": {
+        "invalid": "Enter your email and password.",
+        "rateLimited": "Too many attempts. Wait a few minutes before trying again.",
+        "wrong": "Incorrect email or password."
+      }
+    },
+    "status": {
+      "scheduled": "Booked",
+      "completed": "Completed",
+      "no_show": "No-show",
+      "cancelled": "Cancelled"
+    },
+    "agenda": {
+      "stats": {
+        "scheduled": "Booked",
+        "completed": "Completed",
+        "no_show": "No-shows",
+        "cancelled": "Cancelled"
+      },
+      "weekRange": "{from} – {to}",
+      "week": "Week",
+      "today": "Today",
+      "day": "Day",
+      "views": {
+        "dia": "day",
+        "semana": "week"
+      },
+      "previousWeek": "Previous week",
+      "previousDay": "Previous day",
+      "nextWeek": "Next week",
+      "nextDay": "Next day",
+      "goToDate": "Go to date",
+      "go": "Go",
+      "filterLabel": "Filter by dentist",
+      "all": "All",
+      "hideCancelled": "Hide cancelled",
+      "showCancelled": "Show cancelled",
+      "count": "{count, plural, one {# appointment} other {# appointments}}",
+      "empty": "No appointments",
+      "blocked": "Blocked",
+      "blockedWithReason": "Blocked: {reason}"
+    },
+    "appointment": {
+      "back": "Schedule for {date}",
+      "flash": {
+        "cancelada": "Appointment cancelled.",
+        "remarcada": "Appointment rescheduled. The patient has been emailed the new time.",
+        "presenca": "Attendance recorded.",
+        "status": "That action doesn’t apply to this appointment’s current status.",
+        "horario": "That time is no longer free. Please pick another.",
+        "falha": "Couldn’t save. Please try again."
+      },
+      "summary": "{treatment} with {dentist}",
+      "fields": {
+        "phone": "Phone",
+        "email": "Email",
+        "whatsapp": "WhatsApp",
+        "openChat": "Open chat",
+        "payment": "Payment",
+        "insurance": "Insurance · {provider}",
+        "private": "Self-pay",
+        "source": "Booked via",
+        "website": "Website",
+        "reception": "Front desk",
+        "reschedules": "Reschedules"
+      },
+      "notes": "Patient notes",
+      "cancellationReason": "Cancellation reason: {reason}",
+      "attendance": "Attendance",
+      "attended": "Attended",
+      "noShow": "No-show",
+      "reschedule": "Reschedule",
+      "rescheduleBody": "Open times in {dentist}’s schedule.",
+      "newTime": "New time:",
+      "confirmReschedule": "Confirm new time",
+      "cancelTitle": "Cancel appointment",
+      "reason": "Reason",
+      "reasonPlaceholder": "E.g. patient called to cancel",
+      "notify": "Email the patient",
+      "cancelSubmit": "Cancel appointment"
+    },
+    "blocks": {
+      "title": "Blocked time",
+      "body": "Use it for courses, conferences, equipment maintenance or any time away. Blocked times disappear from online booking right away.",
+      "new": "New block",
+      "newFor": "New block in {dentist}’s schedule",
+      "upcoming": "Upcoming blocks",
+      "removed": "Block removed.",
+      "removeFailed": "Couldn’t remove that block.",
+      "empty": "No blocks in the coming months.",
+      "remove": "Remove",
+      "removeLabel": "block {reason}",
+      "form": {
+        "saved": "Block saved. Those times no longer appear in online booking.",
+        "dentist": "Dentist",
+        "choose": "Choose",
+        "date": "Date",
+        "allDay": "All day",
+        "from": "From",
+        "to": "To",
+        "reason": "Reason",
+        "reasonHint": "Only shown in the panel.",
+        "reasonPlaceholder": "E.g. continuing education course",
+        "submit": "Block time",
+        "submitting": "Saving…"
+      },
+      "errors": {
+        "invalid": "Please check the highlighted fields.",
+        "forbidden": "You can’t block another dentist’s schedule.",
+        "past": "The block has to end in the future.",
+        "overlapping": "{count, plural, one {There is # booked appointment} other {There are # booked appointments}} in that window. Reschedule or cancel before blocking it.",
+        "saveFailed": "Couldn’t save the block."
+      }
+    }
   }
 }

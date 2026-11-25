@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { AgendaToolbar, dayTitle } from '@/components/panel/agenda-toolbar'
@@ -19,7 +20,10 @@ import {
 } from '@/modules/schedule/domain/clinic-time'
 import { CLINIC_TIME_ZONE } from '@/modules/schedule/domain/policy'
 
-export const metadata: Metadata = { title: 'Agenda' }
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('panel.meta')
+  return { title: t('agenda') }
+}
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> }
 
@@ -42,10 +46,11 @@ const MIDNIGHT = parseLocalTime('00:00')
 
 async function Agenda({ searchParams }: Props) {
   const locale = await currentLocale()
-  const [{ db, staff }, raw, dentists] = await Promise.all([
+  const [{ db, staff }, raw, dentists, t] = await Promise.all([
     requireStaff(locale),
     searchParams,
     listDentists(locale),
+    getTranslations({ locale, namespace: 'panel.agenda' }),
   ])
   await connection()
   const params = parseAgendaParams(raw)
@@ -76,7 +81,10 @@ async function Agenda({ searchParams }: Props) {
   const stats = agendaStats(entries)
   const title =
     params.view === 'semana'
-      ? `${formatShortDate(localDateNoon(firstDay), locale)} a ${formatShortDate(localDateNoon(lastDay), locale)}`
+      ? t('weekRange', {
+          from: formatShortDate(localDateNoon(firstDay), locale),
+          to: formatShortDate(localDateNoon(lastDay), locale),
+        })
       : dayTitle(date, locale)
 
   return (
@@ -92,10 +100,10 @@ async function Agenda({ searchParams }: Props) {
       />
       <dl className="flex flex-wrap gap-x-8 gap-y-2 text-sm">
         {[
-          ['Agendadas', stats.scheduled],
-          ['Realizadas', stats.completed],
-          ['Faltas', stats.no_show],
-          ...(params.showCancelled ? ([['Canceladas', stats.cancelled]] as const) : []),
+          [t('stats.scheduled'), stats.scheduled],
+          [t('stats.completed'), stats.completed],
+          [t('stats.no_show'), stats.no_show],
+          ...(params.showCancelled ? ([[t('stats.cancelled'), stats.cancelled]] as const) : []),
         ].map(([label, value]) => (
           <div key={label} className="flex items-baseline gap-2">
             <dt className="text-ink-soft">{label}</dt>

@@ -1,3 +1,4 @@
+import type { AppLocale } from '@/i18n/routing'
 import {
   addDays,
   parseLocalTime,
@@ -20,6 +21,7 @@ export function tomorrowWindow(now: Date, timeZone: string): ReminderWindow {
 export type ClaimedReminder = {
   readonly deliveryId: string
   readonly appointmentId: string
+  readonly locale: AppLocale
   readonly startsAt: Date
   readonly endsAt: Date
   readonly patientName: string
@@ -33,7 +35,7 @@ export type ReminderDependencies = {
   readonly channel: NotificationChannel
   readonly claim: (window: ReminderWindow, channel: string) => Promise<readonly ClaimedReminder[]>
   readonly record: (deliveryId: string, receipt: DeliveryReceipt) => Promise<void>
-  readonly manageUrl: (appointmentId: string) => string
+  readonly manageUrl: (appointmentId: string, locale: AppLocale) => string
   readonly concurrency?: number
 }
 
@@ -47,6 +49,7 @@ export type ReminderRun = {
 export function reminderNotice(reminder: ClaimedReminder, manageUrl: string): AppointmentNotice {
   return {
     kind: 'reminder',
+    locale: reminder.locale,
     patient: {
       name: reminder.patientName,
       email: reminder.patientEmail,
@@ -76,7 +79,7 @@ export async function dispatchReminders(
     const receipts = await Promise.all(
       batch.map(async (reminder) => {
         const receipt = await deps.channel
-          .send(reminderNotice(reminder, deps.manageUrl(reminder.appointmentId)))
+          .send(reminderNotice(reminder, deps.manageUrl(reminder.appointmentId, reminder.locale)))
           .catch((error: unknown): DeliveryReceipt => ({
             ok: false,
             error: error instanceof Error ? error.message : String(error),

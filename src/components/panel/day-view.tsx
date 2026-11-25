@@ -1,4 +1,4 @@
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { dentistPhoto } from '@/content/photos'
@@ -13,7 +13,7 @@ import {
 import type { Dentist } from '@/modules/catalog/types'
 import { weekdayOf, type LocalDate } from '@/modules/schedule/domain/clinic-time'
 import { CLINIC_TIME_ZONE } from '@/modules/schedule/domain/policy'
-import { STATUS_LABELS, STATUS_STYLES } from './status'
+import { STATUS_STYLES } from './status'
 
 const PIXELS_PER_MINUTE = 1.7
 
@@ -31,6 +31,7 @@ export function DayView({
   now: Date
 }) {
   const locale = useLocale()
+  const t = useTranslations('panel')
   const minutes = (window.end.getTime() - window.start.getTime()) / 60000
   const height = minutes * PIXELS_PER_MINUTE
   const hours = Array.from(
@@ -65,15 +66,14 @@ export function DayView({
               <div className="min-w-0">
                 <p className="truncate font-medium text-ink">{dentist.displayName}</p>
                 <p className="text-xs text-ink-soft">
-                  {
-                    entries.filter(
+                  {t('agenda.count', {
+                    count: entries.filter(
                       (entry) =>
                         entry.kind === 'appointment' &&
                         entry.dentistId === dentist.id &&
                         entry.status !== 'cancelled',
-                    ).length
-                  }{' '}
-                  consultas
+                    ).length,
+                  })}
                 </p>
               </div>
             </div>
@@ -143,7 +143,8 @@ export function DayView({
                         className="absolute inset-x-1.5 overflow-hidden rounded-lg border border-dashed border-line-strong bg-paper-deep/90 px-2.5 py-1.5 text-xs text-ink-soft"
                         style={style}
                       >
-                        <span className="font-medium text-ink">Bloqueado</span> · {entry.reason}
+                        <span className="font-medium text-ink">{t('agenda.blocked')}</span> ·{' '}
+                        {entry.reason}
                       </div>
                     )
                   }
@@ -161,7 +162,7 @@ export function DayView({
                       <span className="block truncate">{entry.patientName}</span>
                       <span className="block truncate opacity-80">
                         {entry.treatmentName}
-                        {entry.status !== 'scheduled' ? ` · ${STATUS_LABELS[entry.status]}` : ''}
+                        {entry.status !== 'scheduled' ? ` · ${t(`status.${entry.status}`)}` : ''}
                       </span>
                     </Link>
                   )

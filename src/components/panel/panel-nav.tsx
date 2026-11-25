@@ -1,11 +1,12 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 
 const ITEMS = [
-  { href: '/painel', label: 'Agenda' },
-  { href: '/painel/bloqueios', label: 'Bloqueios' },
+  { href: '/painel', key: 'agenda' },
+  { href: '/painel/bloqueios', key: 'blocks' },
 ] as const
 
 export function PanelNav() {
@@ -14,8 +15,9 @@ export function PanelNav() {
 }
 
 export function PanelNavList({ pathname }: { pathname: string | null }) {
+  const t = useTranslations('panel.layout')
   return (
-    <nav aria-label="Painel">
+    <nav aria-label={t('navLabel')}>
       <ul className="flex gap-1 lg:flex-col">
         {ITEMS.map((item) => {
           const current = pathname ?? ''
@@ -35,7 +37,7 @@ export function PanelNavList({ pathname }: { pathname: string | null }) {
                     : 'text-ink-soft hover:bg-paper-deep hover:text-ink',
                 )}
               >
-                {item.label}
+                {t(`nav.${item.key}`)}
               </Link>
             </li>
           )

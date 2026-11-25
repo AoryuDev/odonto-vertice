@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { LocaleField } from '@/components/site/locale-field'
@@ -12,18 +13,19 @@ import { listDentists } from '@/modules/catalog/catalog.repository'
 import { toLocalDate } from '@/modules/schedule/domain/clinic-time'
 import { CLINIC_TIME_ZONE } from '@/modules/schedule/domain/policy'
 
-export const metadata: Metadata = { title: 'Bloqueios' }
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('panel.meta')
+  return { title: t('blocks') }
+}
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> }
 
-export default function BlocksPage({ searchParams }: Props) {
+export default async function BlocksPage({ searchParams }: Props) {
+  const t = await getTranslations('panel.blocks')
   return (
     <div className="max-w-5xl">
-      <h1 className="font-display text-[2rem] leading-tight text-ink">Bloqueios de agenda</h1>
-      <p className="mt-2 max-w-2xl text-ink-soft">
-        Use para cursos, congressos, manutenção de equipamento ou qualquer ausência. Horários
-        bloqueados somem na hora do agendamento online.
-      </p>
+      <h1 className="font-display text-[2rem] leading-tight text-ink">{t('title')}</h1>
+      <p className="mt-2 max-w-2xl text-ink-soft">{t('body')}</p>
       <Suspense
         fallback={
           <div
@@ -40,10 +42,11 @@ export default function BlocksPage({ searchParams }: Props) {
 
 async function BlocksContent({ searchParams }: Props) {
   const locale = await currentLocale()
-  const [{ db, staff }, dentists, query] = await Promise.all([
+  const [{ db, staff }, dentists, query, t] = await Promise.all([
     requireStaff(locale),
     listDentists(locale),
     searchParams,
+    getTranslations({ locale, namespace: 'panel.blocks' }),
   ])
   await connection()
   const now = new Date()
@@ -58,7 +61,7 @@ async function BlocksContent({ searchParams }: Props) {
         className="rounded-[var(--radius-card)] border border-line bg-card p-5 md:p-6"
       >
         <h2 id="novo-bloqueio" className="font-display text-xl text-ink">
-          Novo bloqueio{own ? ` na agenda de ${own.displayName}` : ''}
+          {own ? t('newFor', { dentist: own.displayName }) : t('new')}
         </h2>
         <div className="mt-5">
           <BlockForm
@@ -71,21 +74,19 @@ async function BlocksContent({ searchParams }: Props) {
 
       <section aria-labelledby="proximos">
         <h2 id="proximos" className="font-display text-xl text-ink">
-          Próximos bloqueios
+          {t('upcoming')}
         </h2>
         {query.ok === 'removido' ? (
           <p role="status" className="mt-3 text-sm text-pine-800">
-            Bloqueio removido.
+            {t('removed')}
           </p>
         ) : null}
         {query.erro ? (
           <p role="alert" className="mt-3 text-sm text-clay-700">
-            Não foi possível remover esse bloqueio.
+            {t('removeFailed')}
           </p>
         ) : null}
-        {blocks.length === 0 ? (
-          <p className="mt-4 text-ink-soft">Nenhum bloqueio nos próximos meses.</p>
-        ) : null}
+        {blocks.length === 0 ? <p className="mt-4 text-ink-soft">{t('empty')}</p> : null}
         <ul className="mt-4 divide-y divide-line rounded-[var(--radius-card)] border border-line bg-card">
           {blocks.map((block) => (
             <li key={block.id} className="flex items-start justify-between gap-4 p-4">
@@ -103,7 +104,8 @@ async function BlocksContent({ searchParams }: Props) {
                   type="submit"
                   className="rounded-full border border-line-strong px-3 py-1.5 text-sm text-ink hover:border-clay-600 hover:text-clay-700"
                 >
-                  Remover<span className="sr-only"> bloqueio {block.reason}</span>
+                  {t('remove')}
+                  <span className="sr-only"> {t('removeLabel', { reason: block.reason })}</span>
                 </button>
               </form>
             </li>

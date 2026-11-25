@@ -7,6 +7,7 @@ describe('console channel', () => {
 
     const receipt = await consoleChannel.send({
       kind: 'confirmation',
+      locale: 'pt',
       patient: { name: 'Ana Souza', email: 'ana@example.com', phone: '+5562991234567' },
       appointment: {
         treatmentName: 'Avaliação',

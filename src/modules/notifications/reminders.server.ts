@@ -20,6 +20,7 @@ export async function runDailyReminders(now: Date): Promise<ReminderRun> {
       return data.map((row) => ({
         deliveryId: row.delivery_id,
         appointmentId: row.appointment_id,
+        locale: row.locale,
         startsAt: new Date(row.starts_at),
         endsAt: new Date(row.ends_at),
         patientName: row.patient_name,
