@@ -8,7 +8,6 @@
     "skipToContent": "Skip to content",
     "navLabel": "Main",
     "book": "Book a visit",
-    "preferCall": "Rather call?",
     "nav": {
       "treatments": "Treatments",
       "team": "Our team",
@@ -20,8 +19,7 @@
   "mobileNav": {
     "label": "Main menu",
     "open": "Open menu",
-    "close": "Close menu",
-    "preferCall": "Rather call? <call>Talk to our front desk</call>"
+    "close": "Close menu"
   },
   "mobileBar": {
     "book": "Book a visit"
@@ -171,7 +169,7 @@
         },
         "reschedule": {
           "question": "Can I reschedule or cancel?",
-          "answer": "Yes, using the link in your confirmation email, up to two hours before your appointment. After that, please call our front desk so we can free up the time."
+          "answer": "Yes, using the link in your confirmation email, up to two hours before your appointment. After that, please email our front desk so we can free up the time."
         },
         "children": {
           "question": "Do you see children?",
@@ -179,7 +177,7 @@
         },
         "pain": {
           "question": "What if I’m in pain right now?",
-          "answer": "Book an emergency visit online: today’s open times show up straight away. If nothing is free, call our front desk and we’ll do our best to fit you in."
+          "answer": "Book an emergency visit online: today’s open times show up straight away. If nothing is free, email our front desk and we’ll do our best to fit you in."
         }
       }
     },
@@ -192,12 +190,11 @@
       "closedDays": "Sundays and holidays",
       "closed": "Closed",
       "directions": "Get directions",
-      "call": "Call · <tabular>{phone}</tabular>",
       "reception": "Coffee and water in the waiting room. Please arrive ten minutes early so we can get you registered."
     },
     "closing": {
       "title": "Pick a time now. It takes less than two minutes.",
-      "body": "The times you see are genuinely open in each dentist’s schedule. Rather talk to someone? Our front desk is at {phone}.",
+      "body": "The times you see are genuinely open in each dentist’s schedule.",
       "cta": "Book a visit"
     }
   },
@@ -243,13 +240,13 @@
   },
   "errorPage": {
     "title": "We couldn’t load this page.",
-    "body": "It may just be a brief hiccup. Try again, or call our front desk at {phone}.",
+    "body": "It may just be a brief hiccup. Please try again in a moment.",
     "retry": "Try again",
     "home": "Go to the home page"
   },
   "globalError": {
     "title": "Something went wrong on our end.",
-    "body": "Please try again in a few seconds. If you need to book right now, call {phone}.",
+    "body": "Please try again in a few seconds.",
     "retry": "Try again"
   },
   "photoAlt": {
@@ -338,7 +335,7 @@
       "bodyAny": "We only show times that are actually free for the dentists who offer this treatment."
     },
     "slotPicker": {
-      "empty": "There are no open times in the next few weeks for this choice. Try another dentist or call our front desk.",
+      "empty": "There are no open times in the next few weeks for this choice. Try another dentist or email our front desk.",
       "count": "{count, plural, one {# open time} other {# open times}} · Brasília time",
       "morning": "Morning",
       "afternoon": "Afternoon",
@@ -389,8 +386,8 @@
       "slot_unavailable": "Someone just booked that time. Pick one of the next open times:",
       "treatment_unavailable": "This treatment isn’t available for online booking right now.",
       "dentist_unavailable": "This dentist doesn’t offer the treatment you chose. Go back and pick another.",
-      "rate_limited": "Too many attempts in a row. Wait a few minutes or call {phone}.",
-      "unexpected": "We couldn’t finish your booking just now. Try again in a moment or call {phone}."
+      "rate_limited": "Too many attempts in a row. Wait a few minutes and try again.",
+      "unexpected": "We couldn’t finish your booking just now. Please try again in a moment."
     }
   },
   "manage": {
@@ -433,13 +430,13 @@
       "financial": "Financial reasons"
     },
     "confirmCancel": "Yes, cancel my appointment",
-    "tooLate": "Your appointment is less than two hours away. To reschedule or cancel, call <phoneLink>{phone}</phoneLink>.",
+    "tooLate": "Your appointment is less than two hours away. To reschedule or cancel, email <emailLink>{email}</emailLink>.",
     "bookAgain": "Book another time",
-    "help": "Questions? Call our front desk at <phoneLink>{phone}</phoneLink> or head back to the <site>website</site>.",
+    "help": "Questions? Email our front desk at <emailLink>{email}</emailLink> or head back to the <site>website</site>.",
     "errors": {
       "not_found": "We couldn’t find this appointment.",
       "not_scheduled": "This appointment has already been cancelled or completed.",
-      "too_late": "Your appointment is less than two hours away. To make a change, please call our front desk.",
+      "too_late": "Your appointment is less than two hours away. To make a change, please email our front desk.",
       "slot_unavailable": "Someone just took that time. Please pick another.",
       "unexpected": "We couldn’t finish that just now. Please try again in a moment."
     }
@@ -499,7 +496,7 @@
     "whenValue": "{date} at {time}",
     "visitValue": "{treatment} with {dentist}",
     "whatsappWhen": "{date} at {time}",
-    "footer": "Please arrive 10 minutes early. Questions? Call {phone}."
+    "footer": "Please arrive 10 minutes early. Questions? Email {email}."
   },
   "panel": {
     "meta": {

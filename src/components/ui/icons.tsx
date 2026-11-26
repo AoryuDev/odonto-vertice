@@ -64,14 +64,6 @@ export function ClockIcon(props: IconProps) {
   )
 }
 
-export function PhoneIcon(props: IconProps) {
-  return (
-    <Icon {...props}>
-      <path d="M6.6 3.5h2.2l1.4 4-2 1.3a11 11 0 0 0 7 7l1.3-2 4 1.4v2.2a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2Z" />
-    </Icon>
-  )
-}
-
 export function MapPinIcon(props: IconProps) {
   return (
     <Icon {...props}>

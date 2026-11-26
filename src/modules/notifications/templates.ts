@@ -89,7 +89,7 @@ export function renderEmail(notice: AppointmentNotice): RenderedEmail {
     when: escapeHtml(describeWhen(notice)),
     url: escapeHtml(notice.appointment.manageUrl),
     address: escapeHtml(formatAddressLine()),
-    footer: escapeHtml(t('footer', { phone: clinic.phone.display })),
+    footer: escapeHtml(t('footer', { email: clinic.email })),
   }
 
   const html = `<!doctype html>

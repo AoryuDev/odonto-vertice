@@ -10,7 +10,6 @@ export const clinic = {
     country: 'BR',
   },
   geo: { latitude: -16.7068, longitude: -49.2712 },
-  phone: { display: '(62) 3920-4815', e164: '+556239204815' },
   email: 'contato@odontovertice.example',
   parking: 'Estacionamento conveniado no térreo do edifício.',
   landmark: 'A duas quadras do Parque Vaca Brava.',

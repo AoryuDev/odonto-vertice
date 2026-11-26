@@ -8,7 +8,6 @@
     "skipToContent": "Pular para o conteúdo",
     "navLabel": "Principal",
     "book": "Agendar consulta",
-    "preferCall": "Prefere ligar?",
     "nav": {
       "treatments": "Tratamentos",
       "team": "Equipe",
@@ -20,8 +19,7 @@
   "mobileNav": {
     "label": "Menu principal",
     "open": "Abrir menu",
-    "close": "Fechar menu",
-    "preferCall": "Prefere ligar? <call>Fale com a recepção</call>"
+    "close": "Fechar menu"
   },
   "mobileBar": {
     "book": "Agendar consulta"
@@ -171,7 +169,7 @@
         },
         "reschedule": {
           "question": "Posso remarcar ou cancelar?",
-          "answer": "Pode, pelo link do e-mail de confirmação, até duas horas antes do horário. Depois disso, ligue para a recepção para liberarmos o horário."
+          "answer": "Pode, pelo link do e-mail de confirmação, até duas horas antes do horário. Depois disso, escreva para a recepção para liberarmos o horário."
         },
         "children": {
           "question": "Vocês atendem crianças?",
@@ -179,7 +177,7 @@
         },
         "pain": {
           "question": "E se eu estiver com dor agora?",
-          "answer": "Agende uma urgência pelo site: os horários livres do dia aparecem na hora. Se não houver vaga, ligue para a recepção que tentamos um encaixe."
+          "answer": "Agende uma urgência pelo site: os horários livres do dia aparecem na hora. Se não houver vaga, escreva para a recepção que tentamos um encaixe."
         }
       }
     },
@@ -192,12 +190,11 @@
       "closedDays": "Domingo e feriados",
       "closed": "Fechado",
       "directions": "Traçar rota",
-      "call": "Ligar · <tabular>{phone}</tabular>",
       "reception": "Recepção com café e água. Chegue com dez minutos de antecedência para o cadastro."
     },
     "closing": {
       "title": "Escolha um horário agora. Leva menos de dois minutos.",
-      "body": "Os horários mostrados são os que estão livres de verdade na agenda de cada dentista. Prefere falar com alguém? A recepção atende no {phone}.",
+      "body": "Os horários mostrados são os que estão livres de verdade na agenda de cada dentista.",
       "cta": "Agendar consulta"
     }
   },
@@ -243,13 +240,13 @@
   },
   "errorPage": {
     "title": "Não conseguimos carregar esta página.",
-    "body": "Pode ser uma instabilidade momentânea. Tente novamente ou fale com a recepção pelo telefone {phone}.",
+    "body": "Pode ser uma instabilidade momentânea. Tente novamente em alguns instantes.",
     "retry": "Tentar novamente",
     "home": "Ir para o início"
   },
   "globalError": {
     "title": "Algo deu errado do nosso lado.",
-    "body": "Tente de novo em alguns segundos. Se precisar marcar uma consulta agora, ligue para {phone}.",
+    "body": "Tente de novo em alguns segundos.",
     "retry": "Tentar novamente"
   },
   "photoAlt": {
@@ -338,7 +335,7 @@
       "bodyAny": "Mostramos só o que está livre na agenda dos dentistas que atendem este tratamento."
     },
     "slotPicker": {
-      "empty": "Não há horários livres nas próximas semanas para esta escolha. Tente outro dentista ou ligue para a recepção.",
+      "empty": "Não há horários livres nas próximas semanas para esta escolha. Tente outro dentista ou escreva para a recepção.",
       "count": "{count, plural, one {# horário livre} other {# horários livres}} · horário de Brasília",
       "morning": "Manhã",
       "afternoon": "Tarde",
@@ -389,8 +386,8 @@
       "slot_unavailable": "Esse horário acabou de ser reservado por outra pessoa. Escolha um dos próximos horários livres:",
       "treatment_unavailable": "Esse tratamento não está disponível para agendamento online no momento.",
       "dentist_unavailable": "Esse dentista não atende o tratamento escolhido. Volte e escolha outro.",
-      "rate_limited": "Muitas tentativas seguidas. Aguarde alguns minutos ou ligue para {phone}.",
-      "unexpected": "Não conseguimos concluir agora. Tente de novo em instantes ou ligue para {phone}."
+      "rate_limited": "Muitas tentativas seguidas. Aguarde alguns minutos e tente de novo.",
+      "unexpected": "Não conseguimos concluir agora. Tente de novo em instantes."
     }
   },
   "manage": {
@@ -433,13 +430,13 @@
       "financial": "Questão financeira"
     },
     "confirmCancel": "Sim, cancelar consulta",
-    "tooLate": "Faltam menos de duas horas para a consulta. Para remarcar ou cancelar, ligue para <phoneLink>{phone}</phoneLink>.",
+    "tooLate": "Faltam menos de duas horas para a consulta. Para remarcar ou cancelar, escreva para <emailLink>{email}</emailLink>.",
     "bookAgain": "Agendar outro horário",
-    "help": "Dúvidas? Fale com a recepção pelo <phoneLink>{phone}</phoneLink> ou volte para o <site>site</site>.",
+    "help": "Dúvidas? Escreva para a recepção em <emailLink>{email}</emailLink> ou volte para o <site>site</site>.",
     "errors": {
       "not_found": "Não encontramos esse agendamento.",
       "not_scheduled": "Essa consulta já foi cancelada ou realizada.",
-      "too_late": "Faltam menos de duas horas para a consulta. Para mudar, ligue para a recepção.",
+      "too_late": "Faltam menos de duas horas para a consulta. Para mudar, escreva para a recepção.",
       "slot_unavailable": "Esse horário acabou de ser ocupado. Escolha outro.",
       "unexpected": "Não conseguimos concluir agora. Tente de novo em instantes."
     }
@@ -499,7 +496,7 @@
     "whenValue": "{date}, às {time}",
     "visitValue": "{treatment} com {dentist}",
     "whatsappWhen": "{date}, {time}",
-    "footer": "Chegue com 10 minutos de antecedência. Dúvidas: {phone}."
+    "footer": "Chegue com 10 minutos de antecedência. Dúvidas: {email}."
   },
   "panel": {
     "meta": {

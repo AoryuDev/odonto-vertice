@@ -2,7 +2,6 @@ import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 import { ButtonLink } from '@/components/ui/button'
 import { photos } from '@/content/photos'
-import { clinic } from '@/modules/catalog/clinic'
 
 export async function ClosingCta() {
   const [t, tPhoto] = await Promise.all([
@@ -14,9 +13,7 @@ export async function ClosingCta() {
       <div className="relative grid overflow-hidden rounded-[2rem] bg-pine-800 text-paper md:grid-cols-12">
         <div className="relative z-10 p-8 md:col-span-7 md:p-14">
           <h2 className="text-title">{t('title')}</h2>
-          <p className="mt-5 max-w-lg text-pine-100">
-            {t('body', { phone: clinic.phone.display })}
-          </p>
+          <p className="mt-5 max-w-lg text-pine-100">{t('body')}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="/agendar" variant="inverse" size="lg">
               {t('cta')}

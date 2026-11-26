@@ -1,8 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { ButtonLink } from '@/components/ui/button'
-import { PhoneIcon } from '@/components/ui/icons'
-import { clinic } from '@/modules/catalog/clinic'
 import { Logo } from './logo'
 import { LocaleSwitcherSlot } from './locale-switcher-slot'
 import { MobileNav } from './mobile-nav'
@@ -35,16 +33,9 @@ export async function SiteHeader() {
         </nav>
         <div className="ml-auto hidden items-center gap-4 md:flex xl:ml-0 xl:gap-5">
           <LocaleSwitcherSlot />
-          <a
-            href={`tel:${clinic.phone.e164}`}
-            className="hidden items-center gap-2 text-[0.95rem] whitespace-nowrap text-ink-soft hover:text-ink xl:inline-flex"
-          >
-            <PhoneIcon size={18} />
-            <span className="tabular">{clinic.phone.display}</span>
-          </a>
           <ButtonLink href="/agendar">{t('book')}</ButtonLink>
         </div>
-        <MobileNav items={items} phone={clinic.phone.e164} />
+        <MobileNav items={items} />
       </div>
     </header>
   )

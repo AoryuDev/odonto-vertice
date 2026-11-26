@@ -7,7 +7,7 @@ import { CloseIcon, MenuIcon } from '@/components/ui/icons'
 import { LocaleSwitcher, LocaleSwitcherFallback } from './locale-switcher'
 import type { NavItem } from './nav-items'
 
-export function MobileNav({ items, phone }: { items: readonly NavItem[]; phone: string }) {
+export function MobileNav({ items }: { items: readonly NavItem[] }) {
   const t = useTranslations('mobileNav')
   const [open, setOpen] = useState(false)
   const panelId = useId()
@@ -59,18 +59,6 @@ export function MobileNav({ items, phone }: { items: readonly NavItem[]; phone: 
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-sm text-ink-soft">
-            {t.rich('preferCall', {
-              call: (chunks) => (
-                <a
-                  href={`tel:${phone}`}
-                  className="font-medium text-pine-800 underline underline-offset-4"
-                >
-                  {chunks}
-                </a>
-              ),
-            })}
-          </p>
           <div className="mt-5 border-t border-line pt-4">
             <Suspense fallback={<LocaleSwitcherFallback variant="full" />}>
               <LocaleSwitcher variant="full" />

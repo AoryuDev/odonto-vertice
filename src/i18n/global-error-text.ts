@@ -1,5 +1,4 @@
 import { createTranslator } from 'next-intl'
-import { clinic } from '@/modules/catalog/clinic'
 import { HTML_LANG } from './locales'
 import { loadMessages } from './messages'
 import type { AppLocale } from './routing'
@@ -17,7 +16,7 @@ export async function globalErrorText(locale: AppLocale): Promise<GlobalErrorTex
   return {
     lang: HTML_LANG[locale],
     title: t('title'),
-    body: t('body', { phone: clinic.phone.display }),
+    body: t('body'),
     retry: t('retry'),
   }
 }

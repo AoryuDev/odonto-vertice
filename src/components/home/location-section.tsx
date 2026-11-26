@@ -106,12 +106,6 @@ export async function LocationSection() {
               {t('directions')}
               <ArrowUpRightIcon size={18} />
             </ButtonLink>
-            <ButtonLink href={`tel:${clinic.phone.e164}`} variant="secondary">
-              {t.rich('call', {
-                phone: clinic.phone.display,
-                tabular: (chunks) => <span className="tabular">{chunks}</span>,
-              })}
-            </ButtonLink>
           </div>
 
           <div className="mt-10 hidden items-center gap-4 md:flex">

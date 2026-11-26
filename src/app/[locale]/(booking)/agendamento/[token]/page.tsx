@@ -208,10 +208,10 @@ async function ManageContent({ params, searchParams }: Props) {
       {appointment.status === 'scheduled' && !canManage && !isPast ? (
         <p className="mt-10 rounded-[var(--radius-soft)] border border-line bg-card p-5 text-ink-soft">
           {t.rich('tooLate', {
-            phone: clinic.phone.display,
-            phoneLink: (chunks) => (
+            email: clinic.email,
+            emailLink: (chunks) => (
               <a
-                href={`tel:${clinic.phone.e164}`}
+                href={`mailto:${clinic.email}`}
                 className="font-medium text-pine-800 underline underline-offset-4"
               >
                 {chunks}
@@ -229,9 +229,9 @@ async function ManageContent({ params, searchParams }: Props) {
 
       <p className="mt-12 text-sm text-ink-soft">
         {t.rich('help', {
-          phone: clinic.phone.display,
-          phoneLink: (chunks) => (
-            <a href={`tel:${clinic.phone.e164}`} className="underline underline-offset-4">
+          email: clinic.email,
+          emailLink: (chunks) => (
+            <a href={`mailto:${clinic.email}`} className="underline underline-offset-4">
               {chunks}
             </a>
           ),

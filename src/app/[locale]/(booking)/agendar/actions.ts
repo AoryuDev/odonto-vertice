@@ -11,7 +11,6 @@ import {
   type BookingFailure,
 } from '@/modules/booking/booking.service'
 import { bookingRequestSchema } from '@/modules/booking/schemas'
-import { clinic } from '@/modules/catalog/clinic'
 
 export type BookingActionResult = {
   readonly reason: BookingFailure | 'invalid'
@@ -54,7 +53,7 @@ export async function submitBooking(input: unknown): Promise<BookingActionResult
 
   return {
     reason: result.reason,
-    message: t(result.reason, { phone: clinic.phone.display }),
+    message: t(result.reason),
     alternatives:
       result.reason === 'slot_unavailable' ? await suggestAlternatives(parsed.data) : undefined,
   }

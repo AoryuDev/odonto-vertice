@@ -34,8 +34,10 @@
 | ------------------------------------------------- | --------------------------------------------------- |
 | ![Reception day agenda](docs/media/panel-day.png) | ![Reception week agenda](docs/media/panel-week.png) |
 
-> Odonto Vértice is a fictional clinic built as a portfolio project. Names, CRO numbers, address,
-> phone numbers and testimonials are illustrative; the site says so in its footer.
+> Odonto Vértice is a fictional clinic built as a portfolio project. Names, CRO numbers, address
+> and testimonials are illustrative; the site says so in its footer. It lists no phone or WhatsApp
+> number, since any invented number could belong to a real person; the only contact is an address
+> on the reserved `.example` domain.
 
 ## Contents
 
@@ -306,7 +308,7 @@ tags, the social card image and JSON-LD are localized, and the sitemap lists bot
 page with their alternates.
 
 **Checks.** `pnpm messages:check` (in CI) fails when a key is missing from any language, when a
-message is empty, or when placeholders such as `{phone}` or rich-text tags differ between languages.
+message is empty, or when placeholders such as `{email}` or rich-text tags differ between languages.
 The end-to-end suite runs the public site and booking flow in both languages, books, reschedules
 and cancels in English while asserting that no untranslated text or missing-key marker appears,
 switches language with the keyboard and on a phone, and checks that the panel remembers each staff
@@ -374,7 +376,7 @@ is the first focusable element.
 
 Local SEO: per-page metadata, canonical URLs and `hreflang` alternates in both languages,
 a generated Open Graph image per language, a bilingual `sitemap.xml`, `robots.txt`, and JSON-LD
-for `Dentist` (address, geo, opening hours derived from the dentists' schedules, telephone,
+for `Dentist` (address, geo, opening hours derived from the dentists' schedules, e-mail,
 staff), `Person`, `MedicalProcedure`, `FAQPage` and `BreadcrumbList`.
 
 ## Tests

@@ -75,11 +75,6 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
           </h2>
           <ul className="mt-4 space-y-2 text-[0.95rem]">
             <li>
-              <a href={`tel:${clinic.phone.e164}`} className="tabular hover:text-paper">
-                {clinic.phone.display}
-              </a>
-            </li>
-            <li>
               <a href={`mailto:${clinic.email}`} className="hover:text-paper">
                 {clinic.email}
               </a>

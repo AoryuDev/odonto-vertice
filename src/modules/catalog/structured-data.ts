@@ -26,7 +26,6 @@ export function dentistOrganizationSchema(input: {
     name: clinic.name,
     url: localizedUrl('/', input.locale),
     image: input.imageUrl,
-    telephone: clinic.phone.e164,
     email: clinic.email,
     currenciesAccepted: 'BRL',
     paymentAccepted: input.text.paymentAccepted,

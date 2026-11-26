@@ -46,7 +46,7 @@ for (const locale of LOCALES) {
         url: expect.stringMatching(new RegExp(`/${locale}$`)),
         paymentAccepted: text.seo.paymentAccepted,
         address: { addressLocality: 'Goiânia', addressRegion: 'GO' },
-        telephone: expect.stringMatching(/^\+55/),
+        email: 'contato@odontovertice.example',
       })
       expect(dentist?.openingHoursSpecification).toHaveLength(6)
     })
